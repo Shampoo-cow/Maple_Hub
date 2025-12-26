@@ -1,6 +1,6 @@
 import { ExternalLink, Youtube, Link } from "lucide-react";
 import { AdBanner } from "./AdBanner";
-import mapleLeaf from "figma:asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 
 interface LinkItemProps {
   name: string;
