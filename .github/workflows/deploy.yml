@@ -31,9 +31,10 @@ jobs:
 
       - name: Upload to NCP Object Storage
         run: |
-          aws s3 sync dist/ s3://${{ secrets.NCP_BUCKET_MAPLE }} \
-            --delete \
-            --endpoint-url https://kr.object.ncloudstorage.com
+          aws s3 sync dist/ s3://${{ secrets.NCP_BUCKET_NAME }} \
+             --delete \
+             --acl private \
+             --endpoint-url https://kr.object.ncloudstorage.com
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_KEY }}
