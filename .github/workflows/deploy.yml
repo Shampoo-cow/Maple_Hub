@@ -24,17 +24,16 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.NCP_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.NCP_SECRET_KEY }}
-          aws-region: kr-standard
+      - name: Install AWS CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install awscli
 
       - name: Upload to NCP Object Storage
         run: |
-          aws s3 sync dist/ s3://${{ secrets.NCP_BUCKET_MAPLE }} --delete
+          aws s3 sync dist/ s3://${{ secrets.NCP_BUCKET_MAPLE }} \
+            --delete \
+            --endpoint-url https://kr.object.ncloudstorage.com
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_KEY }}
-          AWS_DEFAULT_REGION: kr-standard
