@@ -1,6 +1,8 @@
 import { ExternalLink, Youtube, Link } from "lucide-react";
 import { AdBanner } from "./AdBanner";
-import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import { Footer } from "./Footer";
+import mapleLeaf from "figma:asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "figma:asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 
 interface LinkItemProps {
   name: string;
@@ -43,7 +45,7 @@ export function MainPage({ onNavigate }: { onNavigate: (page: string) => void })
     {
       name: "메이플로드",
       description: "메이플 플레이에 필요한 각종 계산기를 제공하는 사이트. 주로 사냥터 효율 분석, 경험치 계산 등 레벨업 및 사냥 최적화를 위해 사용.",
-      url: "https://mapleroad.io",
+      url: "https://mapleroad.kr",
     },
     {
       name: "환산주스탯",
@@ -68,7 +70,7 @@ export function MainPage({ onNavigate }: { onNavigate: (page: string) => void })
     {
       name: "메이플 인벤",
       description: "전통적인 공식·유저 기반 커뮤니티이자 정보 DB 사이트. 다수의 유저들이 공유하는 팁과 노하우, 그리고 메이플스토리에 대한 유저들의 애정과 경험이 축적된 공간.",
-      url: "https://www.inven.co.kr/board/maple",
+      url: "https://maple.inven.co.kr/",
     },
   ];
 
@@ -80,6 +82,8 @@ export function MainPage({ onNavigate }: { onNavigate: (page: string) => void })
     { name: "글자네", url: "https://youtube.com/channel/UCb5NLtXAsTBrmaZVhyFa-Wg?si=S167kJkvxfZct-yA" },
     { name: "진격캐넌", url: "https://youtube.com/channel/UCmRL_430mSNs-6M6tcGXFCw?si=M1Wq_wwh4vmVM2l-" },
     { name: "맑음", url: "https://youtube.com/channel/UC1dHu9GhbHH7RcHKyJdaOvA?si=Y31LoGUsiB86Bm1l" },
+    { name: "후닝", url: "https://youtube.com/@maplehooni?si=c4T2SBiz36OpuyDd" },
+    { name: "온앤온", url: "https://youtube.com/channel/UCop7QCLcdzTpcYZzMu1mFAg?si=H8sZOt5Td-V6HFrE" },
   ];
 
   return (
@@ -93,18 +97,27 @@ export function MainPage({ onNavigate }: { onNavigate: (page: string) => void })
         {/* Main Content */}
         <div className="flex-1 max-w-5xl mx-auto">
           {/* Header */}
-          <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 border-4 border-orange-500">
-            <div className="flex items-center justify-center gap-4">
+          <div 
+            className="rounded-2xl shadow-2xl p-8 mb-6 border-4 border-purple-400 relative overflow-hidden"
+            style={{
+              backgroundImage: `url(${headerBg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="relative z-10 flex items-center justify-center gap-4">
               <img 
                 src={mapleLeaf} 
                 alt="Maple Leaf" 
                 className="w-16 h-16 object-contain drop-shadow-lg"
               />
-              <h1 className="text-5xl text-orange-600" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
+              <h1 className="text-5xl text-orange-600" style={{ textShadow: '2px 2px 4px rgba(255,255,255,0.8), -1px -1px 2px rgba(255,255,255,0.8)' }}>
                 Maple_Hub
               </h1>
             </div>
-            <p className="text-orange-500 text-center text-lg mt-3">메이플 컨텐츠 디멘션 게이트</p>
+            <p className="relative z-10 text-orange-600 text-center text-lg mt-3" style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8), -1px -1px 1px rgba(255,255,255,0.8)' }}>
+              메이플 컨텐츠 디멘션 게이트
+            </p>
           </div>
 
           {/* Navigation */}
@@ -169,6 +182,11 @@ export function MainPage({ onNavigate }: { onNavigate: (page: string) => void })
       {/* Bottom Ad Banner */}
       <div className="p-4 pt-0">
         <AdBanner type="horizontal" className="mx-auto max-w-6xl" />
+      </div>
+
+      {/* Footer */}
+      <div className="p-4">
+        <Footer />
       </div>
     </div>
   );
