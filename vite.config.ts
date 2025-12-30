@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  base: "/Maple_Hub/",        // GitHub Pages 경로
+  base: "/",        // ncp 경로
   plugins: [
     react(),                 // ⭐⭐⭐ 반드시 필요
     tailwindcss(),
