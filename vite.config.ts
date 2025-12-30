@@ -1,19 +1,19 @@
 import { defineConfig } from "vite";
 import path from "path";
-import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  base: "/Maple_Hub/",
+  base: "/Maple_Hub/",        // GitHub Pages 경로
+  build: {
+    outDir: "docs",          // Pages 배포용 폴더
+  },
   plugins: [
-    // The React and Tailwind plugins are both required for Make, even if
-    // Tailwind is not being actively used – do not remove them
-    react(),
+    react(),                 // ⭐⭐⭐ 반드시 필요
     tailwindcss(),
   ],
   resolve: {
     alias: {
-      // Alias @ to the src directory
       "@": path.resolve(__dirname, "./src"),
     },
   },
