@@ -26,7 +26,7 @@ const sampleEvents: Event[] = [
     name: "뉴네임 옥션",
     startDate: new Date(2025, 11, 24), // Dec 24, 2025
     endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1260",
     color: "#f59e0b", // amber
   },
   {
@@ -34,7 +34,7 @@ const sampleEvents: Event[] = [
     name: "작은 눈사람의 행복",
     startDate: new Date(2025, 11, 25), // Dec 25, 2025
     endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1259",
     color: "#06b6d4", // cyan
   },
   {
@@ -42,7 +42,7 @@ const sampleEvents: Event[] = [
     name: "챌린저스 월드 시즌3",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 3, 16), // Apr 16, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1256",
     color: "#8b5cf6", // violet
   },
   {
@@ -50,7 +50,7 @@ const sampleEvents: Event[] = [
     name: "아이템 버닝 PLUS",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 3, 22), // Apr 22, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1255",
     color: "#ef4444", // red
   },
   {
@@ -58,7 +58,7 @@ const sampleEvents: Event[] = [
     name: "하이퍼 버닝 MAX",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1254",
     color: "#dc2626", // dark red
   },
   {
@@ -66,7 +66,7 @@ const sampleEvents: Event[] = [
     name: "버닝 BEYOND",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1253",
     color: "#f97316", // orange
   },
   {
@@ -74,7 +74,7 @@ const sampleEvents: Event[] = [
     name: "닉네임 익스프레스",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1252",
     color: "#10b981", // emerald
   },
   {
@@ -82,7 +82,7 @@ const sampleEvents: Event[] = [
     name: "KINETIC 뷰티 익스프레스",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1251",
     color: "#ec4899", // pink
   },
   {
@@ -90,7 +90,7 @@ const sampleEvents: Event[] = [
     name: "커스텀 일러스트 이벤트",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1249",
     color: "#a855f7", // purple
   },
   {
@@ -98,7 +98,7 @@ const sampleEvents: Event[] = [
     name: "카이 최초 격파 이벤트",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1248",
     color: "#3b82f6", // blue
   },
   {
@@ -106,7 +106,7 @@ const sampleEvents: Event[] = [
     name: "챌린저스 파트너",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1247",
     color: "#6366f1", // indigo
   },
   {
@@ -114,7 +114,7 @@ const sampleEvents: Event[] = [
     name: "챌린저스 패스",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 1, 11), // Feb 11, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1246",
     color: "#14b8a6", // teal
   },
   {
@@ -122,7 +122,7 @@ const sampleEvents: Event[] = [
     name: "의문의 결계",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1245",
     color: "#9333ea", // purple
   },
   {
@@ -130,7 +130,7 @@ const sampleEvents: Event[] = [
     name: "모멘텀 패스",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1244",
     color: "#0ea5e9", // sky
   },
   {
@@ -138,7 +138,7 @@ const sampleEvents: Event[] = [
     name: "엘라노스 크로니클",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1243",
     color: "#84cc16", // lime
   },
   {
@@ -146,7 +146,7 @@ const sampleEvents: Event[] = [
     name: "탈라하트 판타지아",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1242",
     color: "#d946ef", // fuchsia
   },
   {
@@ -154,7 +154,7 @@ const sampleEvents: Event[] = [
     name: "KINETIC",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1241",
     color: "#22c55e", // green
   },
   {
@@ -162,7 +162,7 @@ const sampleEvents: Event[] = [
     name: "겨울나기 미션",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1240",
     color: "#06b6d4", // cyan
   },
   {
@@ -170,7 +170,7 @@ const sampleEvents: Event[] = [
     name: "일루전 코인샵&환영의 기억",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1239",
     color: "#8b5cf6", // violet
   },
   {
@@ -178,7 +178,7 @@ const sampleEvents: Event[] = [
     name: "프리미엄 PC방 접속 보상 이벤트",
     startDate: new Date(2025, 11, 19), // Dec 19, 2025
     endDate: new Date(2026, 0, 15), // Jan 15, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1238",
     color: "#f59e0b", // amber
   },
   {
@@ -186,7 +186,7 @@ const sampleEvents: Event[] = [
     name: "VIP 사우나",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1237",
     color: "#10b981", // emerald
   },
   {
@@ -194,7 +194,7 @@ const sampleEvents: Event[] = [
     name: "월드 리프",
     startDate: new Date(2025, 11, 18), // Dec 18, 2025
     endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1236",
     color: "#22c55e", // green
   },
   {
@@ -202,7 +202,7 @@ const sampleEvents: Event[] = [
     name: "윈터 카운트 다운",
     startDate: new Date(2025, 10, 20), // Nov 20, 2025
     endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com",
+    url: "https://maplestory.nexon.com/board/83886117/1220",
     color: "#3b82f6", // blue
   },
 ];
@@ -233,7 +233,7 @@ export function EventCalendarPage({
   const [currentDate, setCurrentDate] = useState(
     new Date(2025, 11, 1),
   ); // Dec 2025
-  const getToday = () => {
+   const getToday = () => {
   const now = new Date();
   return new Date(
     now.getFullYear(),
@@ -261,30 +261,34 @@ export function EventCalendarPage({
   };
 
   // Get events for the current month
-  const eventsInMonth = sampleEvents.filter((event) => {
-    return (
-      (event.startDate.getFullYear() === year &&
-        event.startDate.getMonth() === month) ||
-      (event.endDate.getFullYear() === year &&
-        event.endDate.getMonth() === month) ||
-      (event.startDate < firstDayOfMonth &&
-        event.endDate > lastDayOfMonth)
-    );
-  }).sort((a, b) => {
-    // Sort by end date descending (events ending later appear first)
-    return b.endDate.getTime() - a.endDate.getTime();
-  });
+  const eventsInMonth = sampleEvents
+    .filter((event) => {
+      return (
+        (event.startDate.getFullYear() === year &&
+          event.startDate.getMonth() === month) ||
+        (event.endDate.getFullYear() === year &&
+          event.endDate.getMonth() === month) ||
+        (event.startDate < firstDayOfMonth &&
+          event.endDate > lastDayOfMonth)
+      );
+    })
+    .sort((a, b) => {
+      // Sort by end date descending (events ending later appear first)
+      return b.endDate.getTime() - a.endDate.getTime();
+    });
 
   // Get update schedules for the current month
-  const updatesInMonth = updateSchedules.filter((schedule) => {
-    return (
-      schedule.date.getFullYear() === year &&
-      schedule.date.getMonth() === month
-    );
-  }).sort((a, b) => {
-    // Sort by date ascending (earlier dates first)
-    return a.date.getTime() - b.date.getTime();
-  });
+  const updatesInMonth = updateSchedules
+    .filter((schedule) => {
+      return (
+        schedule.date.getFullYear() === year &&
+        schedule.date.getMonth() === month
+      );
+    })
+    .sort((a, b) => {
+      // Sort by date ascending (earlier dates first)
+      return a.date.getTime() - b.date.getTime();
+    });
 
   // Check if a day has an event
   const getEventsForDay = (day: number) => {
@@ -302,7 +306,8 @@ export function EventCalendarPage({
     const currentDay = new Date(year, month, day);
     return updateSchedules.find((schedule) => {
       return (
-        currentDay.getFullYear() === schedule.date.getFullYear() &&
+        currentDay.getFullYear() ===
+          schedule.date.getFullYear() &&
         currentDay.getMonth() === schedule.date.getMonth() &&
         currentDay.getDate() === schedule.date.getDate()
       );
@@ -419,14 +424,12 @@ export function EventCalendarPage({
     }
     
     const timeDiff = event.endDate.getTime() - today.getTime();
-    const daysDiff = Math.ceil(
-      timeDiff / (1000 * 60 * 60 * 24),
-    );
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both today and end date
 
     if (daysDiff < 0) {
       return "종료됨";
-    } else if (daysDiff === 0) {
-      return "오늘 종료";
+    } else if (daysDiff === 1) {
+      return "오늘까지";
     } else {
       return `남은 기간 ${daysDiff}일`;
     }
@@ -434,8 +437,10 @@ export function EventCalendarPage({
 
   // Calculate total event duration
   const getEventDuration = (event: Event) => {
-    const timeDiff = event.endDate.getTime() - event.startDate.getTime();
-    const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
+    const timeDiff =
+      event.endDate.getTime() - event.startDate.getTime();
+    const totalDays =
+      Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
     const weeks = Math.floor(totalDays / 7);
     return `(총 ${totalDays}일/${weeks}주)`;
   };
@@ -445,7 +450,8 @@ export function EventCalendarPage({
     const sundays = [];
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDay = new Date(year, month, day);
-      if (currentDay.getDay() === 0) { // 0 = Sunday
+      if (currentDay.getDay() === 0) {
+        // 0 = Sunday
         sundays.push(day);
       }
     }
@@ -468,14 +474,32 @@ export function EventCalendarPage({
         return "트헌 3배 / 어빌 50% / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
       }
     }
-    
+
     // If year is 2026 or later (January 2026 onwards), show "아직 몰라요"
     if (year >= 2026) {
       return "아직 몰라요";
     }
-    
+
     // Default for other months
     return "아직 몰라요";
+  };
+
+  const getSundayBenefitUrl = (day: number) => {
+    // December 2025 specific URLs
+    if (year === 2025 && month === 11) {
+      if (day === 7) {
+        return "https://maplestory.nexon.com/board/83886117/1232";
+      } else if (day === 14) {
+        return "https://maplestory.nexon.com/board/83886117/1234";
+      } else if (day === 21) {
+        return "https://maplestory.nexon.com/board/83886117/1258";
+      } else if (day === 28) {
+        return "https://maplestory.nexon.com/board/83886117/1261";
+      }
+    }
+    
+    // Default URL for other dates
+    return "https://maplestory.nexon.com";
   };
 
   const getSundayBenefitColor = (day: number) => {
@@ -491,12 +515,12 @@ export function EventCalendarPage({
         return "#ec4899"; // pink
       }
     }
-    
+
     // If year is 2026 or later, show gray color
     if (year >= 2026) {
       return "#9ca3af"; // gray
     }
-    
+
     // Default gray for unknown
     return "#9ca3af";
   };
@@ -630,24 +654,34 @@ export function EventCalendarPage({
                         {/* Event Details */}
                         <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
                           <p className="text-gray-600">
-                            {formatDate(event.startDate).slice(5)} ~{" "}
+                            {formatDate(event.startDate).slice(
+                              5,
+                            )}{" "}
+                            ~{" "}
                             {formatDate(event.endDate).slice(5)}
                           </p>
-                          <span className="text-gray-400">|</span>
+                          <span className="text-gray-400">
+                            |
+                          </span>
                           <p
                             className={`font-semibold ${
-                              getDaysRemaining(event) === "종료됨"
+                              getDaysRemaining(event) ===
+                              "종료됨"
                                 ? "text-gray-400"
-                                : getDaysRemaining(event) === "오늘 종료"
+                                : getDaysRemaining(event) ===
+                                    "오늘까지"
                                   ? "text-red-500"
-                                  : getDaysRemaining(event) === "시작전"
+                                  : getDaysRemaining(event) ===
+                                      "시작전"
                                     ? "text-blue-500"
                                     : "text-purple-600"
                             }`}
                           >
                             {getDaysRemaining(event)}
                           </p>
-                          <span className="text-gray-400">|</span>
+                          <span className="text-gray-400">
+                            |
+                          </span>
                           <p className="text-gray-500">
                             {getEventDuration(event)}
                           </p>
@@ -681,15 +715,21 @@ export function EventCalendarPage({
                       {sundaysInMonth.map((sunday) => (
                         <a
                           key={sunday}
-                          href="https://maplestory.nexon.com"
+                          href={getSundayBenefitUrl(sunday)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="group bg-white rounded-lg p-2 md:p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-start gap-2"
-                          style={{ borderColor: getSundayBenefitColor(sunday) }}
+                          style={{
+                            borderColor:
+                              getSundayBenefitColor(sunday),
+                          }}
                         >
                           <div
                             className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0 mt-1"
-                            style={{ backgroundColor: getSundayBenefitColor(sunday) }}
+                            style={{
+                              backgroundColor:
+                                getSundayBenefitColor(sunday),
+                            }}
                           />
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
@@ -699,7 +739,9 @@ export function EventCalendarPage({
                               <p className="text-gray-600">
                                 {month + 1}/{sunday} (일)
                               </p>
-                              <span className="text-gray-400">|</span>
+                              <span className="text-gray-400">
+                                |
+                              </span>
                               <p className="text-gray-500">
                                 00:00 ~ 23:59
                               </p>
@@ -803,36 +845,51 @@ export function EventCalendarPage({
                         const dayUpdate = day
                           ? getUpdateForDay(day)
                           : null;
+                        
+                        // Check if this day is today
+                        const isToday = day && 
+                          year === today.getFullYear() && 
+                          month === today.getMonth() && 
+                          day === today.getDate();
 
                         return (
                           <div
                             key={dayIdx}
-                            className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${
+                            className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${""}${
                               dayIdx === 4
                                 ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
                                 : "border-gray-300"
                             } ${
-                              day
-                                ? dayEvents.length > 0
-                                  ? "bg-purple-50/30"
-                                  : "bg-white"
-                                : "bg-gray-50"
+                              isToday
+                                ? "bg-yellow-100 border-4 border-yellow-400 shadow-lg"
+                                : day
+                                  ? dayEvents.length > 0
+                                    ? "bg-purple-50/30"
+                                    : "bg-white"
+                                  : "bg-gray-50"
                             }`}
                           >
                             {day && (
                               <>
                                 <div
                                   className={`text-sm mb-2 ${
-                                    dayIdx === 0
-                                      ? "text-red-600"
-                                      : dayIdx === 6
-                                        ? "text-blue-600"
-                                        : "text-gray-700"
+                                    isToday
+                                      ? "text-yellow-700 font-bold"
+                                      : dayIdx === 0
+                                        ? "text-red-600"
+                                        : dayIdx === 6
+                                          ? "text-blue-600"
+                                          : "text-gray-700"
                                   }`}
                                 >
                                   {day}
+                                  {isToday && (
+                                    <span className="ml-1 text-[10px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">
+                                      오늘
+                                    </span>
+                                  )}
                                 </div>
-                                
+
                                 {/* Update Schedule Badge */}
                                 {dayUpdate && (
                                   <a
@@ -844,7 +901,8 @@ export function EventCalendarPage({
                                     <div
                                       className="px-2 py-1 rounded text-white text-[10px] font-bold shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer"
                                       style={{
-                                        backgroundColor: dayUpdate.color,
+                                        backgroundColor:
+                                          dayUpdate.color,
                                       }}
                                     >
                                       🔄 업데이트
@@ -854,7 +912,8 @@ export function EventCalendarPage({
                                       <div
                                         className="rounded px-3 py-2 text-white text-xs shadow-lg"
                                         style={{
-                                          backgroundColor: dayUpdate.color,
+                                          backgroundColor:
+                                            dayUpdate.color,
                                         }}
                                       >
                                         <div className="font-semibold">
@@ -864,7 +923,7 @@ export function EventCalendarPage({
                                     </div>
                                   </a>
                                 )}
-                                
+
                                 {/* Event dots */}
                                 {dayEvents.length > 0 && (
                                   <div className="flex flex-wrap gap-1">
