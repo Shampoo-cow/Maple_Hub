@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Download, X } from "lucide-react";
 import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
-import mapleLeaf from "../../assets/images/maple-leaf.png";
-import headerBg from "../../assets/images/header.png";
+import mapleLeaf from "../../asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "../../asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
+import guildMark1 from "../../asset/cabd9554cb33e7d602ba2b91d702f2013d116715.png";
+import guildMark2 from "../../asset/0e0505fcc4e2d35e1e832ab0b5260633279591d7.png";
+import guildMark3 from "../../asset/7b9bd0cf888f69e549f2d2b38289f9a8ac283b8d.png";
+import guildMark4 from "../../asset/a8405af1e2cf29d8dfffa8b38e4b0de2406e26c7.png";
+import guildMark5 from "../../asset/d78e7977a698391f02f71fd8054b194b6dd1460a.png";
+import guildMark6 from "../../asset/866a3ca49d7b7ef6a0795ea4c24141562e5778fd.png";
+import guildMark7 from "../../asset/16f7b4f4fa9c2804e2f4847873c5e99ed4404ed4.png";
 
 interface GuildMark {
   id: number;
@@ -11,67 +18,43 @@ interface GuildMark {
   imageData: string;
 }
 
-// Mock guild mark database - auto-generated guild marks
-const generateGuildMark = (
-  id: number,
-  name: string,
-  color1: string,
-  color2: string,
-): GuildMark => {
-  // Create a simple 17x17 pattern using canvas
-  const canvas = document.createElement("canvas");
-  canvas.width = 17;
-  canvas.height = 17;
-  const ctx = canvas.getContext("2d");
-
-  if (ctx) {
-    // Create a gradient or pattern background
-    const gradient = ctx.createLinearGradient(0, 0, 17, 17);
-    gradient.addColorStop(0, color1);
-    gradient.addColorStop(1, color2);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 17, 17);
-
-    // Add some simple shapes to make it look like a guild mark
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(5, 5, 7, 7);
-    ctx.fillStyle = color1;
-    ctx.fillRect(7, 7, 3, 3);
-  }
-
-  return {
-    id,
-    name,
-    imageData: canvas.toDataURL("image/png"),
-  };
-};
-
+// Guild marks database using actual images
 const guildMarksDatabase: GuildMark[] = [
-  generateGuildMark(1, "드래곤 윙", "#ff6b6b", "#ee5a6f"),
-  generateGuildMark(2, "피닉스 라이징", "#ffa500", "#ff8c00"),
-  generateGuildMark(3, "블루 스타", "#4dabf7", "#339af0"),
-  generateGuildMark(4, "그린 리프", "#51cf66", "#37b24d"),
-  generateGuildMark(5, "퍼플 크라운", "#9775fa", "#845ef7"),
-  generateGuildMark(6, "골든 쉴드", "#ffd43b", "#fab005"),
-  generateGuildMark(7, "레드 소드", "#ff6b6b", "#fa5252"),
-  generateGuildMark(8, "사이언 웨이브", "#22b8cf", "#15aabf"),
-  generateGuildMark(9, "핑크 하트", "#ff6b9d", "#da77f2"),
-  generateGuildMark(10, "오렌지 플레임", "#ff922b", "#fd7e14"),
-  generateGuildMark(11, "틸 다이아몬드", "#20c997", "#12b886"),
-  generateGuildMark(12, "바이올렛 문", "#845ef7", "#7950f2"),
-  generateGuildMark(13, "라임 썬더", "#94d82d", "#82c91e"),
-  generateGuildMark(14, "마젠타 스타", "#e64980", "#d6336c"),
-  generateGuildMark(15, "엠버 썬", "#fd7e14", "#f76707"),
-  generateGuildMark(16, "인디고 나이트", "#5c7cfa", "#4c6ef5"),
-  generateGuildMark(
-    17,
-    "에메랄드 크로스",
-    "#2f9e44",
-    "#2b8a3e",
-  ),
-  generateGuildMark(18, "루비 젬", "#c92a2a", "#a61e4d"),
-  generateGuildMark(19, "사파이어 윙", "#1864ab", "#1971c2"),
-  generateGuildMark(20, "실버 문", "#adb5bd", "#868e96"),
+  {
+    id: 1,
+    name: "길드 마크 1",
+    imageData: guildMark1,
+  },
+  {
+    id: 2,
+    name: "길드 마크 2",
+    imageData: guildMark2,
+  },
+  {
+    id: 3,
+    name: "길드 마크 3",
+    imageData: guildMark3,
+  },
+  {
+    id: 4,
+    name: "길드 마크 4",
+    imageData: guildMark4,
+  },
+  {
+    id: 5,
+    name: "길드 마크 5",
+    imageData: guildMark5,
+  },
+  {
+    id: 6,
+    name: "길드 마크 6",
+    imageData: guildMark6,
+  },
+  {
+    id: 7,
+    name: "길드 마크 7",
+    imageData: guildMark7,
+  },
 ];
 
 export function GuildMarkPage({
