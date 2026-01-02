@@ -12,6 +12,13 @@ import { Footer } from "./Footer";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 
+function getKSTDate() { //여기서부터
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  kst.setHours(0, 0, 0, 0);
+  return kst;
+} // 여기까지
+
 interface Event {
   id: number;
   name: string;
