@@ -2,15 +2,15 @@ import { useState } from "react";
 import { Download, X } from "lucide-react";
 import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
-import mapleLeaf from "../../asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
-import headerBg from "../../asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
-import guildMark1 from "../../asset/cabd9554cb33e7d602ba2b91d702f2013d116715.png";
-import guildMark2 from "../../asset/0e0505fcc4e2d35e1e832ab0b5260633279591d7.png";
-import guildMark3 from "../../asset/7b9bd0cf888f69e549f2d2b38289f9a8ac283b8d.png";
-import guildMark4 from "../../asset/a8405af1e2cf29d8dfffa8b38e4b0de2406e26c7.png";
-import guildMark5 from "../../asset/d78e7977a698391f02f71fd8054b194b6dd1460a.png";
-import guildMark6 from "../../asset/866a3ca49d7b7ef6a0795ea4c24141562e5778fd.png";
-import guildMark7 from "../../asset/16f7b4f4fa9c2804e2f4847873c5e99ed4404ed4.png";
+import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
+import guildMark1 from "../../assets/cabd9554cb33e7d602ba2b91d702f2013d116715.png";
+import guildMark2 from "../../assets/0e0505fcc4e2d35e1e832ab0b5260633279591d7.png";
+import guildMark3 from "../../assets/7b9bd0cf888f69e549f2d2b38289f9a8ac283b8d.png";
+import guildMark4 from "../../assets/a8405af1e2cf29d8dfffa8b38e4b0de2406e26c7.png";
+import guildMark5 from "../../assets/d78e7977a698391f02f71fd8054b194b6dd1460a.png";
+import guildMark6 from "../../assets/866a3ca49d7b7ef6a0795ea4c24141562e5778fd.png";
+import guildMark7 from "../../assets/16f7b4f4fa9c2804e2f4847873c5e99ed4404ed4.png";
 
 interface GuildMark {
   id: number;

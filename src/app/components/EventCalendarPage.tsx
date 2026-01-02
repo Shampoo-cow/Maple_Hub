@@ -4,11 +4,13 @@ import {
   ChevronRight,
   Calendar,
   ExternalLink,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
-import mapleLeaf from "../../asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
-import headerBg from "../../asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
+import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 
 interface Event {
   id: number;
@@ -16,194 +18,219 @@ interface Event {
   startDate: Date;
   endDate: Date;
   url: string;
-  color: string;
 }
 
-// Sample events (you can add more later)
-const sampleEvents: Event[] = [
+interface EventCategory {
+  id: string;
+  name: string;
+  color: string;
+  events: Event[];
+}
+
+// Event categories with events
+const eventCategories: EventCategory[] = [
   {
-    id: 1,
-    name: "뉴네임 옥션",
-    startDate: new Date(2025, 11, 24), // Dec 24, 2025
-    endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1260",
-    color: "#f59e0b", // amber
-  },
-  {
-    id: 2,
-    name: "작은 눈사람의 행복",
-    startDate: new Date(2025, 11, 25), // Dec 25, 2025
-    endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com/board/83886117/1259",
-    color: "#06b6d4", // cyan
-  },
-  {
-    id: 3,
-    name: "챌린저스 월드 시즌3",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 3, 16), // Apr 16, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1256",
-    color: "#8b5cf6", // violet
-  },
-  {
-    id: 4,
-    name: "아이템 버닝 PLUS",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 3, 22), // Apr 22, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1255",
+    id: "burning",
+    name: "버닝 / 성장",
     color: "#ef4444", // red
+    events: [
+      {
+        id: 5,
+        name: "하이퍼 버닝 MAX",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 5, 17),
+        url: "https://maplestory.nexon.com/board/83886117/1254",
+      },
+      {
+        id: 6,
+        name: "버닝 BEYOND",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 5, 17),
+        url: "https://maplestory.nexon.com/board/83886117/1253",
+      },
+      {
+        id: 4,
+        name: "아이템 버닝 PLUS",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 3, 22),
+        url: "https://maplestory.nexon.com/board/83886117/1255",
+      },
+      {
+        id: 3,
+        name: "챌린저스 월드 시즌3",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 3, 16),
+        url: "https://maplestory.nexon.com/board/83886117/1256",
+      },
+      {
+        id: 11,
+        name: "챌린저스 파트너",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 3, 15),
+        url: "https://maplestory.nexon.com/board/83886117/1247",
+      },
+      {
+        id: 13,
+        name: "의문의 결계",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 3, 15),
+        url: "https://maplestory.nexon.com/board/83886117/1245",
+      },
+    ],
   },
   {
-    id: 5,
-    name: "하이퍼 버닝 MAX",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1254",
-    color: "#dc2626", // dark red
-  },
-  {
-    id: 6,
-    name: "버닝 BEYOND",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1253",
-    color: "#f97316", // orange
-  },
-  {
-    id: 7,
-    name: "닉네임 익스프레스",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1252",
-    color: "#10b981", // emerald
-  },
-  {
-    id: 8,
-    name: "KINETIC 뷰티 익스프레스",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1251",
-    color: "#ec4899", // pink
-  },
-  {
-    id: 9,
-    name: "커스텀 일러스트 이벤트",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1249",
-    color: "#a855f7", // purple
-  },
-  {
-    id: 10,
-    name: "카이 최초 격파 이벤트",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1248",
-    color: "#3b82f6", // blue
-  },
-  {
-    id: 11,
-    name: "챌린저스 파트너",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1247",
-    color: "#6366f1", // indigo
-  },
-  {
-    id: 12,
-    name: "챌린저스 패스",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 1, 11), // Feb 11, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1246",
-    color: "#14b8a6", // teal
-  },
-  {
-    id: 13,
-    name: "의문의 결계",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 3, 15), // Apr 15, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1245",
-    color: "#9333ea", // purple
-  },
-  {
-    id: 14,
-    name: "모멘텀 패스",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1244",
-    color: "#0ea5e9", // sky
-  },
-  {
-    id: 15,
-    name: "엘라노스 크로니클",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1243",
-    color: "#84cc16", // lime
-  },
-  {
-    id: 16,
-    name: "탈라하트 판타지아",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1242",
-    color: "#d946ef", // fuchsia
-  },
-  {
-    id: 17,
-    name: "KINETIC",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 0, 14), // Jan 14, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1241",
-    color: "#22c55e", // green
-  },
-  {
-    id: 18,
-    name: "겨울나기 미션",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1240",
-    color: "#06b6d4", // cyan
-  },
-  {
-    id: 19,
-    name: "일루전 코인샵&환영의 기억",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 2, 18), // Mar 18, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1239",
+    id: "pass",
+    name: "패스 / 미션형",
     color: "#8b5cf6", // violet
+    events: [
+      {
+        id: 12,
+        name: "챌린저스 패스",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 1, 11),
+        url: "https://maplestory.nexon.com/board/83886117/1246",
+      },
+      {
+        id: 14,
+        name: "모멘텀 패스",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1244",
+      },
+      {
+        id: 15,
+        name: "엘라노스 크로니클",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1243",
+      },
+      {
+        id: 16,
+        name: "탈라하트 판타지아",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1242",
+      },
+      {
+        id: 18,
+        name: "겨울나기 미션",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1240",
+      },
+      {
+        id: 23,
+        name: "윈터 카운트 다운",
+        startDate: new Date(2025, 10, 20),
+        endDate: new Date(2025, 11, 31),
+        url: "https://maplestory.nexon.com/board/83886117/1220",
+      },
+    ],
   },
   {
-    id: 20,
-    name: "프리미엄 PC방 접속 보상 이벤트",
-    startDate: new Date(2025, 11, 19), // Dec 19, 2025
-    endDate: new Date(2026, 0, 15), // Jan 15, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1238",
+    id: "coinshop",
+    name: "코인샵 / 교환",
     color: "#f59e0b", // amber
+    events: [
+      {
+        id: 19,
+        name: "일루전 코인샵&환영의 기억",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1239",
+      },
+    ],
   },
   {
-    id: 21,
-    name: "VIP 사우나",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2026, 5, 17), // Jun 17, 2026
-    url: "https://maplestory.nexon.com/board/83886117/1237",
+    id: "boss",
+    name: "보스 / 전투",
+    color: "#000000", // black
+    events: [
+      {
+        id: 10,
+        name: "카이 최초 격파 이벤트",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 3, 15),
+        url: "https://maplestory.nexon.com/board/83886117/1248",
+      },
+    ],
+  },
+  {
+    id: "custom",
+    name: "커스터마이징 / 편의",
     color: "#10b981", // emerald
+    events: [
+      {
+        id: 1,
+        name: "뉴네임 옥션",
+        startDate: new Date(2025, 11, 24),
+        endDate: new Date(2026, 0, 14),
+        url: "https://maplestory.nexon.com/board/83886117/1260",
+      },
+      {
+        id: 7,
+        name: "닉네임 익스프레스",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 0, 14),
+        url: "https://maplestory.nexon.com/board/83886117/1252",
+      },
+      {
+        id: 8,
+        name: "KINETIC 뷰티 익스프레스",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 0, 14),
+        url: "https://maplestory.nexon.com/board/83886117/1251",
+      },
+      {
+        id: 9,
+        name: "커스텀 일러스트 이벤트",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 0, 14),
+        url: "https://maplestory.nexon.com/board/83886117/1249",
+      },
+      {
+        id: 17,
+        name: "KINETIC",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 0, 14),
+        url: "https://maplestory.nexon.com/board/83886117/1241",
+      },
+      {
+        id: 22,
+        name: "월드 리프",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2025, 11, 31),
+        url: "https://maplestory.nexon.com/board/83886117/1236",
+      },
+      {
+        id: 2,
+        name: "작은 눈사람의 행복",
+        startDate: new Date(2025, 11, 25),
+        endDate: new Date(2025, 11, 31),
+        url: "https://maplestory.nexon.com/board/83886117/1259",
+      },
+    ],
   },
   {
-    id: 22,
-    name: "월드 리프",
-    startDate: new Date(2025, 11, 18), // Dec 18, 2025
-    endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com/board/83886117/1236",
-    color: "#22c55e", // green
-  },
-  {
-    id: 23,
-    name: "윈터 카운트 다운",
-    startDate: new Date(2025, 10, 20), // Nov 20, 2025
-    endDate: new Date(2025, 11, 31), // Dec 31, 2025
-    url: "https://maplestory.nexon.com/board/83886117/1220",
-    color: "#3b82f6", // blue
+    id: "etc",
+    name: "기타 (출석 / 접속 보상)",
+    color: "#06b6d4", // cyan
+    events: [
+      {
+        id: 20,
+        name: "프리미엄 PC방 접속 보상 이벤트",
+        startDate: new Date(2025, 11, 19),
+        endDate: new Date(2026, 0, 15),
+        url: "https://maplestory.nexon.com/board/83886117/1238",
+      },
+      {
+        id: 21,
+        name: "VIP 사우나",
+        startDate: new Date(2025, 11, 18),
+        endDate: new Date(2026, 5, 17),
+        url: "https://maplestory.nexon.com/board/83886117/1237",
+      },
+    ],
   },
 ];
 
@@ -225,24 +252,15 @@ const updateSchedules = [
   },
 ];
 
-export function EventCalendarPage({
+export function EventCalendarPage({ //여기서 부터
   onNavigate,
 }: {
   onNavigate: (page: string) => void;
 }) {
-  const [currentDate, setCurrentDate] = useState(
-    new Date(2025, 11, 1),
-  ); // Dec 2025
-   const getToday = () => {
-  const now = new Date();
-  return new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-};
+  const today = getKSTDate();
 
-  const today = getToday();
+  const [currentDate, setCurrentDate] = useState<Date>(today);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]); //여기까지
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -260,22 +278,45 @@ export function EventCalendarPage({
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
-  // Get events for the current month
-  const eventsInMonth = sampleEvents
-    .filter((event) => {
-      return (
-        (event.startDate.getFullYear() === year &&
-          event.startDate.getMonth() === month) ||
-        (event.endDate.getFullYear() === year &&
-          event.endDate.getMonth() === month) ||
-        (event.startDate < firstDayOfMonth &&
-          event.endDate > lastDayOfMonth)
+  const toggleCategory = (categoryId: string) => {
+    if (expandedCategories.includes(categoryId)) {
+      setExpandedCategories(
+        expandedCategories.filter((id) => id !== categoryId),
       );
+    } else {
+      setExpandedCategories([...expandedCategories, categoryId]);
+    }
+  };
+
+  // Get categories for the current month
+  const categoriesInMonth = eventCategories
+    .map((category) => {
+      const eventsInMonth = category.events.filter((event) => {
+        // Exclude events that ended before this month
+        if (event.endDate < firstDayOfMonth) {
+          return false;
+        }
+        
+        return (
+          (event.startDate.getFullYear() === year &&
+            event.startDate.getMonth() === month) ||
+          (event.endDate.getFullYear() === year &&
+            event.endDate.getMonth() === month) ||
+          (event.startDate < firstDayOfMonth &&
+            event.endDate > lastDayOfMonth)
+        );
+      });
+
+      if (eventsInMonth.length === 0) return null;
+
+      return {
+        ...category,
+        eventsInMonth,
+      };
     })
-    .sort((a, b) => {
-      // Sort by end date descending (events ending later appear first)
-      return b.endDate.getTime() - a.endDate.getTime();
-    });
+    .filter((cat) => cat !== null) as (EventCategory & {
+    eventsInMonth: Event[];
+  })[];
 
   // Get update schedules for the current month
   const updatesInMonth = updateSchedules
@@ -290,15 +331,52 @@ export function EventCalendarPage({
       return a.date.getTime() - b.date.getTime();
     });
 
-  // Check if a day has an event
-  const getEventsForDay = (day: number) => {
+  // Check if a day has category start/end
+  const getCategoryEventsForDay = (day: number) => {
     const currentDay = new Date(year, month, day);
-    return sampleEvents.filter((event) => {
-      return (
-        currentDay >= event.startDate &&
-        currentDay <= event.endDate
-      );
+    const results: {
+      category: EventCategory;
+      type: "start" | "end";
+      events: Event[];
+    }[] = [];
+
+    eventCategories.forEach((category) => {
+      const startingEvents = category.events.filter((event) => {
+        return (
+          currentDay.getFullYear() ===
+            event.startDate.getFullYear() &&
+          currentDay.getMonth() === event.startDate.getMonth() &&
+          currentDay.getDate() === event.startDate.getDate()
+        );
+      });
+
+      const endingEvents = category.events.filter((event) => {
+        return (
+          currentDay.getFullYear() ===
+            event.endDate.getFullYear() &&
+          currentDay.getMonth() === event.endDate.getMonth() &&
+          currentDay.getDate() === event.endDate.getDate()
+        );
+      });
+
+      if (startingEvents.length > 0) {
+        results.push({
+          category,
+          type: "start",
+          events: startingEvents,
+        });
+      }
+
+      if (endingEvents.length > 0) {
+        results.push({
+          category,
+          type: "end",
+          events: endingEvents,
+        });
+      }
     });
+
+    return results;
   };
 
   // Check if a day has an update schedule
@@ -312,74 +390,6 @@ export function EventCalendarPage({
         currentDay.getDate() === schedule.date.getDate()
       );
     });
-  };
-
-  // Check if a day is the start of an event
-  const isEventStart = (day: number, event: Event) => {
-    const currentDay = new Date(year, month, day);
-    return (
-      currentDay.getFullYear() ===
-        event.startDate.getFullYear() &&
-      currentDay.getMonth() === event.startDate.getMonth() &&
-      currentDay.getDate() === event.startDate.getDate()
-    );
-  };
-
-  // Check if a day is the end of an event
-  const isEventEnd = (day: number, event: Event) => {
-    const currentDay = new Date(year, month, day);
-    return (
-      currentDay.getFullYear() ===
-        event.endDate.getFullYear() &&
-      currentDay.getMonth() === event.endDate.getMonth() &&
-      currentDay.getDate() === event.endDate.getDate()
-    );
-  };
-
-  // Get events that span across a week
-  const getWeekEvents = (week: (number | null)[]) => {
-    const weekEvents: {
-      event: Event;
-      startCol: number;
-      endCol: number;
-      row: number;
-    }[] = [];
-
-    sampleEvents.forEach((event) => {
-      let startCol = -1;
-      let endCol = -1;
-
-      week.forEach((day, colIdx) => {
-        if (day) {
-          const dayEvents = getEventsForDay(day);
-          if (dayEvents.includes(event)) {
-            if (startCol === -1) startCol = colIdx;
-            endCol = colIdx;
-          }
-        }
-      });
-
-      if (startCol !== -1) {
-        weekEvents.push({ event, startCol, endCol, row: 0 });
-      }
-    });
-
-    // Assign rows to avoid overlapping
-    weekEvents.forEach((we, idx) => {
-      let row = 0;
-      for (let i = 0; i < idx; i++) {
-        const other = weekEvents[i];
-        if (
-          we.startCol <= other.endCol &&
-          we.endCol >= other.startCol
-        ) {
-          row = Math.max(row, other.row + 1);
-        }
-      }
-      we.row = row;
-    });
-
-    return weekEvents;
   };
 
   // Generate calendar days
@@ -422,12 +432,13 @@ export function EventCalendarPage({
     if (event.startDate > today) {
       return "시작전";
     }
-    
-    const timeDiff = event.endDate.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both today and end date
 
-    if (daysDiff < 0) {
-      return "종료됨";
+    const timeDiff = event.endDate.getTime() - today.getTime();
+    const daysDiff =
+      Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both today and end date
+
+    if (daysDiff <= 0) {
+      return "종료";
     } else if (daysDiff === 1) {
       return "오늘까지";
     } else {
@@ -443,6 +454,22 @@ export function EventCalendarPage({
       Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
     const weeks = Math.floor(totalDays / 7);
     return `(총 ${totalDays}일/${weeks}주)`;
+  };
+
+  // Get category status counts (only for events in the current month)
+  const getCategoryStatus = (eventsToCheck: Event[]) => {
+    let ongoing = 0;
+    let ended = 0;
+
+    eventsToCheck.forEach((event) => {
+      if (event.endDate < today) {
+        ended++;
+      } else if (event.startDate <= today && event.endDate >= today) {
+        ongoing++;
+      }
+    });
+
+    return { ongoing, ended };
   };
 
   // Get all Sundays in the current month
@@ -475,7 +502,14 @@ export function EventCalendarPage({
       }
     }
 
-    // If year is 2026 or later (January 2026 onwards), show "아직 몰라요"
+    // January 2026 specific benefits
+    if (year === 2026 && month === 0) {
+      if (day === 4) {
+        return "미라클타임(잠재, 큐브 2배)";
+      }
+    }
+
+    // If year is 2026 or later (for unknown dates), show "아직 몰라요"
     if (year >= 2026) {
       return "아직 몰라요";
     }
@@ -497,7 +531,14 @@ export function EventCalendarPage({
         return "https://maplestory.nexon.com/board/83886117/1261";
       }
     }
-    
+
+    // January 2026 specific URLs
+    if (year === 2026 && month === 0) {
+      if (day === 4) {
+        return "https://maplestory.nexon.com/board/83886117/1262";
+      }
+    }
+
     // Default URL for other dates
     return "https://maplestory.nexon.com";
   };
@@ -516,6 +557,13 @@ export function EventCalendarPage({
       }
     }
 
+    // January 2026 specific colors
+    if (year === 2026 && month === 0) {
+      if (day === 4) {
+        return "#ec4899"; // pink for miracle time
+      }
+    }
+
     // If year is 2026 or later, show gray color
     if (year >= 2026) {
       return "#9ca3af"; // gray
@@ -524,6 +572,12 @@ export function EventCalendarPage({
     // Default gray for unknown
     return "#9ca3af";
   };
+
+  // Count total ongoing events
+  const totalOngoingEvents = categoriesInMonth.reduce((sum, cat) => {
+    const status = getCategoryStatus(cat.eventsInMonth);
+    return sum + status.ongoing;
+  }, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
@@ -621,75 +675,119 @@ export function EventCalendarPage({
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 md:w-5 md:h-5" />
                   이벤트 목록
+                  <span className="text-sm md:text-base text-purple-600 font-semibold">
+                    (진행중 {totalOngoingEvents}개)
+                  </span>
                 </div>
                 <div className="text-sm md:text-base text-purple-600 font-semibold">
                   오늘: {formatDate(today)}
                 </div>
               </h3>
 
-              {eventsInMonth.length > 0 ? (
+              {categoriesInMonth.length > 0 ? (
                 <div className="space-y-2 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
-                  {eventsInMonth.map((event) => (
-                    <a
-                      key={event.id}
-                      href={event.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`group rounded-lg p-2 md:p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-start gap-2 ${
-                        getDaysRemaining(event) === "종료됨"
-                          ? "bg-gray-200"
-                          : "bg-white"
-                      }`}
-                      style={{ borderColor: event.color }}
-                    >
+                  {categoriesInMonth.map((category) => {
+                    const isExpanded = expandedCategories.includes(
+                      category.id,
+                    );
+                    const status = getCategoryStatus(category.eventsInMonth);
+
+                    return (
                       <div
-                        className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0 mt-1"
-                        style={{ backgroundColor: event.color }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        {/* Event Name */}
-                        <h3 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
-                          {event.name}
-                        </h3>
-                        {/* Event Details */}
-                        <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
-                          <p className="text-gray-600">
-                            {formatDate(event.startDate).slice(
-                              5,
-                            )}{" "}
-                            ~{" "}
-                            {formatDate(event.endDate).slice(5)}
-                          </p>
-                          <span className="text-gray-400">
-                            |
-                          </span>
-                          <p
-                            className={`font-semibold ${
-                              getDaysRemaining(event) ===
-                              "종료됨"
-                                ? "text-gray-400"
-                                : getDaysRemaining(event) ===
-                                    "오늘까지"
-                                  ? "text-red-500"
-                                  : getDaysRemaining(event) ===
-                                      "시작전"
-                                    ? "text-blue-500"
-                                    : "text-purple-600"
-                            }`}
-                          >
-                            {getDaysRemaining(event)}
-                          </p>
-                          <span className="text-gray-400">
-                            |
-                          </span>
-                          <p className="text-gray-500">
-                            {getEventDuration(event)}
-                          </p>
-                        </div>
+                        key={category.id}
+                        className="rounded-lg border-2 overflow-hidden"
+                        style={{ borderColor: category.color }}
+                      >
+                        {/* Category Header */}
+                        <button
+                          onClick={() => toggleCategory(category.id)}
+                          className="w-full bg-white hover:bg-gray-50 p-3 flex items-center justify-between transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{
+                                backgroundColor: category.color,
+                              }}
+                            />
+                            <h4 className="font-semibold text-sm md:text-base">
+                              {category.name}
+                            </h4>
+                            <span className="text-xs md:text-sm text-gray-600">
+                              (진행중 {status.ongoing}건, 종료{" "}
+                              {status.ended}건)
+                            </span>
+                          </div>
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4 text-gray-600" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-gray-600" />
+                          )}
+                        </button>
+
+                        {/* Category Events */}
+                        {isExpanded && (
+                          <div className="bg-gray-50 border-t-2" style={{ borderColor: category.color }}>
+                            {category.eventsInMonth.map((event) => (
+                              <a
+                                key={event.id}
+                                href={event.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`group p-2 md:p-3 flex items-start gap-2 border-b last:border-b-0 hover:bg-white transition-colors ${ 
+                                  getDaysRemaining(event) === "종료"
+                                    ? "bg-gray-200"
+                                    : ""
+                                }`}
+                              >
+                                <div className="flex-1 min-w-0">
+                                  {/* Event Name */}
+                                  <h5 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
+                                    {event.name}
+                                  </h5>
+                                  {/* Event Details */}
+                                  <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
+                                    <p className="text-gray-600">
+                                      {formatDate(event.startDate).slice(
+                                        5,
+                                      )}{" "}
+                                      ~ {formatDate(event.endDate).slice(5)}
+                                    </p>
+                                    <span className="text-gray-400">
+                                      |
+                                    </span>
+                                    <p
+                                      className={`font-semibold ${
+                                        getDaysRemaining(event) ===
+                                        "종료"
+                                          ? "text-gray-400"
+                                          : getDaysRemaining(event) ===
+                                              "오늘까지"
+                                            ? "text-red-500"
+                                            : getDaysRemaining(event) ===
+                                                "시작전"
+                                              ? "text-blue-500"
+                                              : "text-purple-600"
+                                      }`}
+                                    >
+                                      {getDaysRemaining(event)}
+                                    </p>
+                                    <span className="text-gray-400">
+                                      |
+                                    </span>
+                                    <p className="text-gray-500">
+                                      {getEventDuration(event)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
-                    </a>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="text-gray-500 text-center py-8">
@@ -839,23 +937,24 @@ export function EventCalendarPage({
                     {/* Day cells */}
                     <div className="grid grid-cols-7">
                       {week.map((day, dayIdx) => {
-                        const dayEvents = day
-                          ? getEventsForDay(day)
+                        const categoryEvents = day
+                          ? getCategoryEventsForDay(day)
                           : [];
                         const dayUpdate = day
                           ? getUpdateForDay(day)
                           : null;
-                        
+
                         // Check if this day is today
-                        const isToday = day && 
-                          year === today.getFullYear() && 
-                          month === today.getMonth() && 
+                        const isToday =
+                          day &&
+                          year === today.getFullYear() &&
+                          month === today.getMonth() &&
                           day === today.getDate();
 
                         return (
                           <div
                             key={dayIdx}
-                            className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${""}${
+                            className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${
                               dayIdx === 4
                                 ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
                                 : "border-gray-300"
@@ -863,7 +962,7 @@ export function EventCalendarPage({
                               isToday
                                 ? "bg-yellow-100 border-4 border-yellow-400 shadow-lg"
                                 : day
-                                  ? dayEvents.length > 0
+                                  ? categoryEvents.length > 0
                                     ? "bg-purple-50/30"
                                     : "bg-white"
                                   : "bg-gray-50"
@@ -924,50 +1023,67 @@ export function EventCalendarPage({
                                   </a>
                                 )}
 
-                                {/* Event dots */}
-                                {dayEvents.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {dayEvents.map((event) => (
-                                      <a
-                                        key={event.id}
-                                        href={event.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group relative"
-                                        title={event.name}
-                                      >
+                                {/* Category Event Markers */}
+                                {categoryEvents.length > 0 && (
+                                  <div className="space-y-1">
+                                    {categoryEvents.map(
+                                      (catEvent, idx) => (
                                         <div
-                                          className="w-2 h-2 rounded-full hover:scale-150 transition-transform cursor-pointer"
-                                          style={{
-                                            backgroundColor:
-                                              event.color,
-                                          }}
-                                        />
-                                        {/* Tooltip on hover */}
-                                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
+                                          key={idx}
+                                          className="group relative"
+                                        >
                                           <div
-                                            className="rounded px-2 py-1.5 text-white text-xs whitespace-nowrap shadow-lg"
+                                            className={`h-1 rounded-full ${
+                                              catEvent.type === "end"
+                                                ? "border-2 border-dashed"
+                                                : ""
+                                            }`}
                                             style={{
                                               backgroundColor:
-                                                event.color,
+                                                catEvent.type === "start"
+                                                  ? catEvent.category.color
+                                                  : "transparent",
+                                              borderColor:
+                                                catEvent.type === "end"
+                                                  ? catEvent.category.color
+                                                  : undefined,
                                             }}
-                                          >
-                                            <div className="font-semibold">
-                                              {event.name}
-                                            </div>
-                                            <div className="text-[10px] opacity-90">
-                                              {formatDate(
-                                                event.startDate,
-                                              ).slice(5)}{" "}
-                                              ~{" "}
-                                              {formatDate(
-                                                event.endDate,
-                                              ).slice(5)}
+                                          />
+                                          {/* Tooltip on hover */}
+                                          <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
+                                            <div
+                                              className="rounded px-2 py-1.5 text-white text-xs whitespace-nowrap shadow-lg"
+                                              style={{
+                                                backgroundColor:
+                                                  catEvent.category
+                                                    .color,
+                                              }}
+                                            >
+                                              <div className="font-semibold mb-1">
+                                                {
+                                                  catEvent.category
+                                                    .name
+                                                }{" "}
+                                                {catEvent.type ===
+                                                "start"
+                                                  ? "시작"
+                                                  : "종료"}
+                                              </div>
+                                              {catEvent.events.map(
+                                                (evt) => (
+                                                  <div
+                                                    key={evt.id}
+                                                    className="text-[10px] opacity-90"
+                                                  >
+                                                    • {evt.name}
+                                                  </div>
+                                                ),
+                                              )}
                                             </div>
                                           </div>
                                         </div>
-                                      </a>
-                                    ))}
+                                      ),
+                                    )}
                                   </div>
                                 )}
                               </>

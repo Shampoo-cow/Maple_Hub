@@ -1,8 +1,8 @@
 import { ExternalLink, Youtube, Link } from "lucide-react";
 import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
-import mapleLeaf from "../../asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
-import headerBg from "../../asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
+import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 
 interface LinkItemProps {
   name: string;
