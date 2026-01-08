@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { MainPage } from "./components/MainPage";
 import { GuildMarkPage } from "./components/GuildMarkPage";
 import { EventCalendarPage } from "./components/EventCalendarPage";
-import faviconImage from "../../asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import faviconImage from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'main' | 'guildmarks' | 'events'>('main');
