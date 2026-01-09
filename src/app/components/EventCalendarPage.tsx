@@ -527,9 +527,9 @@ export function EventCalendarPage({
       } else if (day === 14) {
         return "샤타포스(30% 할인, 21성 이하 파괴확률 감소)";
       } else if (day === 21) {
-        return "트헌 3배 / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
+        return "트헌 3배 / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
       } else if (day === 28) {
-        return "트헌 3배 / 어빌 50% / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
+        return "트헌 3배 / 어빌 50% / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
       }
     }
 
@@ -537,9 +537,11 @@ export function EventCalendarPage({
     if (year === 2026 && month === 0) {
       if (day === 4) {
         return "미라클타임(잠재, 큐브 2배)";
+      } else if (day === 11) {
+        return "핵사 스탯 확률업 / 트헌 3배 / 어빌 50% / 주흔 50% 할인 / 몬파 250% / 스타포스 10성 이하 1+1 / 소울조각 5배 / 몬컬추 100% / 모몽 3개 / 엘리트 몹 3마리 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
       } else if (day === 25) {
         return "솔에르다 타임(솔에르다 획득 3배, 기운 1개, 조각(솔에조) 100개)";
-      }
+      } 
     }
 
     // February 2026 specific benefits
@@ -576,6 +578,8 @@ export function EventCalendarPage({
     if (year === 2026 && month === 0) {
       if (day === 4) {
         return "https://maplestory.nexon.com/board/83886117/1262";
+      } else if (day === 11) {
+        return "https://maplestory.nexon.com/board/83886117/1263";
       } else if (day === 25) {
         return "https://maplestory.nexon.com";
       }
@@ -610,6 +614,8 @@ export function EventCalendarPage({
     if (year === 2026 && month === 0) {
       if (day === 4) {
         return "#ec4899"; // pink for miracle time
+      } else if (day === 11) {
+        return "#8b5cf6"; // violet
       } else if (day === 25) {
         return "#10b981"; // emerald for sol erda time
       }
