@@ -70,8 +70,14 @@ function YouTuberCard({
       setLoading(true);
       try {
         const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${apiKey}`,
-        );
+        `https://www.googleapis.com/youtube/v3/search
+          ?part=snippet
+          &channelId=${channelId}
+          &type=video
+          &order=date
+          &maxResults=5
+          &key=${apiKey}`,
+    );
         const data = await response.json();
 
     const isCurrentlyLive =
