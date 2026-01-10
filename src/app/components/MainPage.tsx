@@ -74,18 +74,20 @@ function YouTuberCard({
         );
         const data = await response.json();
 
-        if (data.items && data.items.length > 0) {
-          setIsLive(true);
-        } else {
-          setIsLive(false);
-        }
-      } catch (error) {
-        console.error("Error checking live status:", error);
-        setIsLive(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const isCurrentlyLive =
+      data.items?.some(
+        (item: any) =>
+          item.snippet?.liveBroadcastContent === "live",
+      ) ?? false;
+
+    setIsLive(isCurrentlyLive);
+  } catch (error) {
+    console.error("Error checking live status:", error);
+    setIsLive(false);
+  } finally {
+    setLoading(false);
+  }
+};
 
     // Function to get check interval based on current time (KST)
     const getCheckInterval = () => {
