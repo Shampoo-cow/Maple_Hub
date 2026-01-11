@@ -70,30 +70,22 @@ function YouTuberCard({
       setLoading(true);
       try {
         const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search
-          ?part=snippet
-          &channelId=${channelId}
-          &type=video
-          &order=date
-          &maxResults=5
-          &key=${apiKey}`,
-    );
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${apiKey}`,
+        );
         const data = await response.json();
 
-    const isCurrentlyLive =
-      data.items?.some(
-        (item: any) =>
-          item.snippet?.liveBroadcastContent === "live",
-      ) ?? false;
-
-    setIsLive(isCurrentlyLive);
-  } catch (error) {
-    console.error("Error checking live status:", error);
-    setIsLive(false);
-  } finally {
-    setLoading(false);
-  }
-};
+        if (data.items && data.items.length > 0) {
+          setIsLive(true);
+        } else {
+          setIsLive(false);
+        }
+      } catch (error) {
+        console.error("Error checking live status:", error);
+        setIsLive(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     // Function to get check interval based on current time (KST)
     const getCheckInterval = () => {
@@ -161,7 +153,6 @@ function YouTuberCard({
     </a>
   );
 }
-
 export function MainPage({
   onNavigate,
 }: {
