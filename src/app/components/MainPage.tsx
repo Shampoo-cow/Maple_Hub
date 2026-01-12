@@ -69,18 +69,29 @@ function YouTuberCard({
     const checkLiveStatus = async () => {
       setLoading(true);
       try {
+        // Use search endpoint to find live broadcasts
         const response = await fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${apiKey}`,
         );
         const data = await response.json();
 
-        if (data.items && data.items.length > 0) {
+        console.log(`Live check for ${name}:`, data);
+
+        if (data.error) {
+          console.error(`API Error for ${name}:`, data.error);
+          setIsLive(false);
+        } else if (data.items && data.items.length > 0) {
           setIsLive(true);
+          console.log(`${name} is LIVE!`);
         } else {
           setIsLive(false);
+          console.log(`${name} is not live`);
         }
       } catch (error) {
-        console.error("Error checking live status:", error);
+        console.error(
+          `Error checking live status for ${name}:`,
+          error,
+        );
         setIsLive(false);
       } finally {
         setLoading(false);
@@ -122,7 +133,7 @@ function YouTuberCard({
     setupNextCheck();
 
     return () => clearTimeout(interval);
-  }, [channelId, apiKey, checkLive]);
+  }, [channelId, apiKey, checkLive, name]);
 
   return (
     <a
@@ -153,6 +164,7 @@ function YouTuberCard({
     </a>
   );
 }
+
 export function MainPage({
   onNavigate,
 }: {
@@ -209,7 +221,7 @@ export function MainPage({
     {
       name: "청묘",
       url: "https://youtube.com/@cheongmyo?si=LlDLOT-PNCnhfm71",
-      channelId: "UCjY0cYmXzKIZtTOCbNy5d5Q",
+      channelId: "UCCL77mfaS0LwgJqry7ph_zA",
     },
     {
       name: "글자네",
@@ -224,14 +236,14 @@ export function MainPage({
     {
       name: "후닝",
       url: "https://youtube.com/@maplehooni?si=c4T2SBiz36OpuyDd",
-      channelId: "UCJx7KnfoZLZT1TfnELvVhKw",
+      channelId: "UCq6bX1rAJqwt3LmYuHrDPqg",
     },
   ];
 
   const officialChannel = {
     name: "메이플 공식",
     url: "https://youtube.com/@maplestorykr?si=j_LkHNF7_bdwnQMe",
-    channelId: "UCaGT2KBcJVy-t8q6u8l_KMw",
+    channelId: "UCU_hKD03cUTCvnOJpEmKvCg",
   };
 
   const contentCreators = [
