@@ -108,12 +108,12 @@ function YouTuberCard({
       const kstTime = new Date(utc + kstOffset * 60000);
       const kstHour = kstTime.getHours();
 
-      // 10:00 - 23:00 (오전 10시 ~ 오후 11시): 30분마다 확인
-      // 23:00 - 10:00 (오후 11시 ~ 오전 10시): 60분마다 확인
-      if (kstHour >= 10 && kstHour < 23) {
-        return 30 * 60 * 1000; // 30 minutes
-      } else {
+      // 11:00 - 21:00 (오전 11시 ~ 오후 9시): 60분마다 확인
+      // 23:00 - 10:00 (오후 9시 ~ 오전 11시): 90분마다 확인
+      if (kstHour >= 11 && kstHour < 21) {
         return 60 * 60 * 1000; // 60 minutes
+      } else {
+        return 90 * 60 * 1000; // 90 minutes
       }
     };
 
