@@ -7,7 +7,6 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
@@ -646,9 +645,6 @@ export function EventCalendarPage({
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
       <div className="flex gap-4 p-2 md:p-4">
-        {/* Left Ad Banner */}
-        <div className="hidden lg:block flex-shrink-0">
-          <AdBanner type="vertical" />
         </div>
 
         {/* Main Content */}
@@ -1163,18 +1159,11 @@ export function EventCalendarPage({
           </div>
         </div>
 
-        {/* Right Ad Banner */}
-        <div className="hidden lg:block flex-shrink-0">
-          <AdBanner type="vertical" />
+
         </div>
       </div>
 
-      {/* Bottom Ad Banner */}
-      <div className="p-4 pt-0">
-        <AdBanner
-          type="horizontal"
-          className="mx-auto max-w-6xl"
-        />
+
       </div>
 
       {/* Footer */}
