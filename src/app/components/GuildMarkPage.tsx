@@ -4,19 +4,26 @@ import { Footer } from "./Footer";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 import guildMark1 from "../../assets/37054ac47711735d313eb47d69a54f4a420ef083.png";
-import guildMark2 from "../../assets/6cce208904356b544799a82fa58aa2133da5b7ed.png";
-import guildMark3 from "../../assets/e9d186ce7574ccb28e1f26c281904ce4f9f6058b.png";
-import guildMark4 from "../../assets/a115ff6058d0682887cd9d64702262fef95e058b.png";
-import guildMark5 from "../../assets/38c961d68d07bea362f1877e3a58995ced3ec032.png";
-import guildMark6 from "../../assets/bbc1e7d574160ba0572f63120525eda416ddadec.png";
-import guildMark7 from "../../assets/8a32077a4d44430b8b5be553403ae67e25884b87.png";
-import guildMark8 from "../../assets/65c91c6b1aa16709678aa393ebc96339cc3f96cf.png";
-import guildMark9 from "../../assets/d16db933517edb39f1a32fe5cefbf3e2dd27c9b0.png";
-import guildMark10 from "../../assets/d2cf5b45d3c0f8440e11107885f52025ed7a7fd4.png";
-import guildMark11 from "../../assets/6db6db849af9061e121d0190c05c842bf29c4add.png";
-import guildMark12 from "../../assets/e2fe657c6c96bc8aa78421a2067989062590b60a.png";
-import guildMark13 from "../../assets/44092d538f085749d922defad0730b1b8111c33e.png";
-import guildMark14 from "../../assets/c48793867aef63b93990fc3714daf316725eaaec.png";
+import guildMark2 from "../../assets/fa5d7b8ec19e56cea522c837b3b62beccf298c97.png";
+import guildMark3 from "../../assets/79408069b3fab66c0adcfcd422efae2cc16530be.png";
+import guildMark4 from "../../assets/58efac54a6b823182959b99d1e3522c6506a443d.png";
+import guildMark5 from "../../assets/8af61065057704089c6b9691fc5bef9cd01c5fe3.png";
+import guildMark6 from "../../assets/1078649af6e0553b79e72a33f95eeddba24aaa93.png";
+import guildMark7 from "../../assets/97765b83b1d9353ebb75d6f68adbbd74a894e672.png";
+import guildMark8 from "../../assets/57540101e51d5aaa9c38270cbb40e85112f3955a.png";
+import guildMark9 from "../../assets/144d40d1fc14b18ac520247084d3c993179c726a.png";
+import guildMark10 from "../../assets/7c74c4cdb5d5862e704d6835f1c6ae598a742e76.png";
+import guildMark11 from "../../assets/2b32148dc44feed59768f52dae582465d3aff910.png";
+import guildMark12 from "../../assets/ef5d812bfb42e4f20917c4ab9e572cf5d9148852.png";
+import guildMark13 from "../../assets/f9d492fc5d3d59e62beff11bdcc165ad2f28fb5a.png";
+import guildMark14 from "../../assets/c1a07312b472761911b68e6975ca26bb298dbd41.png";
+import guildMark15 from "../../assets/c16ccd9a1c66da563cf47e1c76e7146aed995f93.png";
+import guildMark16 from "../../assets/94bd0443ae3cffc3b809fb6f60710068d28e2b63.png";
+import guildMark17 from "../../assets/4c5d2957d4e27c878c034ea79c460b254c1f4a0a.png";
+import guildMark18 from "../../assets/736ef186cd9ada8b5df3b8547841c9b433bf2beb.png";
+import guildMark19 from "../../assets/f7f44cadcce6419559e1e6d0830834e472c1a7df.png";
+import guildMark20 from "../../assets/5db261524e5874633aceee914b918f7aa0ab0d64.png";
+import guildMark21 from "../../assets/0c5b009170e175e2e24f74eaa0d88039e124ea80.png";
 
 interface GuildMark {
   id: number;
@@ -96,6 +103,41 @@ const guildMarksDatabase: GuildMark[] = [
     name: "길드 마크 14",
     imageData: guildMark14,
   },
+  {
+    id: 15,
+    name: "길드 마크 15",
+    imageData: guildMark15,
+  },
+  {
+    id: 16,
+    name: "길드 마크 16",
+    imageData: guildMark16,
+  },
+  {
+    id: 17,
+    name: "길드 마크 17",
+    imageData: guildMark17,
+  },
+  {
+    id: 18,
+    name: "길드 마크 18",
+    imageData: guildMark18,
+  },
+  {
+    id: 19,
+    name: "길드 마크 19",
+    imageData: guildMark19,
+  },
+  {
+    id: 20,
+    name: "길드 마크 20",
+    imageData: guildMark20,
+  },
+  {
+    id: 21,
+    name: "길드 마크 21",
+    imageData: guildMark21,
+  },
 ];
 
 export function GuildMarkPage({
@@ -116,15 +158,7 @@ export function GuildMarkPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
-
-          </div>
-        </div>
-      )}
-
-      <div className="flex gap-4 p-2 md:p-4">
-
-        </div>
-
+      <div className="p-2 md:p-4">
         {/* Main Content */}
         <div className="flex-1 max-w-5xl mx-auto w-full">
           {/* Header */}
@@ -207,18 +241,41 @@ export function GuildMarkPage({
                   key={mark.id}
                   className="bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-400 hover:scale-105 flex flex-col items-center gap-3"
                 >
-                  {/* Preview Image */}
-                  <div className="w-20 h-20 bg-gray-100 rounded border-2 border-gray-300 flex items-center justify-center">
-                    <img
-                      src={mark.imageData}
-                      alt={mark.name}
-                      className="pixelated"
-                      style={{
-                        width: "68px",
-                        height: "68px",
-                        imageRendering: "pixelated",
-                      }}
-                    />
+                  {/* Preview Images - 1x and 2x */}
+                  <div className="flex items-center gap-4">
+                    {/* 1x Size (23px) */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="bg-gray-100 rounded border-2 border-gray-300 flex items-center justify-center p-2">
+                        <img
+                          src={mark.imageData}
+                          alt={mark.name}
+                          className="pixelated"
+                          style={{
+                            width: "23px",
+                            height: "23px",
+                            imageRendering: "pixelated",
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-600">1x</span>
+                    </div>
+
+                    {/* 2x Size (46px) */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="bg-gray-100 rounded border-2 border-gray-300 flex items-center justify-center p-2">
+                        <img
+                          src={mark.imageData}
+                          alt={mark.name}
+                          className="pixelated"
+                          style={{
+                            width: "46px",
+                            height: "46px",
+                            imageRendering: "pixelated",
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-600">2x</span>
+                    </div>
                   </div>
 
                   {/* Mark Name */}
@@ -244,8 +301,6 @@ export function GuildMarkPage({
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* Footer */}

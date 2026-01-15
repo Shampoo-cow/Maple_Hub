@@ -85,6 +85,13 @@ const eventCategories: EventCategory[] = [
         endDate: new Date(2026, 3, 15),
         url: "https://maplestory.nexon.com/board/83886117/1245",
       },
+      {
+        id: 24,
+        name: "버닝 익스프레스",
+        startDate: new Date(2026, 0, 15),
+        endDate: new Date(2026, 1, 11),
+        url: "https://maplestory.nexon.com/board/83886117/1266",
+      },
     ],
   },
   {
@@ -162,6 +169,13 @@ const eventCategories: EventCategory[] = [
         endDate: new Date(2026, 3, 15),
         url: "https://maplestory.nexon.com/board/83886117/1248",
       },
+      {
+        id: 25,
+        name: "미혹의 부름",
+        startDate: new Date(2026, 0, 15),
+        endDate: new Date(2026, 1, 11),
+        url: "https://maplestory.nexon.com/board/83886117/1268",
+      },
     ],
   },
   {
@@ -218,6 +232,13 @@ const eventCategories: EventCategory[] = [
         endDate: new Date(2025, 11, 31),
         url: "https://maplestory.nexon.com/board/83886117/1259",
       },
+      {
+        id: 26,
+        name: "주간 일러스트 의뢰 티켓 판매 이벤트",
+        startDate: new Date(2026, 0, 15),
+        endDate: new Date(2026, 2, 18),
+        url: "https://maplestory.nexon.com/board/83886117/1265",
+      },
     ],
   },
   {
@@ -238,6 +259,13 @@ const eventCategories: EventCategory[] = [
         startDate: new Date(2025, 11, 18),
         endDate: new Date(2026, 5, 17),
         url: "https://maplestory.nexon.com/board/83886117/1237",
+      },
+      {
+        id: 27,
+        name: "프리미엄PC방 접속 보상 이벤트",
+        startDate: new Date(2026, 0, 16),
+        endDate: new Date(2026, 1, 12),
+        url: "https://maplestory.nexon.com/board/83886117/1264",
       },
     ],
   },
@@ -526,9 +554,9 @@ export function EventCalendarPage({
       } else if (day === 14) {
         return "샤타포스(30% 할인, 21성 이하 파괴확률 감소)";
       } else if (day === 21) {
-        return "트헌 3배 / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
+        return "트헌 3배 / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
       } else if (day === 28) {
-        return "트헌 3배 / 어빌 50% / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
+        return "트헌 3배 / 어빌 50% / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
       }
     }
 
@@ -644,9 +672,7 @@ export function EventCalendarPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
-      <div className="flex gap-4 p-2 md:p-4">
-        </div>
-
+      <div className="p-2 md:p-4">
         {/* Main Content */}
         <div className="flex-1 max-w-5xl mx-auto w-full">
           {/* Header */}
@@ -1158,12 +1184,6 @@ export function EventCalendarPage({
             </div>
           </div>
         </div>
-
-
-        </div>
-      </div>
-
-
       </div>
 
       {/* Footer */}

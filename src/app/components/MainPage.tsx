@@ -270,10 +270,7 @@ export function MainPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
-      <div className="flex gap-4 p-2 md:p-4">
-
-        </div>
-
+      <div className="p-2 md:p-4">
         {/* Main Content */}
         <div className="flex-1 max-w-5xl mx-auto w-full">
           {/* Header */}
@@ -423,13 +420,6 @@ export function MainPage({
             </div>
           </div>
         </div>
-
-
-        </div>
-      </div>
-
-
-        />
       </div>
 
       {/* Footer */}
