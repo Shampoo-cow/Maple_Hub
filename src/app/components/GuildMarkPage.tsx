@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Download, X } from "lucide-react";
-import { AdBanner } from "./AdBanner";
 import { Footer } from "./Footer";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
@@ -117,25 +116,13 @@ export function GuildMarkPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
-      {/* Popup Ad Banner */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="relative">
-            <AdBanner type="popup" />
-            <button
-              onClick={() => setShowPopup(false)}
-              className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg hover:bg-gray-100 transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-700" />
-            </button>
+
           </div>
         </div>
       )}
 
       <div className="flex gap-4 p-2 md:p-4">
-        {/* Left Ad Banner */}
-        <div className="hidden lg:block flex-shrink-0">
-          <AdBanner type="vertical" />
+
         </div>
 
         {/* Main Content */}
@@ -258,18 +245,7 @@ export function GuildMarkPage({
           </div>
         </div>
 
-        {/* Right Ad Banner */}
-        <div className="hidden lg:block flex-shrink-0">
-          <AdBanner type="vertical" />
-        </div>
-      </div>
 
-      {/* Bottom Ad Banner */}
-      <div className="p-4 pt-0">
-        <AdBanner
-          type="horizontal"
-          className="mx-auto max-w-6xl"
-        />
       </div>
 
       {/* Footer */}
