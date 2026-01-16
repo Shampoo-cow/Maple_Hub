@@ -566,6 +566,8 @@ export function EventCalendarPage({
         return "미라클타임(잠재, 큐브 2배)";
       } else if (day === 11) {
         return "핵사 스탯 확률업 / 트헌 3배 / 어빌 50% / 주흔 50% 할인 / 몬파 250% / 스타포스 10성 이하 1+1 / 소울조각 5배 / 몬컬추 100% / 모몽 3개 / 엘리트 몹 3마리 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
+      } else if (day === 18) {
+        return "샤타포스";
       } else if (day === 25) {
         return "솔에르다 타임(솔에르다 획득 3배, 기운 1개, 조각(솔에조) 100개)";
       } 
@@ -607,6 +609,8 @@ export function EventCalendarPage({
         return "https://maplestory.nexon.com/board/83886117/1262";
       } else if (day === 11) {
         return "https://maplestory.nexon.com/board/83886117/1263";
+      } else if (day === 18) {
+        return "https://maplestory.nexon.com/board/83886117/1269";
       } else if (day === 25) {
         return "https://maplestory.nexon.com";
       }
@@ -643,6 +647,8 @@ export function EventCalendarPage({
         return "#ec4899"; // pink for miracle time
       } else if (day === 11) {
         return "#8b5cf6"; // violet
+      } else if (day === 18) {
+        return "#f59e0b"; // amber
       } else if (day === 25) {
         return "#10b981"; // emerald for sol erda time
       }
