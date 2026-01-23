@@ -612,7 +612,7 @@ export function EventCalendarPage({
       } else if (day === 18) {
         return "https://maplestory.nexon.com/board/83886117/1269";
       } else if (day === 25) {
-        return "https://maplestory.nexon.com";
+        return "https://maplestory.nexon.com/board/83886117/1270";
       }
     }
 
