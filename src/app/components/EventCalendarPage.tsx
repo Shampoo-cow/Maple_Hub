@@ -8,7 +8,6 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { Footer } from "./Footer";
-import { Sidebar } from "./Sidebar";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 
@@ -613,7 +612,7 @@ export function EventCalendarPage({
       } else if (day === 18) {
         return "https://maplestory.nexon.com/board/83886117/1269";
       } else if (day === 25) {
-        return "https://maplestory.nexon.com";
+        return "https://maplestory.nexon.com/board/83886117/1270";
       }
     }
 
@@ -680,7 +679,8 @@ export function EventCalendarPage({
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
       <div className="p-2 md:p-4">
-        <div className="max-w-7xl mx-auto">
+        {/* Main Content */}
+        <div className="flex-1 max-w-5xl mx-auto w-full">
           {/* Header */}
           <div
             className="rounded-2xl shadow-2xl p-4 md:p-8 mb-4 md:mb-6 border-2 md:border-4 border-purple-400 relative overflow-hidden"
@@ -725,477 +725,475 @@ export function EventCalendarPage({
           {/* Navigation */}
           <div className="flex gap-2 md:gap-4 mb-4 md:mb-6">
             <button
+              onClick={() => onNavigate("main")}
+              className="flex-1 bg-purple-100 py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-300 hover:bg-purple-200 transition-colors text-sm md:text-base"
+            >
+              🏠 메인 허브
+            </button>
+            <button className="flex-1 bg-white py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-400 text-sm md:text-base">
+              📅 이벤트 캘린더
+            </button>
+            <button
               onClick={() => onNavigate("guildmarks")}
               className="flex-1 bg-purple-100 py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-300 hover:bg-purple-200 transition-colors text-sm md:text-base"
             >
               🎨 길드 마크
             </button>
-            <button className="flex-1 bg-white py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-400 text-sm md:text-base">
-              📅 이벤트 캘린더
-            </button>
           </div>
 
-          {/* Main Layout: Content + Sidebar */}
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Main Content */}
-            <div className="flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                {/* Left: Event List */}
-                <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
-                  <div className="flex items-center justify-between mb-3 md:mb-4">
-                    <button
-                      onClick={goToPreviousMonth}
-                      className="p-1.5 md:p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-                    >
-                      <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-                    </button>
-                    <h2 className="text-xl md:text-2xl text-purple-700">
-                      {year}년 {monthNames[month]}
-                    </h2>
-                    <button
-                      onClick={goToNextMonth}
-                      className="p-1.5 md:p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-                    >
-                      <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-                    </button>
+          {/* Event List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Left: Event List */}
+            <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <button
+                  onClick={goToPreviousMonth}
+                  className="p-1.5 md:p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+                <h2 className="text-xl md:text-2xl text-purple-700">
+                  {year}년 {monthNames[month]}
+                </h2>
+                <button
+                  onClick={goToNextMonth}
+                  className="p-1.5 md:p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+              </div>
+
+              <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                  이벤트 목록
+                  <span className="text-sm md:text-base text-purple-600 font-semibold">
+                    (진행중 {totalOngoingEvents}개)
+                  </span>
+                </div>
+                <div className="text-sm md:text-base text-purple-600 font-semibold">
+                  오늘: {formatDate(today)}
+                </div>
+              </h3>
+
+              {categoriesInMonth.length > 0 ? (
+                <div className="space-y-2 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
+                  {categoriesInMonth.map((category) => {
+                    const isExpanded = expandedCategories.includes(
+                      category.id,
+                    );
+                    const status = getCategoryStatus(category.eventsInMonth);
+
+                    return (
+                      <div
+                        key={category.id}
+                        className="rounded-lg border-2 overflow-hidden"
+                        style={{ borderColor: category.color }}
+                      >
+                        {/* Category Header */}
+                        <button
+                          onClick={() => toggleCategory(category.id)}
+                          className="w-full bg-white hover:bg-gray-50 p-3 flex items-center justify-between transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{
+                                backgroundColor: category.color,
+                              }}
+                            />
+                            <h4 className="font-semibold text-sm md:text-base">
+                              {category.name}
+                            </h4>
+                            <span className="text-xs md:text-sm text-gray-600">
+                              (진행중 {status.ongoing}건, 종료{" "}
+                              {status.ended}건)
+                            </span>
+                          </div>
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4 text-gray-600" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-gray-600" />
+                          )}
+                        </button>
+
+                        {/* Category Events */}
+                        {isExpanded && (
+                          <div className="bg-gray-50 border-t-2" style={{ borderColor: category.color }}>
+                            {category.eventsInMonth.map((event) => (
+                              <a
+                                key={event.id}
+                                href={event.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`group p-2 md:p-3 flex items-start gap-2 border-b last:border-b-0 hover:bg-white transition-colors ${ 
+                                  getDaysRemaining(event) === "종료"
+                                    ? "bg-gray-200"
+                                    : ""
+                                }`}
+                              >
+                                <div className="flex-1 min-w-0">
+                                  {/* Event Name */}
+                                  <h5 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
+                                    {event.name}
+                                  </h5>
+                                  {/* Event Details */}
+                                  <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
+                                    <p className="text-gray-600">
+                                      {formatDate(event.startDate).slice(
+                                        5,
+                                      )}{" "}
+                                      ~ {formatDate(event.endDate).slice(5)}
+                                    </p>
+                                    <span className="text-gray-400">
+                                      |
+                                    </span>
+                                    <p
+                                      className={`font-semibold ${
+                                        getDaysRemaining(event) ===
+                                        "종료"
+                                          ? "text-gray-400"
+                                          : getDaysRemaining(event) ===
+                                              "오늘까지"
+                                            ? "text-red-500"
+                                            : getDaysRemaining(event) ===
+                                                "시작전"
+                                              ? "text-blue-500"
+                                              : "text-purple-600"
+                                      }`}
+                                    >
+                                      {getDaysRemaining(event)}
+                                    </p>
+                                    <span className="text-gray-400">
+                                      |
+                                    </span>
+                                    <p className="text-gray-500">
+                                      {getEventDuration(event)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  이번 달에는 등록된 이벤트가 없습니다.
+                </p>
+              )}
+            </div>
+
+            {/* Right: Sunday Maple & Update Schedule */}
+            <div className="flex flex-col gap-4">
+              {/* Sunday Maple */}
+              <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
+                <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                  썬데이 메이플
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-sm md:text-base text-gray-600 mb-2">
+                    {year}년 {monthNames[month]} 일요일 혜택
+                  </p>
+                  {sundaysInMonth.length > 0 ? (
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
+                      {sundaysInMonth.map((sunday) => (
+                        <a
+                          key={sunday}
+                          href={getSundayBenefitUrl(sunday)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group bg-white rounded-lg p-2 md:p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-start gap-2"
+                          style={{
+                            borderColor:
+                              getSundayBenefitColor(sunday),
+                          }}
+                        >
+                          <div
+                            className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0 mt-1"
+                            style={{
+                              backgroundColor:
+                                getSundayBenefitColor(sunday),
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
+                              {getSundayBenefit(sunday)}
+                            </h3>
+                            <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
+                              <p className="text-gray-600">
+                                {month + 1}/{sunday} (일)
+                              </p>
+                              <span className="text-gray-400">
+                                |
+                              </span>
+                              <p className="text-gray-500">
+                                00:00 ~ 23:59
+                              </p>
+                            </div>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-8 text-sm">
+                      이번 달에는 일요일이 없습니다.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Update Schedule */}
+              <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
+                <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                  업데이트 일정
+                </h3>
+                {updatesInMonth.length > 0 ? (
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
+                    {updatesInMonth.map((schedule) => (
+                      <a
+                        key={schedule.id}
+                        href={schedule.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group bg-white rounded-lg p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-center gap-2 block"
+                        style={{ borderColor: schedule.color }}
+                      >
+                        <div className="flex-1">
+                          <p className="text-sm md:text-base font-semibold text-gray-800 group-hover:opacity-80">
+                            {schedule.name}
+                          </p>
+                          <p className="text-xs md:text-sm text-gray-600">
+                            {formatDate(schedule.date)} {schedule.time}
+                          </p>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0" />
+                      </a>
+                    ))}
                   </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-8 text-sm">
+                    이번 달에는 예정된 업데이트가 없습니다.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
-                  <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-                      이벤트 목록
-                      <span className="text-sm md:text-base text-purple-600 font-semibold">
-                        (진행중 {totalOngoingEvents}개)
-                      </span>
-                    </div>
-                    <div className="text-sm md:text-base text-purple-600 font-semibold">
-                      오늘: {formatDate(today)}
-                    </div>
-                  </h3>
+          {/* Calendar */}
+          <div className="bg-white/80 backdrop-blur rounded-xl p-6 shadow-lg border-2 border-purple-200">
+            {/* Day headers */}
+            <div className="grid grid-cols-7 border-b border-gray-300">
+              {["일", "월", "화", "수", "목", "금", "토"].map(
+                (day, idx) => (
+                  <div
+                    key={day}
+                    className={`text-center py-2 border-r last:border-r-0 relative ${
+                      idx === 4
+                        ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
+                        : "border-gray-300"
+                    } ${
+                      idx === 0
+                        ? "text-red-600"
+                        : idx === 6
+                          ? "text-blue-600"
+                          : "text-gray-700"
+                    }`}
+                  >
+                    {idx === 4 && (
+                      <div className="text-xs text-blue-400 font-semibold mb-1">
+                        컨텐츠 초기화
+                      </div>
+                    )}
+                    {day}
+                  </div>
+                ),
+              )}
+            </div>
 
-                  {categoriesInMonth.length > 0 ? (
-                    <div className="space-y-2 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
-                      {categoriesInMonth.map((category) => {
-                        const isExpanded = expandedCategories.includes(
-                          category.id,
-                        );
-                        const status = getCategoryStatus(category.eventsInMonth);
+            {/* Calendar grid */}
+            <div className="border-l border-r border-b border-gray-300">
+              {weeks.map((week, weekIdx) => {
+                return (
+                  <div
+                    key={weekIdx}
+                    className="relative border-t border-gray-300"
+                  >
+                    {/* Day cells */}
+                    <div className="grid grid-cols-7">
+                      {week.map((day, dayIdx) => {
+                        const categoryEvents = day
+                          ? getCategoryEventsForDay(day)
+                          : [];
+                        const dayUpdate = day
+                          ? getUpdateForDay(day)
+                          : null;
+
+                        // Check if this day is today
+                        const isToday =
+                          day &&
+                          year === today.getFullYear() &&
+                          month === today.getMonth() &&
+                          day === today.getDate();
 
                         return (
                           <div
-                            key={category.id}
-                            className="rounded-lg border-2 overflow-hidden"
-                            style={{ borderColor: category.color }}
+                            key={dayIdx}
+                            className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${
+                              dayIdx === 4
+                                ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
+                                : "border-gray-300"
+                            } ${
+                              isToday
+                                ? "bg-yellow-100 border-4 border-yellow-400 shadow-lg"
+                                : day
+                                  ? categoryEvents.length > 0
+                                    ? "bg-purple-50/30"
+                                    : "bg-white"
+                                  : "bg-gray-50"
+                            }`}
                           >
-                            {/* Category Header */}
-                            <button
-                              onClick={() => toggleCategory(category.id)}
-                              className="w-full bg-white hover:bg-gray-50 p-3 flex items-center justify-between transition-colors"
-                            >
-                              <div className="flex items-center gap-2">
+                            {day && (
+                              <>
                                 <div
-                                  className="w-3 h-3 rounded-full"
-                                  style={{
-                                    backgroundColor: category.color,
-                                  }}
-                                />
-                                <h4 className="font-semibold text-sm md:text-base">
-                                  {category.name}
-                                </h4>
-                                <span className="text-xs md:text-sm text-gray-600">
-                                  (진행중 {status.ongoing}건, 종료{" "}
-                                  {status.ended}건)
-                                </span>
-                              </div>
-                              {isExpanded ? (
-                                <ChevronUp className="w-4 h-4 text-gray-600" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4 text-gray-600" />
-                              )}
-                            </button>
+                                  className={`text-sm mb-2 ${
+                                    isToday
+                                      ? "text-yellow-700 font-bold"
+                                      : dayIdx === 0
+                                        ? "text-red-600"
+                                        : dayIdx === 6
+                                          ? "text-blue-600"
+                                          : "text-gray-700"
+                                  }`}
+                                >
+                                  {day}
+                                  {isToday && (
+                                    <span className="ml-1 text-[10px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">
+                                      오늘
+                                    </span>
+                                  )}
+                                </div>
 
-                            {/* Category Events */}
-                            {isExpanded && (
-                              <div className="bg-gray-50 border-t-2" style={{ borderColor: category.color }}>
-                                {category.eventsInMonth.map((event) => (
+                                {/* Update Schedule Badge */}
+                                {dayUpdate && (
                                   <a
-                                    key={event.id}
-                                    href={event.url}
+                                    href={dayUpdate.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`group p-2 md:p-3 flex items-start gap-2 border-b last:border-b-0 hover:bg-white transition-colors ${ 
-                                      getDaysRemaining(event) === "종료"
-                                        ? "bg-gray-200"
-                                        : ""
-                                    }`}
+                                    className="group mb-2 block"
                                   >
-                                    <div className="flex-1 min-w-0">
-                                      {/* Event Name */}
-                                      <h5 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
-                                        {event.name}
-                                      </h5>
-                                      {/* Event Details */}
-                                      <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
-                                        <p className="text-gray-600">
-                                          {formatDate(event.startDate).slice(
-                                            5,
-                                          )}{" "}
-                                          ~ {formatDate(event.endDate).slice(5)}
-                                        </p>
-                                        <span className="text-gray-400">
-                                          |
-                                        </span>
-                                        <p
-                                          className={`font-semibold ${
-                                            getDaysRemaining(event) ===
-                                            "종료"
-                                              ? "text-gray-400"
-                                              : getDaysRemaining(event) ===
-                                                  "오늘까지"
-                                                ? "text-red-500"
-                                                : getDaysRemaining(event) ===
-                                                    "시작전"
-                                                  ? "text-blue-500"
-                                                  : "text-purple-600"
-                                          }`}
-                                        >
-                                          {getDaysRemaining(event)}
-                                        </p>
-                                        <span className="text-gray-400">
-                                          |
-                                        </span>
-                                        <p className="text-gray-500">
-                                          {getEventDuration(event)}
-                                        </p>
+                                    <div
+                                      className="px-2 py-1 rounded text-white text-[10px] font-bold shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer"
+                                      style={{
+                                        backgroundColor:
+                                          dayUpdate.color,
+                                      }}
+                                    >
+                                      🔄 업데이트
+                                    </div>
+                                    {/* Tooltip on hover */}
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-8 hidden group-hover:block z-10 pointer-events-none whitespace-nowrap">
+                                      <div
+                                        className="rounded px-3 py-2 text-white text-xs shadow-lg"
+                                        style={{
+                                          backgroundColor:
+                                            dayUpdate.color,
+                                        }}
+                                      >
+                                        <div className="font-semibold">
+                                          {dayUpdate.name}
+                                        </div>
                                       </div>
                                     </div>
-                                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
                                   </a>
-                                ))}
-                              </div>
+                                )}
+
+                                {/* Category Event Markers */}
+                                {categoryEvents.length > 0 && (
+                                  <div className="space-y-1">
+                                    {categoryEvents.map(
+                                      (catEvent, idx) => (
+                                        <div
+                                          key={idx}
+                                          className="group relative"
+                                        >
+                                          <div
+                                            className={`h-1 rounded-full ${
+                                              catEvent.type === "end"
+                                                ? "border-2 border-dashed"
+                                                : ""
+                                            }`}
+                                            style={{
+                                              backgroundColor:
+                                                catEvent.type === "start"
+                                                  ? catEvent.category.color
+                                                  : "transparent",
+                                              borderColor:
+                                                catEvent.type === "end"
+                                                  ? catEvent.category.color
+                                                  : undefined,
+                                            }}
+                                          />
+                                          {/* Tooltip on hover */}
+                                          <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
+                                            <div
+                                              className="rounded px-2 py-1.5 text-white text-xs whitespace-nowrap shadow-lg"
+                                              style={{
+                                                backgroundColor:
+                                                  catEvent.category
+                                                    .color,
+                                              }}
+                                            >
+                                              <div className="font-semibold mb-1">
+                                                {
+                                                  catEvent.category
+                                                    .name
+                                                }{" "}
+                                                {catEvent.type ===
+                                                "start"
+                                                  ? "시작"
+                                                  : "종료"}
+                                              </div>
+                                              {catEvent.events.map(
+                                                (evt) => (
+                                                  <div
+                                                    key={evt.id}
+                                                    className="text-[10px] opacity-90"
+                                                  >
+                                                    • {evt.name}
+                                                  </div>
+                                                ),
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ),
+                                    )}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         );
                       })}
                     </div>
-                  ) : (
-                    <p className="text-gray-500 text-center py-8">
-                      이번 달에는 등록된 이벤트가 없습니다.
-                    </p>
-                  )}
-                </div>
-
-                {/* Right: Sunday Maple & Update Schedule */}
-                <div className="flex flex-col gap-4">
-                  {/* Sunday Maple */}
-                  <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
-                    <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-                      썬데이 메이플
-                    </h3>
-                    <div className="space-y-2">
-                      <p className="text-sm md:text-base text-gray-600 mb-2">
-                        {year}년 {monthNames[month]} 일요일 혜택
-                      </p>
-                      {sundaysInMonth.length > 0 ? (
-                        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
-                          {sundaysInMonth.map((sunday) => (
-                            <a
-                              key={sunday}
-                              href={getSundayBenefitUrl(sunday)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group bg-white rounded-lg p-2 md:p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-start gap-2"
-                              style={{
-                                borderColor:
-                                  getSundayBenefitColor(sunday),
-                              }}
-                            >
-                              <div
-                                className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0 mt-1"
-                                style={{
-                                  backgroundColor:
-                                    getSundayBenefitColor(sunday),
-                                }}
-                              />
-                              <div className="flex-1 min-w-0">
-                                <h3 className="text-sm md:text-base font-semibold group-hover:opacity-80 transition-opacity mb-1">
-                                  {getSundayBenefit(sunday)}
-                                </h3>
-                                <div className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
-                                  <p className="text-gray-600">
-                                    {month + 1}/{sunday} (일)
-                                  </p>
-                                  <span className="text-gray-400">
-                                    |
-                                  </span>
-                                  <p className="text-gray-500">
-                                    00:00 ~ 23:59
-                                  </p>
-                                </div>
-                              </div>
-                              <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1" />
-                            </a>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-500 text-center py-8 text-sm">
-                          이번 달에는 일요일이 없습니다.
-                        </p>
-                      )}
-                    </div>
                   </div>
-
-                  {/* Update Schedule */}
-                  <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
-                    <h3 className="text-lg md:text-xl mb-3 md:mb-4 text-purple-700 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-                      업데이트 일정
-                    </h3>
-                    {updatesInMonth.length > 0 ? (
-                      <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
-                        {updatesInMonth.map((schedule) => (
-                          <a
-                            key={schedule.id}
-                            href={schedule.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group bg-white rounded-lg p-3 shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:scale-102 flex items-center gap-2 block"
-                            style={{ borderColor: schedule.color }}
-                          >
-                            <div className="flex-1">
-                              <p className="text-sm md:text-base font-semibold text-gray-800 group-hover:opacity-80">
-                                {schedule.name}
-                              </p>
-                              <p className="text-xs md:text-sm text-gray-600">
-                                {formatDate(schedule.date)} {schedule.time}
-                              </p>
-                            </div>
-                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0" />
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 text-center py-8 text-sm">
-                        이번 달에는 예정된 업데이트가 없습니다.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Calendar */}
-              <div className="bg-white/80 backdrop-blur rounded-xl p-6 shadow-lg border-2 border-purple-200">
-                {/* Day headers */}
-                <div className="grid grid-cols-7 border-b border-gray-300">
-                  {["일", "월", "화", "수", "목", "금", "토"].map(
-                    (day, idx) => (
-                      <div
-                        key={day}
-                        className={`text-center py-2 border-r last:border-r-0 relative ${
-                          idx === 4
-                            ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
-                            : "border-gray-300"
-                        } ${
-                          idx === 0
-                            ? "text-red-600"
-                            : idx === 6
-                              ? "text-blue-600"
-                              : "text-gray-700"
-                        }`}
-                      >
-                        {idx === 4 && (
-                          <div className="text-xs text-blue-400 font-semibold mb-1">
-                            컨텐츠 초기화
-                          </div>
-                        )}
-                        {day}
-                      </div>
-                    ),
-                  )}
-                </div>
-
-                {/* Calendar grid */}
-                <div className="border-l border-r border-b border-gray-300">
-                  {weeks.map((week, weekIdx) => {
-                    return (
-                      <div
-                        key={weekIdx}
-                        className="relative border-t border-gray-300"
-                      >
-                        {/* Day cells */}
-                        <div className="grid grid-cols-7">
-                          {week.map((day, dayIdx) => {
-                            const categoryEvents = day
-                              ? getCategoryEventsForDay(day)
-                              : [];
-                            const dayUpdate = day
-                              ? getUpdateForDay(day)
-                              : null;
-
-                            // Check if this day is today
-                            const isToday =
-                              day &&
-                              year === today.getFullYear() &&
-                              month === today.getMonth() &&
-                              day === today.getDate();
-
-                            return (
-                              <div
-                                key={dayIdx}
-                                className={`border-r last:border-r-0 p-2 pt-1 min-h-[100px] relative ${
-                                  dayIdx === 4
-                                    ? "border-l-2 border-l-blue-400 border-dashed border-r-2 border-r-blue-400"
-                                    : "border-gray-300"
-                                } ${
-                                  isToday
-                                    ? "bg-yellow-100 border-4 border-yellow-400 shadow-lg"
-                                    : day
-                                      ? categoryEvents.length > 0
-                                        ? "bg-purple-50/30"
-                                        : "bg-white"
-                                      : "bg-gray-50"
-                                }`}
-                              >
-                                {day && (
-                                  <>
-                                    <div
-                                      className={`text-sm mb-2 ${
-                                        isToday
-                                          ? "text-yellow-700 font-bold"
-                                          : dayIdx === 0
-                                            ? "text-red-600"
-                                            : dayIdx === 6
-                                              ? "text-blue-600"
-                                              : "text-gray-700"
-                                      }`}
-                                    >
-                                      {day}
-                                      {isToday && (
-                                        <span className="ml-1 text-[10px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">
-                                          오늘
-                                        </span>
-                                      )}
-                                    </div>
-
-                                    {/* Update Schedule Badge */}
-                                    {dayUpdate && (
-                                      <a
-                                        href={dayUpdate.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group mb-2 block"
-                                      >
-                                        <div
-                                          className="px-2 py-1 rounded text-white text-[10px] font-bold shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer"
-                                          style={{
-                                            backgroundColor:
-                                              dayUpdate.color,
-                                          }}
-                                        >
-                                          🔄 업데이트
-                                        </div>
-                                        {/* Tooltip on hover */}
-                                        <div className="absolute left-1/2 -translate-x-1/2 top-8 hidden group-hover:block z-10 pointer-events-none whitespace-nowrap">
-                                          <div
-                                            className="rounded px-3 py-2 text-white text-xs shadow-lg"
-                                            style={{
-                                              backgroundColor:
-                                                dayUpdate.color,
-                                            }}
-                                          >
-                                            <div className="font-semibold">
-                                              {dayUpdate.name}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    )}
-
-                                    {/* Category Event Markers */}
-                                    {categoryEvents.length > 0 && (
-                                      <div className="space-y-1">
-                                        {categoryEvents.map(
-                                          (catEvent, idx) => (
-                                            <div
-                                              key={idx}
-                                              className="group relative"
-                                            >
-                                              <div
-                                                className={`h-1 rounded-full ${
-                                                  catEvent.type === "end"
-                                                    ? "border-2 border-dashed"
-                                                    : ""
-                                                }`}
-                                                style={{
-                                                  backgroundColor:
-                                                    catEvent.type === "start"
-                                                      ? catEvent.category.color
-                                                      : "transparent",
-                                                  borderColor:
-                                                    catEvent.type === "end"
-                                                      ? catEvent.category.color
-                                                      : undefined,
-                                                }}
-                                              />
-                                              {/* Tooltip on hover */}
-                                              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
-                                                <div
-                                                  className="rounded px-2 py-1.5 text-white text-xs whitespace-nowrap shadow-lg"
-                                                  style={{
-                                                    backgroundColor:
-                                                      catEvent.category
-                                                        .color,
-                                                  }}
-                                                >
-                                                  <div className="font-semibold mb-1">
-                                                    {
-                                                      catEvent.category
-                                                        .name
-                                                    }{" "}
-                                                    {catEvent.type ===
-                                                    "start"
-                                                      ? "시작"
-                                                      : "종료"}
-                                                  </div>
-                                                  {catEvent.events.map(
-                                                    (evt) => (
-                                                      <div
-                                                        key={evt.id}
-                                                        className="text-[10px] opacity-90"
-                                                      >
-                                                        • {evt.name}
-                                                      </div>
-                                                    ),
-                                                  )}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          ),
-                                        )}
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                );
+              })}
             </div>
-
-            {/* Sidebar */}
-            <Sidebar />
           </div>
         </div>
-
-        {/* Footer */}
-        <Footer />
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
