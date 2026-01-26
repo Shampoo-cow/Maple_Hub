@@ -9,7 +9,7 @@ export function Footer() {
           본 사이트는 NEXON Korea와 공식적인 관련이 없으며,
         </p>
         <p className="text-gray-600 text-sm mb-3">
-          콘텐츠 구성은 100% 주인장 취향입니다.
+          메이플스토리 이용자에게 도움이 되는 정보를 정리하여 제공합니다.
         </p>
         <p className="text-gray-600 text-sm">
           Contact: <a href="mailto:shampoocau@gmail.com" className="text-blue-600 hover:text-blue-700 underline">shampoocau@gmail.com</a>
