@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Download, X, Upload, Image as ImageIcon } from "lucide-react";
+import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2 } from "lucide-react";
+import { removeBackground } from "@imgly/background-removal";
 import { Footer } from "./Footer";
 import { Sidebar } from "./Sidebar";
 import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
@@ -34,111 +35,27 @@ interface GuildMark {
 
 // Guild marks database using actual images
 const guildMarksDatabase: GuildMark[] = [
-  {
-    id: 1,
-    name: "길드 마크 1",
-    imageData: guildMark1,
-  },
-  {
-    id: 2,
-    name: "길드 마크 2",
-    imageData: guildMark2,
-  },
-  {
-    id: 3,
-    name: "길드 마크 3",
-    imageData: guildMark3,
-  },
-  {
-    id: 4,
-    name: "길드 마크 4",
-    imageData: guildMark4,
-  },
-  {
-    id: 5,
-    name: "길드 마크 5",
-    imageData: guildMark5,
-  },
-  {
-    id: 6,
-    name: "길드 마크 6",
-    imageData: guildMark6,
-  },
-  {
-    id: 7,
-    name: "길드 마크 7",
-    imageData: guildMark7,
-  },
-  {
-    id: 8,
-    name: "길드 마크 8",
-    imageData: guildMark8,
-  },
-  {
-    id: 9,
-    name: "길드 마크 9",
-    imageData: guildMark9,
-  },
-  {
-    id: 10,
-    name: "길드 마크 10",
-    imageData: guildMark10,
-  },
-  {
-    id: 11,
-    name: "길드 마크 11",
-    imageData: guildMark11,
-  },
-  {
-    id: 12,
-    name: "길드 마크 12",
-    imageData: guildMark12,
-  },
-  {
-    id: 13,
-    name: "길드 마크 13",
-    imageData: guildMark13,
-  },
-  {
-    id: 14,
-    name: "길드 마크 14",
-    imageData: guildMark14,
-  },
-  {
-    id: 15,
-    name: "길드 마크 15",
-    imageData: guildMark15,
-  },
-  {
-    id: 16,
-    name: "길드 마크 16",
-    imageData: guildMark16,
-  },
-  {
-    id: 17,
-    name: "길드 마크 17",
-    imageData: guildMark17,
-  },
-  {
-    id: 18,
-    name: "길드 마크 18",
-    imageData: guildMark18,
-  },
-  {
-    id: 19,
-    name: "길드 마크 19",
-    imageData: guildMark19,
-  },
-  {
-    id: 20,
-    name: "길드 마크 20",
-    imageData: guildMark20,
-  },
-  {
-    id: 21,
-    name: "길드 마크 21",
-    imageData: guildMark21,
-  },
+  { id: 1, name: "길드 마크 1", imageData: guildMark1 },
+  { id: 2, name: "길드 마크 2", imageData: guildMark2 },
+  { id: 3, name: "길드 마크 3", imageData: guildMark3 },
+  { id: 4, name: "길드 마크 4", imageData: guildMark4 },
+  { id: 5, name: "길드 마크 5", imageData: guildMark5 },
+  { id: 6, name: "길드 마크 6", imageData: guildMark6 },
+  { id: 7, name: "길드 마크 7", imageData: guildMark7 },
+  { id: 8, name: "길드 마크 8", imageData: guildMark8 },
+  { id: 9, name: "길드 마크 9", imageData: guildMark9 },
+  { id: 10, name: "길드 마크 10", imageData: guildMark10 },
+  { id: 11, name: "길드 마크 11", imageData: guildMark11 },
+  { id: 12, name: "길드 마크 12", imageData: guildMark12 },
+  { id: 13, name: "길드 마크 13", imageData: guildMark13 },
+  { id: 14, name: "길드 마크 14", imageData: guildMark14 },
+  { id: 15, name: "길드 마크 15", imageData: guildMark15 },
+  { id: 16, name: "길드 마크 16", imageData: guildMark16 },
+  { id: 17, name: "길드 마크 17", imageData: guildMark17 },
+  { id: 18, name: "길드 마크 18", imageData: guildMark18 },
+  { id: 19, name: "길드 마크 19", imageData: guildMark19 },
+  { id: 20, name: "길드 마크 20", imageData: guildMark20 },
+  { id: 21, name: "길드 마크 21", imageData: guildMark21 },
 ];
 
 export function GuildMarkPage({
@@ -148,8 +65,10 @@ export function GuildMarkPage({
 }) {
   const [showPopup, setShowPopup] = useState(true);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [convertedImage, setConvertedImage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
   const handleDownload = (mark: GuildMark) => {
     const link = document.createElement("a");
@@ -160,39 +79,51 @@ export function GuildMarkPage({
     document.body.removeChild(link);
   };
 
-  const convertImageTo17x17 = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        // Create canvas for 17x17 conversion
-        const canvas = document.createElement("canvas");
-        canvas.width = 17;
-        canvas.height = 17;
-        const ctx = canvas.getContext("2d");
+  const convertImageTo17x17 = (imageSource: string) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 17;
+      canvas.height = 17;
+      const ctx = canvas.getContext("2d");
 
-        if (ctx) {
-          // Disable image smoothing for pixelated effect
-          ctx.imageSmoothingEnabled = false;
-          
-          // Draw the image scaled down to 17x17
-          ctx.drawImage(img, 0, 0, 17, 17);
-          
-          // Get the converted image as data URL
-          const convertedDataUrl = canvas.toDataURL("image/png");
-          setConvertedImage(convertedDataUrl);
-        }
-      };
-      img.src = e.target?.result as string;
-      setUploadedImage(e.target?.result as string);
+      if (ctx) {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, 17, 17);
+        const convertedDataUrl = canvas.toDataURL("image/png");
+        setConvertedImage(convertedDataUrl);
+      }
     };
-    reader.readAsDataURL(file);
+    img.src = imageSource;
+  };
+
+  const handleRemoveBackground = async () => {
+    if (uploadedImage) {
+      setIsRemovingBackground(true);
+      try {
+        const result = await removeBackground(uploadedImage);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setProcessedImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(result);
+      } catch (error) {
+        console.error("배경 제거 실패:", error);
+        alert("배경 제거에 실패했습니다. 다른 이미지로 다시 시도해주세요.");
+      } finally {
+        setIsRemovingBackground(false);
+      }
+    }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      convertImageTo17x17(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -201,7 +132,11 @@ export function GuildMarkPage({
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      convertImageTo17x17(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -227,6 +162,7 @@ export function GuildMarkPage({
 
   const handleReset = () => {
     setUploadedImage(null);
+    setProcessedImage(null);
     setConvertedImage(null);
   };
 
@@ -307,13 +243,13 @@ export function GuildMarkPage({
                 </h2>
                 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Upload Area */}
+                  {/* Upload/Process Area */}
                   <div>
                     <p className="text-sm text-gray-600 mb-3">
                       이미지를 업로드하면 자동으로 17x17 픽셀 도트 이미지로 변환됩니다.
                     </p>
                     
-                    {!convertedImage ? (
+                    {!uploadedImage ? (
                       <div
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
@@ -348,15 +284,94 @@ export function GuildMarkPage({
                           </div>
                         </label>
                       </div>
+                    ) : !processedImage && !convertedImage ? (
+                      <div className="space-y-4">
+                        <div className="bg-gray-50 rounded-lg p-4 border-2 border-purple-200">
+                          <p className="text-sm text-gray-600 mb-3 text-center">
+                            업로드된 이미지
+                          </p>
+                          <div className="flex justify-center">
+                            <img
+                              src={uploadedImage}
+                              alt="Uploaded"
+                              className="max-w-full max-h-48 object-contain rounded"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <button
+                            onClick={handleRemoveBackground}
+                            disabled={isRemovingBackground}
+                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isRemovingBackground ? (
+                              <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span>배경 제거 중...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Scissors className="w-5 h-5" />
+                                <span>배경 우선 제거하기</span>
+                              </>
+                            )}
+                          </button>
+                          <button
+                            onClick={() => convertImageTo17x17(uploadedImage)}
+                            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                          >
+                            <Upload className="w-5 h-5" />
+                            <span>바로 변환</span>
+                          </button>
+                          <button
+                            onClick={handleReset}
+                            className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2"
+                          >
+                            <X className="w-5 h-5" />
+                            <span>취소</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : processedImage && !convertedImage ? (
+                      <div className="space-y-4">
+                        <div className="bg-gray-50 rounded-lg p-4 border-2 border-green-300">
+                          <p className="text-sm text-green-700 mb-3 text-center font-semibold">
+                            ✅ 배경 제거 완료
+                          </p>
+                          <div className="flex justify-center bg-checkered-pattern rounded p-2">
+                            <img
+                              src={processedImage}
+                              alt="Background Removed"
+                              className="max-w-full max-h-48 object-contain rounded"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <button
+                            onClick={() => convertImageTo17x17(processedImage)}
+                            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                          >
+                            <Upload className="w-5 h-5" />
+                            <span>길드마크로 변환하기</span>
+                          </button>
+                          <button
+                            onClick={handleReset}
+                            className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2"
+                          >
+                            <X className="w-5 h-5" />
+                            <span>취소</span>
+                          </button>
+                        </div>
+                      </div>
                     ) : (
                       <div className="space-y-4">
-                        {/* Preview of converted image */}
                         <div className="bg-gray-50 rounded-lg p-6 border-2 border-purple-200">
                           <p className="text-sm text-gray-600 mb-3 text-center">
                             변환된 길드 마크
                           </p>
                           <div className="flex justify-center items-center gap-6">
-                            {/* 1x preview */}
                             <div className="flex flex-col items-center gap-2">
                               <div className="bg-white rounded border-2 border-gray-300 p-3">
                                 <img
@@ -373,7 +388,6 @@ export function GuildMarkPage({
                               <span className="text-xs text-gray-600">1x (23px)</span>
                             </div>
 
-                            {/* 2x preview */}
                             <div className="flex flex-col items-center gap-2">
                               <div className="bg-white rounded border-2 border-gray-300 p-3">
                                 <img
@@ -390,7 +404,6 @@ export function GuildMarkPage({
                               <span className="text-xs text-gray-600">2x (46px)</span>
                             </div>
 
-                            {/* 4x preview */}
                             <div className="flex flex-col items-center gap-2">
                               <div className="bg-white rounded border-2 border-gray-300 p-3">
                                 <img
@@ -409,7 +422,6 @@ export function GuildMarkPage({
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex gap-3">
                           <button
                             onClick={handleDownloadConverted}
@@ -437,6 +449,12 @@ export function GuildMarkPage({
                       <li className="flex items-start gap-2">
                         <span className="text-purple-500">•</span>
                         <span>
+                          AI 배경 제거 기능을 사용하면 자동으로 누끼를 따서 깔끔한 길드 마크를 만들 수 있습니다.(누끼 작업은 PC 성능의 영향을 받습니다.)
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-purple-500">•</span>
+                        <span>
                           17x17 픽셀은 매우 작은 크기이므로 단순한 도안이나 로고를 추천합니다.
                         </span>
                       </li>
@@ -460,7 +478,7 @@ export function GuildMarkPage({
                       </li>
                     </ul>
 
-                    {uploadedImage && (
+                    {uploadedImage && !convertedImage && (
                       <div className="mt-4 pt-4 border-t border-purple-200">
                         <p className="text-xs text-gray-600 mb-2">원본 이미지 미리보기:</p>
                         <div className="bg-white rounded p-2 border border-purple-200 flex justify-center">
@@ -479,8 +497,7 @@ export function GuildMarkPage({
               {/* Guild Marks Grid */}
               <div className="bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
                 <h2 className="text-xl md:text-2xl mb-4 md:mb-6 text-purple-700">
-                  사용 가능한 길드 마크 ({guildMarksDatabase.length}
-                  개)
+                  사용 가능한 길드 마크 ({guildMarksDatabase.length}개)
                 </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
@@ -489,9 +506,7 @@ export function GuildMarkPage({
                       key={mark.id}
                       className="bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-400 hover:scale-105 flex flex-col items-center gap-3"
                     >
-                      {/* Preview Images - 1x and 2x */}
                       <div className="flex items-center gap-4">
-                        {/* 1x Size (23px) */}
                         <div className="flex flex-col items-center gap-1">
                           <div className="bg-gray-100 rounded border-2 border-gray-300 flex items-center justify-center p-2">
                             <img
@@ -508,7 +523,6 @@ export function GuildMarkPage({
                           <span className="text-xs text-gray-600">1x</span>
                         </div>
 
-                        {/* 2x Size (46px) */}
                         <div className="flex flex-col items-center gap-1">
                           <div className="bg-gray-100 rounded border-2 border-gray-300 flex items-center justify-center p-2">
                             <img
@@ -526,7 +540,6 @@ export function GuildMarkPage({
                         </div>
                       </div>
 
-                      {/* Mark Name */}
                       <div className="text-center">
                         <p className="text-sm line-clamp-2">
                           {mark.name}
@@ -536,7 +549,6 @@ export function GuildMarkPage({
                         </p>
                       </div>
 
-                      {/* Download Button */}
                       <button
                         onClick={() => handleDownload(mark)}
                         className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
@@ -545,7 +557,8 @@ export function GuildMarkPage({
                         <span className="text-sm">다운로드</span>
                       </button>
                     </div>
-                  ))}</div>
+                  ))}
+                </div>
               </div>
             </div>
 
