@@ -313,10 +313,8 @@ export function EventCalendarPage({
 }: {
   onNavigate: (page: string) => void;
 }) {
-  const [currentDate, setCurrentDate] = useState(
-    new Date(2026, 0, 1),
-  ); // Jan 2026
-  const today = getKSTDate(); // Today's date: Jan 1, 2026
+  const [currentDate, setCurrentDate] = useState(getKSTDate()); // Initialize with today's date
+  const today = getKSTDate(); // Today's date
   const [expandedCategories, setExpandedCategories] = useState<string[]>(
     [],
   );
@@ -555,9 +553,9 @@ export function EventCalendarPage({
       } else if (day === 14) {
         return "샤타포스(30% 할인, 21성 이하 파괴확률 감소)";
       } else if (day === 21) {
-        return "트헌 3배 / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
+        return "트헌 3배 / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
       } else if (day === 28) {
-        return "트헌 3배 / 어빌 50% / 룰 시간 감소 / 룰 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
+        return "트헌 3배 / 어빌 50% / 룬 시간 감소 / 룬 경험치 100% / 콤보킬 경험치 300% / 몬파 250% / 사냥 솔에르다 2개 / 챌섭 샤타포스(30%할인, 21성 파괴확률 감소)";
       }
     }
 
@@ -576,7 +574,9 @@ export function EventCalendarPage({
 
     // February 2026 specific benefits
     if (year === 2026 && month === 1) {
-      if (day === 8) {
+      if (day === 1) {
+        return "트헌 3배/ 룬 시간 감소 / 룬 경험치 100% / 콤보구슬 경험치 300% / 몬파 250% / 사냥 솔에르다 2배";
+      } else if (day === 8) {
         return "솔에르다 타임(솔에르다 획득 3배, 기운 1개, 조각(솔에조) 100개)";
       }
     }
@@ -619,7 +619,9 @@ export function EventCalendarPage({
 
     // February 2026 specific URLs
     if (year === 2026 && month === 1) {
-      if (day === 8) {
+      if (day === 1) {
+        return "https://maplestory.nexon.com/board/83886117/1271";
+      } else if (day === 8) {
         return "https://maplestory.nexon.com";
       }
     }
@@ -657,7 +659,9 @@ export function EventCalendarPage({
 
     // February 2026 specific colors
     if (year === 2026 && month === 1) {
-      if (day === 8) {
+      if (day === 1) {
+        return "#10b981"; // emerald for sol erda time
+      } else if (day === 8) {
         return "#10b981"; // emerald for sol erda time
       }
     }
