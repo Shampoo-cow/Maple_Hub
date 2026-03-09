@@ -165,7 +165,7 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   
   // YouTube API Key removed - Live status check disabled
-  const youtubeApiKey = null;
+  const youtubeApiKey = AIzaSyAd4etpm11A82r5QZnyUW2uQOHgrxX_IEk;
 
   const mapleLinks = [
     {
