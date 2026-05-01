@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { GuildMarkPage } from "./components/GuildMarkPage";
-import { EventCalendarPage } from "./components/EventCalendarPage";
-import faviconImage from "../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import { BlacksmithLedgerPage } from "./components/BlacksmithLedgerPage";
+import faviconImage from "figma:asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'guildmarks' | 'events'>('guildmarks');
+  const [currentPage, setCurrentPage] = useState<'guildmarks' | 'ledger'>('guildmarks');
 
   // Set favicon
   useEffect(() => {
@@ -17,8 +17,8 @@ export default function App() {
 
   return (
     <>
-      {currentPage === 'events' ? (
-        <EventCalendarPage onNavigate={setCurrentPage} />
+      {currentPage === 'ledger' ? (
+        <BlacksmithLedgerPage onNavigate={setCurrentPage} />
       ) : (
         <GuildMarkPage onNavigate={setCurrentPage} />
       )}
