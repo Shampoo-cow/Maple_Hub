@@ -199,15 +199,6 @@ export function GuildMarkPage({
                 </span>
               </h1>
             </div>
-            <p
-              className="relative z-10 text-purple-700 font-semibold text-center text-sm md:text-xl mt-2 md:mt-4 tracking-wide"
-              style={{
-                textShadow:
-                  "0 2px 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(168, 85, 247, 0.3)",
-              }}
-            >
-              메이플 컨텐츠 디멘션 게이트
-            </p>
           </div>
 
           {/* Navigation */}
@@ -216,10 +207,10 @@ export function GuildMarkPage({
               🎨 길드 마크
             </button>
             <button
-              onClick={() => onNavigate("events")}
+              onClick={() => onNavigate("ledger")}
               className="flex-1 bg-purple-100 py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-300 hover:bg-purple-200 transition-colors text-sm md:text-base"
             >
-              📅 이벤트 캘린더
+              ⚒️ 대장장이 가계부
             </button>
           </div>
 
