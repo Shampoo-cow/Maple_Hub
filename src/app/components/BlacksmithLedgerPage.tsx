@@ -18,8 +18,8 @@ import {
 } from "recharts";
 import { Footer } from "./Footer";
 import { Sidebar } from "./Sidebar";
-import mapleLeaf from "figma:asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
-import headerBg from "figma:asset/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
+import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
+import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
