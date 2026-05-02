@@ -83,9 +83,10 @@ export function BlacksmithLedgerPage({
         alert("강화 전후 메소를 입력해주세요!");
         return;
       }
-      usedMeso =
-        Number(newEntry.beforeMeso) -
-        Number(newEntry.afterMeso);
+  profit =
+    Number(newEntry.afterMeso) -
+    Number(newEntry.beforeMeso);
+  usedMeso = expectedMeso - profit;
     }
 
     const expectedMeso = Number(newEntry.expectedMeso);
