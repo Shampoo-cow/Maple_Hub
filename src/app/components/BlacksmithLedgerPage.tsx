@@ -41,6 +41,7 @@ export function BlacksmithLedgerPage({
 }) {
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [blacksmithName, setBlacksmithName] = useState("");
+  const [startingCapital, setStartingCapital] = useState(0);
   const [inputMode, setInputMode] = useState<
     "direct" | "calculate"
   >("direct");
@@ -236,27 +237,30 @@ export function BlacksmithLedgerPage({
     return {
       id: `chart-${entry.id}-${index}`,
       순번: entry.id,
-      누적손익: cumulativeProfit,
+      누적손익: startingCapital + cumulativeProfit,
     };
   });
 
-  // Y축 domain 계산 (0을 중앙에 고정)
+  // Y축 domain 계산 (시작 메소를 중앙에 고정)
   const getYAxisDomain = () => {
-    if (chartData.length === 0) return [-100, 100];
+    if (chartData.length === 0) {
+      const padding = Math.max(startingCapital * 0.5, 100);
+      return [startingCapital - padding, startingCapital + padding];
+    }
 
     const values = chartData.map((d) => d.누적손익);
-    const maxValue = Math.max(...values, 0);
-    const minValue = Math.min(...values, 0);
-    const maxAbsValue = Math.max(
-      Math.abs(maxValue),
-      Math.abs(minValue),
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
+    const maxDistanceFromCapital = Math.max(
+      Math.abs(maxValue - startingCapital),
+      Math.abs(minValue - startingCapital),
     );
 
     // 여유 공간 추가 (10%)
-    const padding = maxAbsValue * 0.1;
-    const limit = maxAbsValue + padding;
+    const padding = maxDistanceFromCapital * 0.1;
+    const limit = maxDistanceFromCapital + padding;
 
-    return [-limit, limit];
+    return [startingCapital - limit, startingCapital + limit];
   };
 
   return (
@@ -359,20 +363,50 @@ export function BlacksmithLedgerPage({
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Main Content */}
             <div className="flex-1 space-y-4">
-              {/* Blacksmith Name Input */}
+              {/* Blacksmith Name and Starting Capital Input */}
               <div className="no-print bg-white/80 backdrop-blur rounded-xl p-4 md:p-6 shadow-lg border-2 border-purple-200">
-                <label className="block mb-2 text-purple-700 font-semibold">
-                  👤 대장장이 이름
-                </label>
-                <input
-                  type="text"
-                  placeholder="대장장이 이름을 입력하세요"
-                  value={blacksmithName}
-                  onChange={(e) =>
-                    setBlacksmithName(e.target.value)
-                  }
-                  className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:border-purple-400 focus:outline-none"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-2 text-purple-700 font-semibold">
+                      👤 대장장이 이름
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="대장장이 이름을 입력하세요"
+                      value={blacksmithName}
+                      onChange={(e) =>
+                        setBlacksmithName(e.target.value)
+                      }
+                      className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:border-purple-400 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-purple-700 font-semibold">
+                      💰 시작 메소(자본) - 억
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="시작 메소를 입력하세요"
+                      value={startingCapital || ""}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(
+                          /[^0-9.]/g,
+                          "",
+                        );
+                        const parts = value.split(".");
+                        if (
+                          parts.length <= 2 &&
+                          (!parts[1] || parts[1].length <= 2)
+                        ) {
+                          setStartingCapital(
+                            value ? Number(value) : 0,
+                          );
+                        }
+                      }}
+                      className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:border-purple-400 focus:outline-none"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Input Form */}
@@ -633,7 +667,7 @@ export function BlacksmithLedgerPage({
                           key="tooltip"
                         />
                         <ReferenceLine
-                          y={0}
+                          y={startingCapital}
                           stroke="#666"
                           strokeDasharray="3 3"
                           key="refline"
@@ -972,7 +1006,7 @@ export function BlacksmithLedgerPage({
                             key="tooltip"
                           />
                           <ReferenceLine
-                            y={0}
+                            y={startingCapital}
                             stroke="#666666"
                             strokeDasharray="3 3"
                             key="refline"
