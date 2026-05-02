@@ -71,26 +71,27 @@ export function BlacksmithLedgerPage({
       return;
     }
 
+    const expectedMeso = Number(newEntry.expectedMeso);
     let usedMeso = 0;
+    let profit = 0;
+
     if (inputMode === "direct") {
       if (!newEntry.usedMeso) {
         alert("사용메소를 입력해주세요!");
         return;
       }
       usedMeso = Number(newEntry.usedMeso);
+      profit = expectedMeso - usedMeso;
     } else {
       if (!newEntry.beforeMeso || !newEntry.afterMeso) {
         alert("강화 전후 메소를 입력해주세요!");
         return;
       }
-  profit =
-    Number(newEntry.afterMeso) -
-    Number(newEntry.beforeMeso);
-  usedMeso = expectedMeso - profit;
+      profit =
+        Number(newEntry.afterMeso) -
+        Number(newEntry.beforeMeso);
+      usedMeso = expectedMeso - profit;
     }
-
-    const expectedMeso = Number(newEntry.expectedMeso);
-    const profit = expectedMeso - usedMeso;
 
     const entry: LedgerEntry = {
       id: entries.length + 1,
