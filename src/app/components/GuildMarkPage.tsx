@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2, Pencil, Eraser, Trash2, Pipette } from "lucide-react";
+import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2, Pencil, Eraser, Trash2, Pipette, RotateCcw } from "lucide-react";
 import { removeBackground } from "@imgly/background-removal";
 import { Footer } from "./Footer";
 import { Sidebar } from "./Sidebar";
@@ -75,6 +75,8 @@ const CHECKERBOARD = {
   backgroundColor: "#ffffff",
 };
 
+const MAX_HISTORY = 50;
+
 const emptyPixels = () =>
   Array.from({ length: 17 }, () => Array(17).fill("transparent") as string[]);
 
@@ -86,6 +88,7 @@ export function GuildMarkPage() {
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
   const [pixels, setPixels] = useState<string[][]>(emptyPixels);
+  const [history, setHistory] = useState<string[][][]>([]);
   const [selectedColor, setSelectedColor] = useState("#7c3aed");
   const [activeTool, setActiveTool] = useState<"draw" | "erase" | "pick">("draw");
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -96,6 +99,23 @@ export function GuildMarkPage() {
     window.addEventListener("mouseup", up);
     return () => window.removeEventListener("mouseup", up);
   }, []);
+
+  const saveToHistory = (currentPixels: string[][]) => {
+    setHistory((prev) => {
+      const snapshot = currentPixels.map((row) => [...row]);
+      const next = [...prev, snapshot];
+      return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
+    });
+  };
+
+  const handleUndo = () => {
+    setHistory((prev) => {
+      if (prev.length === 0) return prev;
+      const restored = prev[prev.length - 1];
+      setPixels(restored.map((row) => [...row]));
+      return prev.slice(0, -1);
+    });
+  };
 
   const handleDownload = (mark: GuildMark) => {
     const link = document.createElement("a");
@@ -130,6 +150,7 @@ export function GuildMarkPage() {
         })
       );
       setPixels(newPixels);
+      setHistory([]);
       setShowEditor(true);
       setTimeout(
         () =>
@@ -225,12 +246,18 @@ export function GuildMarkPage() {
       setActiveTool("draw");
       return;
     }
+    saveToHistory(pixels);
     setIsMouseDown(true);
     paintPixel(y, x);
   };
 
   const handlePixelMouseEnter = (y: number, x: number) => {
     if (isMouseDown && activeTool !== "pick") paintPixel(y, x);
+  };
+
+  const handleClearAll = () => {
+    saveToHistory(pixels);
+    setPixels(emptyPixels());
   };
 
   const exportEditorImage = () => {
@@ -258,6 +285,7 @@ export function GuildMarkPage() {
 
   const openBlankEditor = () => {
     setPixels(emptyPixels());
+    setHistory([]);
     setShowEditor(true);
     setTimeout(
       () =>
@@ -586,7 +614,15 @@ export function GuildMarkPage() {
                             </button>
                           ))}
                           <button
-                            onClick={() => setPixels(emptyPixels())}
+                            onClick={handleUndo}
+                            disabled={history.length === 0}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all bg-white text-gray-700 border-gray-200 hover:border-indigo-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                            title={`실행 취소 (${history.length}단계 가능)`}
+                          >
+                            <RotateCcw className="w-4 h-4" />실행 취소
+                          </button>
+                          <button
+                            onClick={handleClearAll}
                             className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all bg-white text-red-500 border-red-200 hover:bg-red-50 hover:border-red-400"
                           >
                             <Trash2 className="w-4 h-4" />전체 지우기
