@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2, Pencil, Eraser, Trash2 } from "lucide-react";
+import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2, Pencil, Eraser, Trash2, Pipette } from "lucide-react";
 import { removeBackground } from "@imgly/background-removal";
 import { Footer } from "./Footer";
 import { Sidebar } from "./Sidebar";
@@ -87,7 +87,7 @@ export function GuildMarkPage() {
 
   const [pixels, setPixels] = useState<string[][]>(emptyPixels);
   const [selectedColor, setSelectedColor] = useState("#7c3aed");
-  const [activeTool, setActiveTool] = useState<"draw" | "erase">("draw");
+  const [activeTool, setActiveTool] = useState<"draw" | "erase" | "pick">("draw");
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
 
@@ -217,6 +217,22 @@ export function GuildMarkPage() {
     });
   };
 
+  const handlePixelMouseDown = (e: React.MouseEvent, y: number, x: number) => {
+    e.preventDefault();
+    if (activeTool === "pick") {
+      const color = pixels[y][x];
+      if (color !== "transparent") setSelectedColor(color);
+      setActiveTool("draw");
+      return;
+    }
+    setIsMouseDown(true);
+    paintPixel(y, x);
+  };
+
+  const handlePixelMouseEnter = (y: number, x: number) => {
+    if (isMouseDown && activeTool !== "pick") paintPixel(y, x);
+  };
+
   const exportEditorImage = () => {
     const canvas = document.createElement("canvas");
     canvas.width = 17;
@@ -251,6 +267,8 @@ export function GuildMarkPage() {
       100
     );
   };
+
+  const toolCursor = activeTool === "erase" ? "cell" : activeTool === "pick" ? "copy" : "crosshair";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
@@ -473,7 +491,7 @@ export function GuildMarkPage() {
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-purple-500">•</span>
-                        <span>변환 후 픽셀 에디터로 세부 색상을 직접 수정할 수 있습니다.</span>
+                        <span>변환 후 캔버스 에디터로 세부 색상을 직접 수정할 수 있습니다.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-purple-500">•</span>
@@ -532,17 +550,11 @@ export function GuildMarkPage() {
                                 height: 20,
                                 backgroundColor: color === "transparent" ? "transparent" : color,
                                 outline: "0.5px solid rgba(0,0,0,0.08)",
-                                cursor: activeTool === "erase" ? "cell" : "crosshair",
+                                cursor: toolCursor,
                                 boxSizing: "border-box",
                               }}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                setIsMouseDown(true);
-                                paintPixel(y, x);
-                              }}
-                              onMouseEnter={() => {
-                                if (isMouseDown) paintPixel(y, x);
-                              }}
+                              onMouseDown={(e) => handlePixelMouseDown(e, y, x)}
+                              onMouseEnter={() => handlePixelMouseEnter(y, x)}
                               onMouseUp={() => setIsMouseDown(false)}
                             />
                           ))
@@ -556,8 +568,8 @@ export function GuildMarkPage() {
                       {/* Tool buttons */}
                       <div>
                         <p className="text-sm font-semibold text-gray-700 mb-2">도구</p>
-                        <div className="flex gap-2">
-                          {(["draw", "erase"] as const).map((tool) => (
+                        <div className="flex flex-wrap gap-2">
+                          {(["draw", "erase", "pick"] as const).map((tool) => (
                             <button
                               key={tool}
                               onClick={() => setActiveTool(tool)}
@@ -567,14 +579,30 @@ export function GuildMarkPage() {
                                   : "bg-white text-gray-700 border-gray-200 hover:border-indigo-400"
                               }`}
                             >
-                              {tool === "draw" ? <Pencil className="w-4 h-4" /> : <Eraser className="w-4 h-4" />}
-                              {tool === "draw" ? "그리기" : "지우기"}
+                              {tool === "draw" && <Pencil className="w-4 h-4" />}
+                              {tool === "erase" && <Eraser className="w-4 h-4" />}
+                              {tool === "pick" && <Pipette className="w-4 h-4" />}
+                              {tool === "draw" ? "그리기" : tool === "erase" ? "지우기" : "색 따오기"}
                             </button>
                           ))}
+                          <button
+                            onClick={() => setPixels(emptyPixels())}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all bg-white text-red-500 border-red-200 hover:bg-red-50 hover:border-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />전체 지우기
+                          </button>
                         </div>
                       </div>
 
-                      {/* Palette */}
+                      {/* 색 따오기 안내 */}
+                      {activeTool === "pick" && (
+                        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-amber-700">
+                          <Pipette className="w-4 h-4 flex-shrink-0" />
+                          캔버스의 픽셀을 클릭하면 해당 색상이 선택됩니다.
+                        </div>
+                      )}
+
+                      {/* Color Canvas */}
                       <div>
                         <p className="text-sm font-semibold text-gray-700 mb-2">색상 캔버스</p>
                         <div className="grid grid-cols-8 gap-1 mb-3">
@@ -674,12 +702,6 @@ export function GuildMarkPage() {
                             <Upload className="w-4 h-4" />변환 이미지로 초기화
                           </button>
                         )}
-                        <button
-                          onClick={() => setPixels(emptyPixels())}
-                          className="w-full bg-red-50 text-red-600 py-2.5 px-4 rounded-lg hover:bg-red-100 transition-all flex items-center justify-center gap-2 border border-red-200 text-sm"
-                        >
-                          <Trash2 className="w-4 h-4" />전체 지우기
-                        </button>
                       </div>
                     </div>
                   </div>
