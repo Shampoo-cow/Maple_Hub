@@ -442,7 +442,7 @@ export function GuildMarkPage() {
                             onClick={() => initEditorFromImage(convertedImage!)}
                             className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 shadow-md"
                           >
-                            <Pencil className="w-5 h-5" /><span>팔레트에서 편집하기</span>
+                            <Pencil className="w-5 h-5" /><span>캔버스에서 편집하기</span>
                           </button>
                           <button
                             onClick={handleReset}
@@ -576,7 +576,7 @@ export function GuildMarkPage() {
 
                       {/* Palette */}
                       <div>
-                        <p className="text-sm font-semibold text-gray-700 mb-2">색상 팔레트</p>
+                        <p className="text-sm font-semibold text-gray-700 mb-2">색상 캔버스</p>
                         <div className="grid grid-cols-8 gap-1 mb-3">
                           {PALETTE_COLORS.map((color) => (
                             <button
