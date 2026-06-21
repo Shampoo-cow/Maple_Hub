@@ -58,11 +58,7 @@ const guildMarksDatabase: GuildMark[] = [
   { id: 21, name: "길드 마크 21", imageData: guildMark21 },
 ];
 
-export function GuildMarkPage({
-  onNavigate,
-}: {
-  onNavigate: (page: string) => void;
-}) {
+export function GuildMarkPage() {
   const [showPopup, setShowPopup] = useState(true);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
@@ -200,20 +196,6 @@ export function GuildMarkPage({
               </h1>
             </div>
           </div>
-
-          {/* Navigation */}
-          <div className="flex gap-2 md:gap-4 mb-4 md:mb-6">
-            <button className="flex-1 bg-white py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-400 text-sm md:text-base">
-              🎨 길드 마크
-            </button>
-            <button
-              onClick={() => onNavigate("ledger")}
-              className="flex-1 bg-purple-100 py-2 md:py-3 px-3 md:px-6 rounded-lg shadow-md border-2 border-purple-300 hover:bg-purple-200 transition-colors text-sm md:text-base"
-            >
-              ⚒️ 대장장이 가계부
-            </button>
-          </div>
-
           {/* Main Layout: Content + Sidebar */}
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Main Content */}
