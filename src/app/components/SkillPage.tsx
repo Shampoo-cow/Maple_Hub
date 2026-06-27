@@ -15,17 +15,12 @@ type Skill = {
   max_effect: string | null;
   cooldown: string | null;
   required_skill: string | null;
+  icon_url: string | null;
 };
 
 const JOB_ORDER: Record<string, string[]> = {
-  전사: [
-    "히어로","팔라딘","다크나이트","소울마스터","미하일","블래스터",
-    "데몬 슬레이어","데몬 어벤져","아란","카이저","아델","렌","제로",
-  ],
-  마법사: [
-    "아크메이지(불,독)","아크메이지(썬,콜)","비숍","플레임위자드","배틀메이지",
-    "에반","루미너스","일리움","라라","키네시스","레테",
-  ],
+  전사: ["히어로","팔라딘","다크나이트","소울마스터","미하일","블래스터","데몬 슬레이어","데몬 어벤져","아란","카이저","아델","렌","제로"],
+  마법사: ["아크메이지(불,독)","아크메이지(썬,콜)","비숍","플레임위자드","배틀메이지","에반","루미너스","일리움","라라","키네시스","레테"],
   궁수: ["보우마스터","신궁","패스파인더","윈드브레이커","와일드헌터","메르세데스","카인"],
   도적: ["나이트로드","섀도어","듀얼블레이드","나이트워커","팬텀","카데나","칼리","호영"],
   해적: ["바이퍼","캡틴","캐논슈터","스트라이커","메카닉","은월","엔젤릭버스터","아크","제논"],
@@ -33,21 +28,45 @@ const JOB_ORDER: Record<string, string[]> = {
 const GROUP_ORDER = ["전사", "마법사", "궁수", "도적", "해적"];
 const ADV_ORDER = ["0차", "1차", "2차", "3차", "4차", "하이퍼", "5차", "6차"];
 
-const ADV_STYLE: Record<string, { btn: string; badge: string; effect: string }> = {
-  "0차":   { btn: "bg-gray-500 text-white",    badge: "bg-gray-100 text-gray-600 border-gray-300",      effect: "bg-gray-50 border-gray-200 text-gray-700" },
-  "1차":   { btn: "bg-emerald-500 text-white", badge: "bg-emerald-50 text-emerald-700 border-emerald-300", effect: "bg-emerald-50 border-emerald-200 text-emerald-800" },
-  "2차":   { btn: "bg-blue-500 text-white",    badge: "bg-blue-50 text-blue-700 border-blue-300",        effect: "bg-blue-50 border-blue-200 text-blue-800" },
-  "3차":   { btn: "bg-indigo-600 text-white",  badge: "bg-indigo-50 text-indigo-700 border-indigo-300",  effect: "bg-indigo-50 border-indigo-200 text-indigo-800" },
-  "4차":   { btn: "bg-violet-600 text-white",  badge: "bg-violet-50 text-violet-700 border-violet-300",  effect: "bg-violet-50 border-violet-200 text-violet-800" },
-  "하이퍼":{ btn: "bg-orange-500 text-white",  badge: "bg-orange-50 text-orange-700 border-orange-300",  effect: "bg-orange-50 border-orange-200 text-orange-800" },
-  "5차":   { btn: "bg-rose-600 text-white",    badge: "bg-rose-50 text-rose-700 border-rose-300",        effect: "bg-rose-50 border-rose-200 text-rose-800" },
-  "6차":   { btn: "bg-pink-600 text-white",    badge: "bg-pink-50 text-pink-700 border-pink-300",        effect: "bg-pink-50 border-pink-200 text-pink-800" },
+const ADV_STYLE: Record<string, { btn: string; badge: string; effect: string; iconBg: string }> = {
+  "0차":   { btn: "bg-gray-500 text-white",    badge: "bg-gray-100 text-gray-600 border-gray-300",         effect: "bg-gray-50 border-gray-200 text-gray-700",      iconBg: "bg-gray-100" },
+  "1차":   { btn: "bg-emerald-500 text-white", badge: "bg-emerald-50 text-emerald-700 border-emerald-300", effect: "bg-emerald-50 border-emerald-200 text-emerald-800", iconBg: "bg-emerald-50" },
+  "2차":   { btn: "bg-blue-500 text-white",    badge: "bg-blue-50 text-blue-700 border-blue-300",           effect: "bg-blue-50 border-blue-200 text-blue-800",       iconBg: "bg-blue-50" },
+  "3차":   { btn: "bg-indigo-600 text-white",  badge: "bg-indigo-50 text-indigo-700 border-indigo-300",    effect: "bg-indigo-50 border-indigo-200 text-indigo-800",  iconBg: "bg-indigo-50" },
+  "4차":   { btn: "bg-violet-600 text-white",  badge: "bg-violet-50 text-violet-700 border-violet-300",    effect: "bg-violet-50 border-violet-200 text-violet-800",  iconBg: "bg-violet-50" },
+  "하이퍼":{ btn: "bg-orange-500 text-white",  badge: "bg-orange-50 text-orange-700 border-orange-300",    effect: "bg-orange-50 border-orange-200 text-orange-800",  iconBg: "bg-orange-50" },
+  "5차":   { btn: "bg-rose-600 text-white",    badge: "bg-rose-50 text-rose-700 border-rose-300",          effect: "bg-rose-50 border-rose-200 text-rose-800",        iconBg: "bg-rose-50" },
+  "6차":   { btn: "bg-pink-600 text-white",    badge: "bg-pink-50 text-pink-700 border-pink-300",          effect: "bg-pink-50 border-pink-200 text-pink-800",        iconBg: "bg-pink-50" },
 };
 
 const supaFetch = <T,>(path: string): Promise<T> =>
   fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
   }).then((r) => r.json() as Promise<T>);
+
+function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: string; advStyle?: { iconBg: string } }) {
+  const [err, setErr] = useState(false);
+
+  if (iconUrl && !err) {
+    return (
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${advStyle?.iconBg ?? "bg-gray-100"}`}>
+        <img
+          src={iconUrl}
+          alt={name}
+          className="w-8 h-8 object-contain"
+          onError={() => setErr(true)}
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-lg ${advStyle?.iconBg ?? "bg-gray-100"}`}>
+      ⚔️
+    </div>
+  );
+}
 
 function SkillCard({ skill }: { skill: Skill }) {
   const [expanded, setExpanded] = useState(false);
@@ -56,37 +75,38 @@ function SkillCard({ skill }: { skill: Skill }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all overflow-hidden">
-      {/* Header */}
-      <div className="px-3 pt-3 pb-2">
-        <div className="flex items-start justify-between gap-1 mb-1.5">
-          <h4 className="text-sm font-bold text-gray-800 leading-tight">{skill.name}</h4>
-          {style && (
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-semibold border ${style.badge}`}>
-              {skill.advancement}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {skill.skill_type && (
-            <span className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">
-              {skill.skill_type}
-            </span>
-          )}
-          {skill.master_level != null && (
-            <span className="text-[10px] text-gray-400 font-medium">Lv.{skill.master_level}</span>
-          )}
-          {skill.cooldown && (
-            <span className="text-[10px] text-blue-500 ml-auto">⏱ {skill.cooldown}</span>
-          )}
+      {/* Header: icon + name + badges */}
+      <div className="px-3 pt-3 pb-2 flex gap-2.5">
+        <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-1 mb-1">
+            <h4 className="text-sm font-bold text-gray-800 leading-tight truncate">{skill.name}</h4>
+            {style && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-semibold border ${style.badge}`}>
+                {skill.advancement}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {skill.skill_type && (
+              <span className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">
+                {skill.skill_type}
+              </span>
+            )}
+            {skill.master_level != null && (
+              <span className="text-[10px] text-gray-400 font-medium">Lv.{skill.master_level}</span>
+            )}
+            {skill.cooldown && (
+              <span className="text-[10px] text-blue-500 ml-auto">⏱ {skill.cooldown}</span>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Description */}
       {skill.description && (
         <div className="px-3 pb-2">
-          <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
-            {skill.description}
-          </p>
+          <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">{skill.description}</p>
         </div>
       )}
 
@@ -95,15 +115,10 @@ function SkillCard({ skill }: { skill: Skill }) {
         <div className={`mx-3 mb-3 px-2.5 py-2 rounded-lg border text-[11px] leading-relaxed ${style?.effect ?? "bg-gray-50 border-gray-200 text-gray-700"}`}>
           <div className="flex items-start gap-1">
             <span className="font-bold flex-shrink-0 opacity-60 text-[9px] mt-0.5">MAX</span>
-            <p className={`flex-1 ${!expanded && hasLongEffect ? "line-clamp-3" : ""}`}>
-              {skill.max_effect}
-            </p>
+            <p className={`flex-1 ${!expanded && hasLongEffect ? "line-clamp-3" : ""}`}>{skill.max_effect}</p>
           </div>
           {hasLongEffect && (
-            <button
-              onClick={() => setExpanded((v) => !v)}
-              className="mt-1 text-[10px] opacity-60 hover:opacity-100 transition-opacity font-medium"
-            >
+            <button onClick={() => setExpanded((v) => !v)} className="mt-1 text-[10px] opacity-60 hover:opacity-100 transition-opacity font-medium">
               {expanded ? "접기 ▲" : "더 보기 ▼"}
             </button>
           )}
@@ -112,9 +127,7 @@ function SkillCard({ skill }: { skill: Skill }) {
 
       {/* Required Skill */}
       {skill.required_skill && (
-        <div className="px-3 pb-2.5 text-[10px] text-amber-600">
-          필요: {skill.required_skill}
-        </div>
+        <div className="px-3 pb-2.5 text-[10px] text-amber-600">필요: {skill.required_skill}</div>
       )}
     </div>
   );
@@ -135,13 +148,10 @@ export function SkillPage() {
   const selectJob = async (job: Job) => {
     setSelectedJob(job);
     setLoading(true);
-    const data = await supaFetch<Skill[]>(
-      `skills?job_id=eq.${job.id}&select=*&limit=300`
-    );
+    const data = await supaFetch<Skill[]>(`skills?job_id=eq.${job.id}&select=*&limit=300`);
     setSkills(data);
     setLoading(false);
-    const firstAdv =
-      ADV_ORDER.find((a) => data.some((s) => s.advancement === a)) ?? "0차";
+    const firstAdv = ADV_ORDER.find((a) => data.some((s) => s.advancement === a)) ?? "0차";
     setActiveAdv(firstAdv);
   };
 
@@ -156,9 +166,7 @@ export function SkillPage() {
   const jobsByGroup = (group: string) => {
     const order = JOB_ORDER[group] ?? [];
     const groupJobs = jobs.filter((j) => j.job_group === group);
-    return order
-      .map((name) => groupJobs.find((j) => j.name === name))
-      .filter(Boolean) as Job[];
+    return order.map((name) => groupJobs.find((j) => j.name === name)).filter(Boolean) as Job[];
   };
 
   const availableAdvs = ADV_ORDER.filter((a) => skills.some((s) => s.advancement === a));
@@ -180,9 +188,7 @@ export function SkillPage() {
                   className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border-b border-purple-100 transition-colors"
                 >
                   {group}
-                  <span className="text-purple-400 text-[10px]">
-                    {expandedGroups.has(group) ? "▲" : "▼"}
-                  </span>
+                  <span className="text-purple-400 text-[10px]">{expandedGroups.has(group) ? "▲" : "▼"}</span>
                 </button>
                 {expandedGroups.has(group) &&
                   jobsByGroup(group).map((job) => (
@@ -213,7 +219,6 @@ export function SkillPage() {
           </div>
         ) : (
           <>
-            {/* Job Title */}
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-lg font-bold text-purple-800">{selectedJob.name}</h2>
               <span className="text-xs text-purple-500 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
@@ -222,7 +227,6 @@ export function SkillPage() {
               <span className="text-xs text-gray-400 ml-auto">총 {skills.length}개 스킬</span>
             </div>
 
-            {/* Advancement Tabs */}
             <div className="flex flex-wrap gap-1.5 mb-4">
               {availableAdvs.map((adv) => {
                 const count = skills.filter((s) => s.advancement === adv).length;
@@ -243,7 +247,6 @@ export function SkillPage() {
               })}
             </div>
 
-            {/* Skill Cards */}
             {loading ? (
               <div className="flex items-center justify-center h-48 text-gray-400">
                 <span className="animate-pulse">스킬 정보 불러오는 중...</span>
