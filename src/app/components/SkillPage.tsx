@@ -5,6 +5,18 @@ const ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbWhrZmp3cXBtaWl1Z3BmZ3Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MTc3MzYsImV4cCI6MjA5ODA5MzczNn0.LDMpg-eNzZuITtqR1K5YlqiqoN09TofJLixgOxgH4y4";
 
 type Job = { id: string; name: string; job_group: string };
+
+type BurstSkill = { t: number; s: string; seq: string };
+type StatSkill  = { s: string; pct: number; dps: number; cnt: number };
+type BpCache = {
+  rank: number;
+  character_name: string;
+  world_name: string;
+  total_dps: number;
+  season: number;
+  burst_sequence: BurstSkill[];
+  skill_stats: StatSkill[];
+};
 type Skill = {
   id: string;
   name: string;
@@ -43,6 +55,128 @@ const supaFetch = <T,>(path: string): Promise<T> =>
   fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
   }).then((r) => r.json() as Promise<T>);
+
+const SEQ_COLOR: Record<string, string> = {
+  "극":   "bg-red-100 text-red-700 border-red-300 font-bold",
+  "준극": "bg-orange-100 text-orange-700 border-orange-300 font-semibold",
+};
+
+function BurstCyclePanel({ jobName }: { jobName: string }) {
+  const [data, setData] = useState<BpCache[]>([]);
+  const [activeRank, setActiveRank] = useState(1);
+  const [open, setOpen] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    setActiveRank(1);
+    const enc = encodeURIComponent(jobName);
+    supaFetch<BpCache[]>(
+      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,burst_sequence,skill_stats&order=rank.asc&limit=3`
+    ).then((d) => { setData(d); setLoading(false); });
+  }, [jobName]);
+
+  if (loading) return (
+    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-600 animate-pulse">
+      극딜 사이클 불러오는 중...
+    </div>
+  );
+  if (data.length === 0) return null;
+
+  const current = data.find((d) => d.rank === activeRank) ?? data[0];
+  const topStats = [...(current.skill_stats ?? [])].sort((a, b) => b.pct - a.pct).slice(0, 7);
+  const maxPct = topStats[0]?.pct ?? 1;
+  const season = current.season;
+
+  return (
+    <div className="mb-4 rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white overflow-hidden shadow-sm">
+      {/* Header */}
+      <button
+        className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-amber-100/50 transition-colors"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold text-amber-800">🔥 극딜 사이클</span>
+          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded-full border border-amber-200">
+            시즌{season} 기준
+          </span>
+          <span className="text-[10px] text-gray-400">연무장 top3 (2분 사이클)</span>
+        </div>
+        <span className="text-xs text-amber-400">{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4">
+          {/* Rank tabs */}
+          <div className="flex gap-1.5 mb-3">
+            {data.map((d) => (
+              <button
+                key={d.rank}
+                onClick={() => setActiveRank(d.rank)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  activeRank === d.rank
+                    ? "bg-amber-500 text-white shadow-sm"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-amber-300"
+                }`}
+              >
+                <span>{d.rank}위</span>
+                <span className="opacity-75">{d.character_name}</span>
+                <span className={`opacity-60 ${activeRank === d.rank ? "text-amber-100" : "text-gray-400"}`}>
+                  {(d.total_dps / 1e12).toFixed(2)}조
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {/* Burst sequence */}
+            <div>
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">극딜 순서</p>
+              <div className="flex flex-wrap gap-1">
+                {(current.burst_sequence ?? []).map((sk, i) => {
+                  const color = SEQ_COLOR[sk.seq] ?? "bg-yellow-50 text-yellow-700 border-yellow-200";
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] ${color}`}
+                    >
+                      <span className="opacity-50 text-[9px]">{(sk.t / 1000).toFixed(1)}s</span>
+                      <span>{sk.s}</span>
+                    </div>
+                  );
+                })}
+                {(current.burst_sequence ?? []).length === 0 && (
+                  <span className="text-xs text-gray-400">시퀀스 정보 없음</span>
+                )}
+              </div>
+            </div>
+
+            {/* DPS stats */}
+            <div>
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">DPS 기여도</p>
+              <div className="space-y-1">
+                {topStats.map((sk, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-[10px] text-gray-600 w-28 truncate flex-shrink-0">{sk.s}</span>
+                    <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                        style={{ width: `${(sk.pct / maxPct) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-semibold text-amber-700 w-10 text-right flex-shrink-0">
+                      {sk.pct}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: string; advStyle?: { iconBg: string } }) {
   const [err, setErr] = useState(false);
@@ -226,6 +360,8 @@ export function SkillPage() {
               </span>
               <span className="text-xs text-gray-400 ml-auto">총 {skills.length}개 스킬</span>
             </div>
+
+            <BurstCyclePanel jobName={selectedJob.name} />
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {availableAdvs.map((adv) => {
