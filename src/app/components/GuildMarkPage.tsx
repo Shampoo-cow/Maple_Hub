@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { Download, X, Upload, Image as ImageIcon, Scissors, Loader2, Pencil, Eraser, Trash2, Pipette, RotateCcw } from "lucide-react";
 import { removeBackground } from "@imgly/background-removal";
-import { Footer } from "./Footer";
-import { Sidebar } from "./Sidebar";
-import mapleLeaf from "../../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
-import headerBg from "../../assets/0bbd438f2659f0b454ed2b2e5656ebd71721c84f.png";
 import guildMark1 from "../../assets/37054ac47711735d313eb47d69a54f4a420ef083.png";
 import guildMark2 from "../../assets/fa5d7b8ec19e56cea522c837b3b62beccf298c97.png";
 import guildMark3 from "../../assets/79408069b3fab66c0adcfcd422efae2cc16530be.png";
@@ -791,16 +787,6 @@ export function GuildMarkPage() {
                   ))}
                 </div>
               </div>
-            </div>
-
-            {/* Sidebar */}
-            <Sidebar />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    </div>
+    </>
   );
 }
