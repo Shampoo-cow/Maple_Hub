@@ -295,43 +295,7 @@ export function GuildMarkPage() {
   const toolCursor = activeTool === "erase" ? "cell" : activeTool === "pick" ? "copy" : "crosshair";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100 to-blue-50">
-      <div className="p-2 md:p-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div
-            className="rounded-2xl shadow-2xl p-4 md:p-8 mb-4 md:mb-6 border-2 md:border-4 border-purple-400 relative overflow-hidden"
-            style={{
-              backgroundImage: `url(${headerBg})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="relative z-10 flex items-center justify-center gap-2 md:gap-4">
-              <img
-                src={mapleLeaf}
-                alt="Maple Leaf"
-                className="w-10 h-10 md:w-16 md:h-16 object-contain drop-shadow-lg"
-              />
-              <h1
-                className="text-4xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 animate-gradient relative"
-                style={{
-                  textShadow:
-                    "0 0 30px rgba(168,85,247,0.4),0 0 60px rgba(168,85,247,0.2)",
-                  filter: "drop-shadow(0 4px 20px rgba(168,85,247,0.5))",
-                }}
-              >
-                Maple_Hub
-                <span className="absolute inset-0 blur-xl bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 opacity-30 -z-10">
-                  Maple_Hub
-                </span>
-              </h1>
-            </div>
-          </div>
-
-          {/* Main Layout */}
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
+    <>
               {/* Info Box */}
               <div className="bg-purple-50 border-2 border-purple-300 rounded-lg p-3 md:p-4 mb-4">
                 <p className="text-purple-800 text-center text-sm md:text-base">
