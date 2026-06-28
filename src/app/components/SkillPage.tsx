@@ -190,6 +190,7 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
           className="w-8 h-8 object-contain"
           onError={() => setErr(true)}
           loading="lazy"
+          referrerPolicy="no-referrer"
         />
       </div>
     );
