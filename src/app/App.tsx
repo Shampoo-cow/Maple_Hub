@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { GuildMarkPage } from "./components/GuildMarkPage";
 import { SkillPage } from "./components/SkillPage";
-import { Sidebar } from "./components/Sidebar";
 import { Footer } from "./components/Footer";
 import faviconImage from "figma:asset/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
 import mapleLeaf from "../assets/cb0f5c1c966b5decd0275b09e80838bc724c6eac.png";
@@ -82,11 +81,8 @@ export default function App() {
           </div>
 
           {/* Main Layout */}
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              {activePage === "guild-mark" ? <GuildMarkPage /> : <SkillPage />}
-            </div>
-            <Sidebar />
+          <div>
+            {activePage === "guild-mark" ? <GuildMarkPage /> : <SkillPage />}
           </div>
         </div>
 
