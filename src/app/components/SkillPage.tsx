@@ -445,7 +445,7 @@ export function SkillPage() {
                 <span className="animate-pulse">스킬 정보 불러오는 중...</span>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                 {filteredSkills.map((skill) => (
                   <SkillCard key={skill.id} skill={skill} />
                 ))}
