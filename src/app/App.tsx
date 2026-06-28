@@ -57,26 +57,26 @@ export default function App() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-3 mb-4">
             <button
               onClick={() => setActivePage("guild-mark")}
-              className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`px-8 py-3 rounded-2xl text-base font-bold tracking-wide transition-all ${
                 activePage === "guild-mark"
-                  ? "bg-purple-600 text-white shadow-md"
+                  ? "bg-purple-600 text-white shadow-lg shadow-purple-200"
                   : "bg-white/70 text-purple-600 hover:bg-white border border-purple-200"
               }`}
             >
-              🎨 길드마크 만들기
+              길드마크 만들기
             </button>
             <button
               onClick={() => setActivePage("skills")}
-              className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`px-8 py-3 rounded-2xl text-base font-bold tracking-wide transition-all ${
                 activePage === "skills"
-                  ? "bg-purple-600 text-white shadow-md"
+                  ? "bg-purple-600 text-white shadow-lg shadow-purple-200"
                   : "bg-white/70 text-purple-600 hover:bg-white border border-purple-200"
               }`}
             >
-              ⚔️ 직업 스킬정보
+              직업 스킬정보
             </button>
           </div>
 
