@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -286,10 +286,20 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
 function SkillCard({ skill }: { skill: Skill }) {
   const [descExpanded, setDescExpanded] = useState(false);
   const [effExpanded, setEffExpanded]   = useState(false);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const effRef  = useRef<HTMLParagraphElement>(null);
+  const [descOverflows, setDescOverflows] = useState(false);
+  const [effOverflows,  setEffOverflows]  = useState(false);
+
+  useLayoutEffect(() => {
+    if (descRef.current)
+      setDescOverflows(descRef.current.scrollHeight > descRef.current.clientHeight + 2);
+    if (effRef.current)
+      setEffOverflows(effRef.current.scrollHeight > effRef.current.clientHeight + 2);
+  }, []);
+
   const style    = ADV_STYLE[skill.advancement];
   const dotColor = TYPE_DOT[skill.skill_type ?? ""] ?? "bg-gray-400";
-  const hasLongDesc = (skill.description?.length ?? 0) > 120;
-  const hasLongEff  = (skill.max_effect?.length ?? 0) > 100;
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition-shadow">
@@ -338,8 +348,8 @@ function SkillCard({ skill }: { skill: Skill }) {
             <span className="text-[11px] text-gray-500">설명</span>
           </div>
           <div className="flex-1 px-3 py-2 text-[11px] text-gray-700 leading-relaxed">
-            <p className={!descExpanded && hasLongDesc ? "line-clamp-4" : ""}>{skill.description}</p>
-            {hasLongDesc && (
+            <p ref={descRef} className={!descExpanded ? "line-clamp-4" : ""}>{skill.description}</p>
+            {descOverflows && (
               <button onClick={() => setDescExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
                 {descExpanded ? "접기 ▲" : "더보기 ▼"}
               </button>
@@ -358,8 +368,8 @@ function SkillCard({ skill }: { skill: Skill }) {
                 <span className="text-[10px] text-gray-400">{skill.master_level}</span>
               </div>
               <div className="flex-1 px-2 py-2 text-[11px] text-gray-700 leading-relaxed">
-                <p className={!effExpanded && hasLongEff ? "line-clamp-3" : ""}>{skill.max_effect}</p>
-                {hasLongEff && (
+                <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
+                {effOverflows && (
                   <button onClick={() => setEffExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
                     {effExpanded ? "접기 ▲" : "더보기 ▼"}
                   </button>
