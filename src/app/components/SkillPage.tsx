@@ -56,6 +56,16 @@ const supaFetch = <T,>(path: string): Promise<T> =>
     headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
   }).then((r) => r.json() as Promise<T>);
 
+const TYPE_DOT: Record<string, string> = {
+  "패시브":          "bg-green-500",
+  "액티브(즉발)":    "bg-red-500",
+  "액티브(지속)":    "bg-orange-400",
+  "액티브(온/오프)": "bg-violet-500",
+  "액티브":          "bg-blue-500",
+  "소환(지속)":      "bg-teal-500",
+  "버프":            "bg-yellow-400",
+};
+
 const SEQ_COLOR: Record<string, string> = {
   "극":   "bg-red-100 text-red-700 border-red-300 font-bold",
   "준극": "bg-orange-100 text-orange-700 border-orange-300 font-semibold",
@@ -204,65 +214,111 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
 }
 
 function SkillCard({ skill }: { skill: Skill }) {
-  const [expanded, setExpanded] = useState(false);
-  const style = ADV_STYLE[skill.advancement];
-  const hasLongEffect = skill.max_effect && skill.max_effect.length > 80;
+  const [descExpanded, setDescExpanded] = useState(false);
+  const [effExpanded, setEffExpanded]   = useState(false);
+  const style    = ADV_STYLE[skill.advancement];
+  const dotColor = TYPE_DOT[skill.skill_type ?? ""] ?? "bg-gray-400";
+  const hasLongDesc = (skill.description?.length ?? 0) > 120;
+  const hasLongEff  = (skill.max_effect?.length ?? 0) > 100;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all overflow-hidden">
-      {/* Header: icon + name + badges */}
-      <div className="px-3 pt-3 pb-2 flex gap-2.5">
-        <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-1 mb-1">
-            <h4 className="text-sm font-bold text-gray-800 leading-tight truncate">{skill.name}</h4>
-            {style && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-semibold border ${style.badge}`}>
-                {skill.advancement}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {skill.skill_type && (
-              <span className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">
-                {skill.skill_type}
-              </span>
-            )}
-            {skill.master_level != null && (
-              <span className="text-[10px] text-gray-400 font-medium">Lv.{skill.master_level}</span>
-            )}
-            {skill.cooldown && (
-              <span className="text-[10px] text-blue-500 ml-auto">⏱ {skill.cooldown}</span>
-            )}
-          </div>
+    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition-shadow">
+      {/* SKILL 헤더 */}
+      <div className="bg-[#1b2a4a] px-3 py-1.5">
+        <span className="text-[#e8c96a] text-[10px] font-bold tracking-[0.2em]">SKILL</span>
+      </div>
+
+      {/* 아이콘 + 스킬명 */}
+      <div className="flex items-stretch border-b border-gray-200">
+        <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
+          <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center py-2 px-2 min-w-0">
+          <span className="text-sm font-bold text-gray-900 text-center leading-tight">{skill.name}</span>
         </div>
       </div>
 
-      {/* Description */}
-      {skill.description && (
-        <div className="px-3 pb-2">
-          <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">{skill.description}</p>
+      {/* 스킬 타입 */}
+      <div className="flex items-center border-b border-gray-200">
+        <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
+          <div className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
         </div>
-      )}
+        <div className="flex-1 px-3 py-1.5 text-xs text-gray-700">{skill.skill_type ?? "—"}</div>
+      </div>
 
-      {/* Max Effect */}
-      {skill.max_effect && (
-        <div className={`mx-3 mb-3 px-2.5 py-2 rounded-lg border text-[11px] leading-relaxed ${style?.effect ?? "bg-gray-50 border-gray-200 text-gray-700"}`}>
-          <div className="flex items-start gap-1">
-            <span className="font-bold flex-shrink-0 opacity-60 text-[9px] mt-0.5">MAX</span>
-            <p className={`flex-1 ${!expanded && hasLongEffect ? "line-clamp-3" : ""}`}>{skill.max_effect}</p>
+      {/* 마스터 레벨 */}
+      <div className="flex items-center border-b border-gray-200">
+        <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
+          <span className="text-[11px] text-gray-500">마스터 레벨</span>
+        </div>
+        <div className="flex-1 px-3 py-1.5 text-xs text-gray-800">{skill.master_level}</div>
+      </div>
+
+      {/* 재사용 대기 */}
+      {skill.cooldown && (
+        <div className="flex items-center border-b border-gray-200">
+          <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
+            <span className="text-[11px] text-gray-500">재사용 대기</span>
           </div>
-          {hasLongEffect && (
-            <button onClick={() => setExpanded((v) => !v)} className="mt-1 text-[10px] opacity-60 hover:opacity-100 transition-opacity font-medium">
-              {expanded ? "접기 ▲" : "더 보기 ▼"}
-            </button>
-          )}
+          <div className="flex-1 px-3 py-1.5 text-xs text-blue-600">{skill.cooldown}</div>
         </div>
       )}
 
-      {/* Required Skill */}
+      {/* 필요 스킬 */}
       {skill.required_skill && (
-        <div className="px-3 pb-2.5 text-[10px] text-amber-600">필요: {skill.required_skill}</div>
+        <div className="flex items-center border-b border-gray-200">
+          <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
+            <span className="text-[11px] text-gray-500">필요 스킬</span>
+          </div>
+          <div className="flex-1 px-3 py-1.5 text-xs text-amber-600">{skill.required_skill}</div>
+        </div>
+      )}
+
+      {/* 설명 */}
+      {skill.description && (
+        <div className="flex items-start border-b border-gray-200">
+          <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
+            <span className="text-[11px] text-gray-500">설명</span>
+          </div>
+          <div className="flex-1 px-3 py-2 text-[11px] text-gray-700 leading-relaxed">
+            <p className={!descExpanded && hasLongDesc ? "line-clamp-4" : ""}>{skill.description}</p>
+            {hasLongDesc && (
+              <button
+                onClick={() => setDescExpanded((v) => !v)}
+                className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium"
+              >
+                {descExpanded ? "접기 ▲" : "더보기 ▼"}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 효과 */}
+      {skill.max_effect && (
+        <div className="flex items-start">
+          <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
+            <span className="text-[11px] text-gray-500">효과</span>
+          </div>
+          <div className="flex-1">
+            <div className="flex items-start">
+              <div className="w-8 flex-shrink-0 flex items-start justify-center pt-2 border-r border-gray-100">
+                <span className="text-[10px] text-gray-400">{skill.master_level}</span>
+              </div>
+              <div className="flex-1 px-2 py-2 text-[11px] text-gray-700 leading-relaxed">
+                <p className={!effExpanded && hasLongEff ? "line-clamp-3" : ""}>{skill.max_effect}</p>
+                {hasLongEff && (
+                  <button
+                    onClick={() => setEffExpanded((v) => !v)}
+                    className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium"
+                  >
+                    {effExpanded ? "접기 ▲" : "더보기 ▼"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -389,7 +445,7 @@ export function SkillPage() {
                 <span className="animate-pulse">스킬 정보 불러오는 중...</span>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                 {filteredSkills.map((skill) => (
                   <SkillCard key={skill.id} skill={skill} />
                 ))}
