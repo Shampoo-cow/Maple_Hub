@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -6,7 +6,7 @@ const ANON_KEY =
 
 type Job = { id: string; name: string; job_group: string };
 
-type BurstSkill = { t: number; s: string; seq: string };
+type TimelineSkill = { t: number; s: string; seq: string; h: boolean };
 type StatSkill  = { s: string; pct: number; dps: number; cnt: number };
 type BpCache = {
   rank: number;
@@ -14,7 +14,7 @@ type BpCache = {
   world_name: string;
   total_dps: number;
   season: number;
-  burst_sequence: BurstSkill[];
+  skill_timeline: TimelineSkill[];
   skill_stats: StatSkill[];
 };
 type Skill = {
@@ -66,25 +66,86 @@ const TYPE_DOT: Record<string, string> = {
   "버프":            "bg-yellow-400",
 };
 
-const SEQ_COLOR: Record<string, string> = {
-  "극":   "bg-red-100 text-red-700 border-red-300 font-bold",
-  "준극": "bg-orange-100 text-orange-700 border-orange-300 font-semibold",
-};
+function CycleSkillIcon({
+  name,
+  iconUrl,
+  isSeq,
+}: {
+  name: string;
+  iconUrl: string | null;
+  isSeq: boolean;
+}) {
+  const [err, setErr] = useState(false);
+  const short = name.length > 9 ? name.slice(0, 8) + "…" : name;
+  return (
+    <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-12">
+      <div
+        className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden ${
+          isSeq
+            ? "ring-2 ring-amber-400 bg-amber-50"
+            : "bg-gray-100"
+        }`}
+      >
+        {iconUrl && !err ? (
+          <img
+            src={iconUrl}
+            alt={name}
+            title={name}
+            className="w-8 h-8 object-contain"
+            onError={() => setErr(true)}
+            loading="lazy"
+          />
+        ) : (
+          <span className="text-base">⚔️</span>
+        )}
+      </div>
+      <span className="text-[8px] text-gray-500 text-center leading-tight w-full truncate px-0.5" title={name}>
+        {short}
+      </span>
+    </div>
+  );
+}
 
-function BurstCyclePanel({ jobName }: { jobName: string }) {
+function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: Skill[] }) {
   const [data, setData] = useState<BpCache[]>([]);
   const [activeRank, setActiveRank] = useState(1);
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
+
+  const iconMap = useMemo(() => {
+    const map: Record<string, string | null> = {};
+    jobSkills.forEach((s) => { map[s.name] = s.icon_url; });
+    return map;
+  }, [jobSkills]);
 
   useEffect(() => {
     setLoading(true);
     setActiveRank(1);
     const enc = encodeURIComponent(jobName);
     supaFetch<BpCache[]>(
-      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,burst_sequence,skill_stats&order=rank.asc&limit=3`
+      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=rank.asc&limit=3`
     ).then((d) => { setData(d); setLoading(false); });
   }, [jobName]);
+
+  const current = data.find((d) => d.rank === activeRank) ?? data[0];
+
+  const uniqueTimeline = useMemo(() => {
+    if (!current) return [];
+    const seen = new Set<string>();
+    const result: TimelineSkill[] = [];
+    for (const sk of current.skill_timeline ?? []) {
+      if (!seen.has(sk.s)) {
+        seen.add(sk.s);
+        result.push(sk);
+      }
+    }
+    return result;
+  }, [current]);
+
+  const topStats = useMemo(() => {
+    if (!current) return [];
+    return [...(current.skill_stats ?? [])].sort((a, b) => b.pct - a.pct).slice(0, 7);
+  }, [current]);
 
   if (loading) return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-600 animate-pulse">
@@ -93,10 +154,8 @@ function BurstCyclePanel({ jobName }: { jobName: string }) {
   );
   if (data.length === 0) return null;
 
-  const current = data.find((d) => d.rank === activeRank) ?? data[0];
-  const topStats = [...(current.skill_stats ?? [])].sort((a, b) => b.pct - a.pct).slice(0, 7);
   const maxPct = topStats[0]?.pct ?? 1;
-  const season = current.season;
+  const season = current?.season;
 
   return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white overflow-hidden shadow-sm">
@@ -138,48 +197,60 @@ function BurstCyclePanel({ jobName }: { jobName: string }) {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Burst sequence */}
-            <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">극딜 순서</p>
-              <div className="flex flex-wrap gap-1">
-                {(current.burst_sequence ?? []).map((sk, i) => {
-                  const color = SEQ_COLOR[sk.seq] ?? "bg-yellow-50 text-yellow-700 border-yellow-200";
-                  return (
-                    <div
+          {/* Skill cycle icon row */}
+          <div className="mb-3">
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+              딜 사이클
+              <span className="ml-2 normal-case font-normal text-amber-500">
+                ■ 금색 테두리 = 극딜 시퀀스
+              </span>
+            </p>
+            {uniqueTimeline.length === 0 ? (
+              <span className="text-xs text-gray-400">타임라인 정보 없음</span>
+            ) : (
+              <div className="overflow-x-auto pb-1">
+                <div className="flex gap-1.5 w-max">
+                  {uniqueTimeline.map((sk, i) => (
+                    <CycleSkillIcon
                       key={i}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] ${color}`}
-                    >
-                      <span className="opacity-50 text-[9px]">{(sk.t / 1000).toFixed(1)}s</span>
-                      <span>{sk.s}</span>
-                    </div>
-                  );
-                })}
-                {(current.burst_sequence ?? []).length === 0 && (
-                  <span className="text-xs text-gray-400">시퀀스 정보 없음</span>
-                )}
+                      name={sk.s}
+                      iconUrl={iconMap[sk.s] ?? null}
+                      isSeq={!!sk.seq}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* DPS stats */}
-            <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">DPS 기여도</p>
-              <div className="space-y-1">
-                {topStats.map((sk, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-600 w-28 truncate flex-shrink-0">{sk.s}</span>
-                    <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                        style={{ width: `${(sk.pct / maxPct) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] font-semibold text-amber-700 w-10 text-right flex-shrink-0">
-                      {sk.pct}%
-                    </span>
+          {/* DPS stats */}
+          <div>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">DPS 기여도</p>
+            <div className="space-y-1">
+              {topStats.map((sk, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  {iconMap[sk.s] ? (
+                    <img
+                      src={iconMap[sk.s]!}
+                      alt={sk.s}
+                      className="w-4 h-4 object-contain flex-shrink-0"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="text-[10px] w-4 text-center flex-shrink-0">⚔</span>
+                  )}
+                  <span className="text-[10px] text-gray-600 w-28 truncate flex-shrink-0">{sk.s}</span>
+                  <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                      style={{ width: `${(sk.pct / maxPct) * 100}%` }}
+                    />
                   </div>
-                ))}
-              </div>
+                  <span className="text-[10px] font-semibold text-amber-700 w-10 text-right flex-shrink-0">
+                    {sk.pct}%
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -200,7 +271,6 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
           className="w-8 h-8 object-contain"
           onError={() => setErr(true)}
           loading="lazy"
-          referrerPolicy="no-referrer"
         />
       </div>
     );
@@ -223,12 +293,9 @@ function SkillCard({ skill }: { skill: Skill }) {
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition-shadow">
-      {/* SKILL 헤더 */}
       <div className="bg-[#1b2a4a] px-3 py-1.5">
         <span className="text-[#e8c96a] text-[10px] font-bold tracking-[0.2em]">SKILL</span>
       </div>
-
-      {/* 아이콘 + 스킬명 */}
       <div className="flex items-stretch border-b border-gray-200">
         <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
           <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
@@ -237,24 +304,18 @@ function SkillCard({ skill }: { skill: Skill }) {
           <span className="text-sm font-bold text-gray-900 text-center leading-tight">{skill.name}</span>
         </div>
       </div>
-
-      {/* 스킬 타입 */}
       <div className="flex items-center border-b border-gray-200">
         <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
           <div className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
         </div>
         <div className="flex-1 px-3 py-1.5 text-xs text-gray-700">{skill.skill_type ?? "—"}</div>
       </div>
-
-      {/* 마스터 레벨 */}
       <div className="flex items-center border-b border-gray-200">
         <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
           <span className="text-[11px] text-gray-500">마스터 레벨</span>
         </div>
         <div className="flex-1 px-3 py-1.5 text-xs text-gray-800">{skill.master_level}</div>
       </div>
-
-      {/* 재사용 대기 */}
       {skill.cooldown && (
         <div className="flex items-center border-b border-gray-200">
           <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
@@ -263,8 +324,6 @@ function SkillCard({ skill }: { skill: Skill }) {
           <div className="flex-1 px-3 py-1.5 text-xs text-blue-600">{skill.cooldown}</div>
         </div>
       )}
-
-      {/* 필요 스킬 */}
       {skill.required_skill && (
         <div className="flex items-center border-b border-gray-200">
           <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
@@ -273,8 +332,6 @@ function SkillCard({ skill }: { skill: Skill }) {
           <div className="flex-1 px-3 py-1.5 text-xs text-amber-600">{skill.required_skill}</div>
         </div>
       )}
-
-      {/* 설명 */}
       {skill.description && (
         <div className="flex items-start border-b border-gray-200">
           <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
@@ -283,18 +340,13 @@ function SkillCard({ skill }: { skill: Skill }) {
           <div className="flex-1 px-3 py-2 text-[11px] text-gray-700 leading-relaxed">
             <p className={!descExpanded && hasLongDesc ? "line-clamp-4" : ""}>{skill.description}</p>
             {hasLongDesc && (
-              <button
-                onClick={() => setDescExpanded((v) => !v)}
-                className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium"
-              >
+              <button onClick={() => setDescExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
                 {descExpanded ? "접기 ▲" : "더보기 ▼"}
               </button>
             )}
           </div>
         </div>
       )}
-
-      {/* 효과 */}
       {skill.max_effect && (
         <div className="flex items-start">
           <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
@@ -308,10 +360,7 @@ function SkillCard({ skill }: { skill: Skill }) {
               <div className="flex-1 px-2 py-2 text-[11px] text-gray-700 leading-relaxed">
                 <p className={!effExpanded && hasLongEff ? "line-clamp-3" : ""}>{skill.max_effect}</p>
                 {hasLongEff && (
-                  <button
-                    onClick={() => setEffExpanded((v) => !v)}
-                    className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium"
-                  >
+                  <button onClick={() => setEffExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
                     {effExpanded ? "접기 ▲" : "더보기 ▼"}
                   </button>
                 )}
@@ -365,7 +414,6 @@ export function SkillPage() {
 
   return (
     <div className="flex gap-4">
-      {/* Left: Job Selection */}
       <div className="w-52 flex-shrink-0">
         <div className="bg-white rounded-xl shadow-sm border border-purple-200 overflow-hidden sticky top-4">
           <div className="bg-purple-600 px-3 py-2">
@@ -401,7 +449,6 @@ export function SkillPage() {
         </div>
       </div>
 
-      {/* Right: Skill Display */}
       <div className="flex-1 min-w-0">
         {!selectedJob ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400 bg-white/50 rounded-xl border-2 border-dashed border-purple-200">
@@ -418,7 +465,7 @@ export function SkillPage() {
               <span className="text-xs text-gray-400 ml-auto">총 {skills.length}개 스킬</span>
             </div>
 
-            <BurstCyclePanel jobName={selectedJob.name} />
+            <BurstCyclePanel jobName={selectedJob.name} jobSkills={skills} />
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {availableAdvs.map((adv) => {
