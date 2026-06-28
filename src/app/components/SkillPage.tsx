@@ -128,7 +128,7 @@ function BurstCyclePanel({ jobName }: { jobName: string }) {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Burst sequence */}
             <div>
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">극딜 순서</p>
@@ -309,7 +309,7 @@ export function SkillPage() {
   return (
     <div className="flex gap-4">
       {/* Left: Job Selection */}
-      <div className="w-44 flex-shrink-0">
+      <div className="w-52 flex-shrink-0">
         <div className="bg-white rounded-xl shadow-sm border border-purple-200 overflow-hidden sticky top-4">
           <div className="bg-purple-600 px-3 py-2">
             <h3 className="text-xs font-bold text-white tracking-wide">직업 선택</h3>
@@ -388,12 +388,12 @@ export function SkillPage() {
                 <span className="animate-pulse">스킬 정보 불러오는 중...</span>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {filteredSkills.map((skill) => (
                   <SkillCard key={skill.id} skill={skill} />
                 ))}
                 {filteredSkills.length === 0 && (
-                  <div className="col-span-3 text-center text-gray-400 py-10 text-sm">
+                  <div className="col-span-full text-center text-gray-400 py-10 text-sm">
                     이 차수에 스킬 정보가 없습니다
                   </div>
                 )}
