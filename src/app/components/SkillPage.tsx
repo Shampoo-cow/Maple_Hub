@@ -73,22 +73,22 @@ function CycleSkillIcon({ name, iconUrl }: { name: string; iconUrl: string | nul
   const [err, setErr] = useState(false);
   const short = name.length > 9 ? name.slice(0, 8) + "…" : name;
   return (
-    <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-12">
-      <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-gray-100">
+    <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-14">
+      <div className="w-11 h-11 rounded-lg flex items-center justify-center overflow-hidden bg-gray-100">
         {iconUrl && !err ? (
           <img
             src={iconUrl}
             alt={name}
             title={name}
-            className="w-8 h-8 object-contain"
+            className="w-9 h-9 object-contain"
             onError={() => setErr(true)}
             loading="lazy"
           />
         ) : (
-          <span className="text-base">⚔️</span>
+          <span className="text-lg">⚔️</span>
         )}
       </div>
-      <span className="text-[8px] text-gray-500 text-center leading-tight w-full truncate px-0.5" title={name}>
+      <span className="text-[10px] text-gray-500 text-center leading-tight w-full truncate px-0.5" title={name}>
         {short}
       </span>
     </div>
@@ -176,7 +176,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
   }, [uniqueTimeline]);
 
   if (loading) return (
-    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-600 animate-pulse">
+    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-600 animate-pulse">
       극딜 사이클 불러오는 중...
     </div>
   );
@@ -189,17 +189,17 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
     <div className="mb-4 rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white overflow-hidden shadow-sm">
       {/* Header */}
       <button
-        className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-amber-100/50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 transition-colors"
         onClick={() => setOpen((v) => !v)}
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-amber-800">🔥 극딜 사이클</span>
-          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded-full border border-amber-200">
+          <span className="text-base font-bold text-amber-800">🔥 극딜 사이클</span>
+          <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
             시즌{season} 기준
           </span>
-          <span className="text-[10px] text-gray-400">연무장 top3 (2분 사이클)</span>
+          <span className="text-xs text-gray-400">연무장 top3 (2분 사이클)</span>
         </div>
-        <span className="text-xs text-amber-400">{open ? "▲" : "▼"}</span>
+        <span className="text-sm text-amber-400">{open ? "▲" : "▼"}</span>
       </button>
 
       {open && (
@@ -210,7 +210,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
               <button
                 key={d.rank}
                 onClick={() => setActiveRank(d.rank)}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
                   activeRank === d.rank
                     ? "bg-amber-500 text-white shadow-sm"
                     : "bg-white text-gray-600 border border-gray-200 hover:border-amber-300"
@@ -227,19 +227,19 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
 
           {/* Skill cycle icon row */}
           <div className="mb-3">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
               딜 사이클
               <span className="ml-2 normal-case font-normal text-red-500">빨간 박스 = 극딜 시퀀스</span>
             </p>
             {uniqueTimeline.length === 0 ? (
-              <span className="text-xs text-gray-400">타임라인 정보 없음</span>
+              <span className="text-sm text-gray-400">타임라인 정보 없음</span>
             ) : (
               <div className="overflow-x-auto pb-1">
                 <div className="flex items-end gap-1.5 w-max">
                   {segments.map((seg, i) =>
                     seg.type === "seq" ? (
                       <div key={i} className="flex flex-col items-start gap-0.5">
-                        <span className="text-[8px] text-red-500 font-bold leading-none ml-1">{seg.seq}</span>
+                        <span className="text-[10px] text-red-500 font-bold leading-none ml-1">{seg.seq}</span>
                         <div className="flex gap-1 px-1.5 rounded-xl border-2 border-red-400 bg-red-50/60">
                           {seg.skills.map((sk, j) => (
                             <CycleSkillIcon key={j} name={sk.s} iconUrl={iconMap[sk.s] ?? null} />
@@ -257,28 +257,28 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
 
           {/* DPS stats */}
           <div>
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-2">DPS 기여도</p>
-            <div className="space-y-1">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">DPS 기여도</p>
+            <div className="space-y-1.5">
               {topStats.map((sk, i) => (
                 <div key={i} className="flex items-center gap-2">
                   {iconMap[sk.s] ? (
                     <img
                       src={iconMap[sk.s]!}
                       alt={sk.s}
-                      className="w-4 h-4 object-contain flex-shrink-0"
+                      className="w-5 h-5 object-contain flex-shrink-0"
                       loading="lazy"
                     />
                   ) : (
-                    <span className="text-[10px] w-4 text-center flex-shrink-0">⚔</span>
+                    <span className="text-xs w-5 text-center flex-shrink-0">⚔</span>
                   )}
-                  <span className="text-[10px] text-gray-600 w-28 truncate flex-shrink-0">{sk.s}</span>
-                  <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <span className="text-xs text-gray-600 w-32 truncate flex-shrink-0">{sk.s}</span>
+                  <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
                       style={{ width: `${(sk.pct / maxPct) * 100}%` }}
                     />
                   </div>
-                  <span className="text-[10px] font-semibold text-amber-700 w-10 text-right flex-shrink-0">
+                  <span className="text-xs font-semibold text-amber-700 w-10 text-right flex-shrink-0">
                     {sk.pct}%
                   </span>
                 </div>
@@ -296,11 +296,11 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
 
   if (iconUrl && !err) {
     return (
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${advStyle?.iconBg ?? "bg-gray-100"}`}>
+      <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${advStyle?.iconBg ?? "bg-gray-100"}`}>
         <img
           src={iconUrl}
           alt={name}
-          className="w-8 h-8 object-contain"
+          className="w-10 h-10 object-contain"
           onError={() => setErr(true)}
           loading="lazy"
         />
@@ -309,7 +309,7 @@ function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: 
   }
 
   return (
-    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-lg ${advStyle?.iconBg ?? "bg-gray-100"}`}>
+    <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl ${advStyle?.iconBg ?? "bg-gray-100"}`}>
       ⚔️
     </div>
   );
@@ -335,54 +335,54 @@ function SkillCard({ skill }: { skill: Skill }) {
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition-shadow">
-      <div className="bg-[#1b2a4a] px-3 py-1.5">
-        <span className="text-[#e8c96a] text-[10px] font-bold tracking-[0.2em]">SKILL</span>
+      <div className="bg-[#1b2a4a] px-3 py-2">
+        <span className="text-[#e8c96a] text-xs font-bold tracking-[0.2em]">SKILL</span>
       </div>
       <div className="flex items-stretch border-b border-gray-200">
-        <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
+        <div className="w-16 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
           <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
         </div>
-        <div className="flex-1 flex flex-col items-center justify-center py-2 px-2 min-w-0">
-          <span className="text-sm font-bold text-gray-900 text-center leading-tight">{skill.name}</span>
+        <div className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 min-w-0">
+          <span className="text-base font-bold text-gray-900 text-center leading-tight">{skill.name}</span>
         </div>
       </div>
       <div className="flex items-center border-b border-gray-200">
-        <div className="w-14 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
-          <div className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
+        <div className="w-16 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
+          <div className={`w-3 h-3 rounded-full ${dotColor}`} />
         </div>
-        <div className="flex-1 px-3 py-1.5 text-xs text-gray-700">{skill.skill_type ?? "—"}</div>
+        <div className="flex-1 px-3 py-2 text-sm text-gray-700">{skill.skill_type ?? "—"}</div>
       </div>
       <div className="flex items-center border-b border-gray-200">
-        <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
-          <span className="text-[11px] text-gray-500">마스터 레벨</span>
+        <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
+          <span className="text-xs text-gray-500">마스터 레벨</span>
         </div>
-        <div className="flex-1 px-3 py-1.5 text-xs text-gray-800">{skill.master_level}</div>
+        <div className="flex-1 px-3 py-2 text-sm text-gray-800">{skill.master_level}</div>
       </div>
       {skill.cooldown && (
         <div className="flex items-center border-b border-gray-200">
-          <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
-            <span className="text-[11px] text-gray-500">재사용 대기</span>
+          <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
+            <span className="text-xs text-gray-500">재사용 대기</span>
           </div>
-          <div className="flex-1 px-3 py-1.5 text-xs text-blue-600">{skill.cooldown}</div>
+          <div className="flex-1 px-3 py-2 text-sm text-blue-600">{skill.cooldown}</div>
         </div>
       )}
       {skill.required_skill && (
         <div className="flex items-center border-b border-gray-200">
-          <div className="w-20 flex-shrink-0 px-3 py-1.5 bg-gray-50 border-r border-gray-200">
-            <span className="text-[11px] text-gray-500">필요 스킬</span>
+          <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
+            <span className="text-xs text-gray-500">필요 스킬</span>
           </div>
-          <div className="flex-1 px-3 py-1.5 text-xs text-amber-600">{skill.required_skill}</div>
+          <div className="flex-1 px-3 py-2 text-sm text-amber-600">{skill.required_skill}</div>
         </div>
       )}
       {skill.description && (
         <div className="flex items-start border-b border-gray-200">
-          <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
-            <span className="text-[11px] text-gray-500">설명</span>
+          <div className="w-24 flex-shrink-0 px-3 py-2.5 bg-gray-50 border-r border-gray-200">
+            <span className="text-xs text-gray-500">설명</span>
           </div>
-          <div className="flex-1 px-3 py-2 text-[11px] text-gray-700 leading-relaxed">
+          <div className="flex-1 px-3 py-2.5 text-sm text-gray-700 leading-relaxed">
             <p ref={descRef} className={!descExpanded ? "line-clamp-4" : ""}>{skill.description}</p>
             {descOverflows && (
-              <button onClick={() => setDescExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
+              <button onClick={() => setDescExpanded((v) => !v)} className="text-xs text-purple-500 hover:text-purple-700 mt-1 font-medium">
                 {descExpanded ? "접기 ▲" : "더보기 ▼"}
               </button>
             )}
@@ -391,18 +391,18 @@ function SkillCard({ skill }: { skill: Skill }) {
       )}
       {skill.max_effect && (
         <div className="flex items-start">
-          <div className="w-20 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
-            <span className="text-[11px] text-gray-500">효과</span>
+          <div className="w-24 flex-shrink-0 px-3 py-2.5 bg-gray-50 border-r border-gray-200">
+            <span className="text-xs text-gray-500">효과</span>
           </div>
           <div className="flex-1">
             <div className="flex items-start">
-              <div className="w-8 flex-shrink-0 flex items-start justify-center pt-2 border-r border-gray-100">
-                <span className="text-[10px] text-gray-400">{skill.master_level}</span>
+              <div className="w-10 flex-shrink-0 flex items-start justify-center pt-2.5 border-r border-gray-100">
+                <span className="text-xs text-gray-400">{skill.master_level}</span>
               </div>
-              <div className="flex-1 px-2 py-2 text-[11px] text-gray-700 leading-relaxed">
+              <div className="flex-1 px-3 py-2.5 text-sm text-gray-700 leading-relaxed">
                 <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
                 {effOverflows && (
-                  <button onClick={() => setEffExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
+                  <button onClick={() => setEffExpanded((v) => !v)} className="text-xs text-purple-500 hover:text-purple-700 mt-1 font-medium">
                     {effExpanded ? "접기 ▲" : "더보기 ▼"}
                   </button>
                 )}
@@ -456,27 +456,27 @@ export function SkillPage() {
 
   return (
     <div className="flex gap-4">
-      <div className="w-52 flex-shrink-0">
+      <div className="w-56 flex-shrink-0">
         <div className="bg-white rounded-xl shadow-sm border border-purple-200 overflow-hidden sticky top-4">
-          <div className="bg-purple-600 px-3 py-2">
-            <h3 className="text-xs font-bold text-white tracking-wide">직업 선택</h3>
+          <div className="bg-purple-600 px-3 py-2.5">
+            <h3 className="text-sm font-bold text-white tracking-wide">직업 선택</h3>
           </div>
           <div className="overflow-y-auto max-h-[70vh]">
             {GROUP_ORDER.map((group) => (
               <div key={group}>
                 <button
                   onClick={() => toggleGroup(group)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border-b border-purple-100 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border-b border-purple-100 transition-colors"
                 >
                   {group}
-                  <span className="text-purple-400 text-[10px]">{expandedGroups.has(group) ? "▲" : "▼"}</span>
+                  <span className="text-purple-400 text-xs">{expandedGroups.has(group) ? "▲" : "▼"}</span>
                 </button>
                 {expandedGroups.has(group) &&
                   jobsByGroup(group).map((job) => (
                     <button
                       key={job.id}
                       onClick={() => selectJob(job)}
-                      className={`w-full text-left px-4 py-1.5 text-xs transition-colors border-b border-gray-50 ${
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors border-b border-gray-50 ${
                         selectedJob?.id === job.id
                           ? "bg-purple-100 text-purple-800 font-semibold"
                           : "text-gray-600 hover:bg-gray-50"
@@ -500,11 +500,11 @@ export function SkillPage() {
         ) : (
           <>
             <div className="flex items-center gap-2 mb-3">
-              <h2 className="text-lg font-bold text-purple-800">{selectedJob.name}</h2>
-              <span className="text-xs text-purple-500 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
+              <h2 className="text-xl font-bold text-purple-800">{selectedJob.name}</h2>
+              <span className="text-sm text-purple-500 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
                 {selectedJob.job_group}
               </span>
-              <span className="text-xs text-gray-400 ml-auto">총 {skills.length}개 스킬</span>
+              <span className="text-sm text-gray-400 ml-auto">총 {skills.length}개 스킬</span>
             </div>
 
             <BurstCyclePanel jobName={selectedJob.name} jobSkills={skills} />
@@ -517,7 +517,7 @@ export function SkillPage() {
                   <button
                     key={adv}
                     onClick={() => setActiveAdv(adv)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all ${
                       activeAdv === adv
                         ? (style?.btn ?? "bg-gray-500 text-white") + " shadow-md scale-105"
                         : "bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600"
