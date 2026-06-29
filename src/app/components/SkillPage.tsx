@@ -112,19 +112,41 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  const iconMap = useMemo(() => {
+  const [iconMap, setIconMap] = useState<Record<string, string | null>>({});
+
+  useEffect(() => {
     const map: Record<string, string | null> = {};
-    jobSkills.forEach((s) => { map[s.name] = s.icon_url; });
-    return map;
+    jobSkills.forEach((s) => { if (s.icon_url) map[s.name] = s.icon_url; });
+    setIconMap((prev) => ({ ...prev, ...map }));
   }, [jobSkills]);
 
   useEffect(() => {
     setLoading(true);
     setActiveRank(1);
+    setIconMap({});
     const enc = encodeURIComponent(jobName);
     supaFetch<BpCache[]>(
       `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=rank.asc&limit=3`
-    ).then((d) => { setData(d); setLoading(false); });
+    ).then(async (d) => {
+      setData(d);
+      const names = new Set<string>();
+      d.forEach((bp) => {
+        bp.skill_timeline?.forEach((sk) => names.add(sk.s));
+        bp.skill_stats?.forEach((sk) => names.add(sk.s));
+      });
+      if (names.size > 0) {
+        const inParam = [...names].map((n) => `"${n}"`).join(",");
+        const icons = await supaFetch<{ name: string; icon_url: string | null }[]>(
+          `skills?name=in.(${encodeURIComponent(inParam)})&select=name,icon_url&limit=200`
+        );
+        setIconMap((prev) => {
+          const map = { ...prev };
+          icons.forEach((s) => { if (s.icon_url) map[s.name] = s.icon_url; });
+          return map;
+        });
+      }
+      setLoading(false);
+    });
   }, [jobName]);
 
   const current = data.find((d) => d.rank === activeRank) ?? data[0];
