@@ -82,7 +82,7 @@ function CycleSkillIcon({
       <div
         className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden ${
           isSeq
-            ? "ring-2 ring-amber-400 bg-amber-50"
+            ? "ring-[3px] ring-red-500 bg-red-50"
             : "bg-gray-100"
         }`}
       >
@@ -223,8 +223,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
           <div className="mb-3">
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
               딜 사이클
-              <span className="ml-2 normal-case font-normal text-amber-500">
-                ■ 금색 테두리 = 극딜 시퀀스
+              <span className="ml-2 normal-case font-normal text-red-500">■ 빨간 테두리 = 극딜 시퀀스
               </span>
             </p>
             {uniqueTimeline.length === 0 ? (
