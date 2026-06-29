@@ -235,12 +235,12 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
               <span className="text-xs text-gray-400">타임라인 정보 없음</span>
             ) : (
               <div className="overflow-x-auto pb-1">
-                <div className="flex items-start gap-1.5 w-max">
+                <div className="flex items-end gap-1.5 w-max">
                   {segments.map((seg, i) =>
                     seg.type === "seq" ? (
                       <div key={i} className="flex flex-col items-start gap-0.5">
                         <span className="text-[8px] text-red-500 font-bold leading-none ml-1">{seg.seq}</span>
-                        <div className="flex gap-1 px-1.5 py-0.5 rounded-xl border-2 border-red-400 bg-red-50/60">
+                        <div className="flex gap-1 px-1.5 rounded-xl border-2 border-red-400 bg-red-50/60">
                           {seg.skills.map((sk, j) => (
                             <CycleSkillIcon key={j} name={sk.s} iconUrl={iconMap[sk.s] ?? null} />
                           ))}
