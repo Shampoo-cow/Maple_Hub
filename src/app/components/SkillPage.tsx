@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -17,6 +17,9 @@ type BpCache = {
   skill_timeline: TimelineSkill[];
   skill_stats: StatSkill[];
 };
+type Segment =
+  | { type: "seq"; seq: string; skills: TimelineSkill[] }
+  | { type: "normal"; skill: TimelineSkill };
 type Skill = {
   id: string;
   name: string;
@@ -66,26 +69,12 @@ const TYPE_DOT: Record<string, string> = {
   "버프":            "bg-yellow-400",
 };
 
-function CycleSkillIcon({
-  name,
-  iconUrl,
-  isSeq,
-}: {
-  name: string;
-  iconUrl: string | null;
-  isSeq: boolean;
-}) {
+function CycleSkillIcon({ name, iconUrl }: { name: string; iconUrl: string | null }) {
   const [err, setErr] = useState(false);
   const short = name.length > 9 ? name.slice(0, 8) + "…" : name;
   return (
     <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-12">
-      <div
-        className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden ${
-          isSeq
-            ? "ring-[3px] ring-red-500 bg-red-50"
-            : "bg-gray-100"
-        }`}
-      >
+      <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-gray-100">
         {iconUrl && !err ? (
           <img
             src={iconUrl}
@@ -169,6 +158,23 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
     return [...(current.skill_stats ?? [])].sort((a, b) => b.pct - a.pct).slice(0, 7);
   }, [current]);
 
+  const segments = useMemo<Segment[]>(() => {
+    const result: Segment[] = [];
+    for (const sk of uniqueTimeline) {
+      if (sk.seq) {
+        const last = result[result.length - 1];
+        if (last?.type === "seq" && last.seq === sk.seq) {
+          last.skills.push(sk);
+        } else {
+          result.push({ type: "seq", seq: sk.seq, skills: [sk] });
+        }
+      } else {
+        result.push({ type: "normal", skill: sk });
+      }
+    }
+    return result;
+  }, [uniqueTimeline]);
+
   if (loading) return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-600 animate-pulse">
       극딜 사이클 불러오는 중...
@@ -223,22 +229,27 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
           <div className="mb-3">
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
               딜 사이클
-              <span className="ml-2 normal-case font-normal text-red-500">■ 빨간 테두리 = 극딜 시퀀스
-              </span>
+              <span className="ml-2 normal-case font-normal text-red-500">빨간 박스 = 극딜 시퀀스</span>
             </p>
             {uniqueTimeline.length === 0 ? (
               <span className="text-xs text-gray-400">타임라인 정보 없음</span>
             ) : (
               <div className="overflow-x-auto pb-1">
-                <div className="flex gap-1.5 w-max">
-                  {uniqueTimeline.map((sk, i) => (
-                    <CycleSkillIcon
-                      key={i}
-                      name={sk.s}
-                      iconUrl={iconMap[sk.s] ?? null}
-                      isSeq={!!sk.seq}
-                    />
-                  ))}
+                <div className="flex items-start gap-1.5 w-max">
+                  {segments.map((seg, i) =>
+                    seg.type === "seq" ? (
+                      <div key={i} className="flex flex-col items-start gap-0.5">
+                        <span className="text-[8px] text-red-500 font-bold leading-none ml-1">{seg.seq}</span>
+                        <div className="flex gap-1 px-1.5 py-0.5 rounded-xl border-2 border-red-400 bg-red-50/60">
+                          {seg.skills.map((sk, j) => (
+                            <CycleSkillIcon key={j} name={sk.s} iconUrl={iconMap[sk.s] ?? null} />
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <CycleSkillIcon key={i} name={seg.skill.s} iconUrl={iconMap[seg.skill.s] ?? null} />
+                    )
+                  )}
                 </div>
               </div>
             )}
