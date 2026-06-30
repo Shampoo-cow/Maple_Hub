@@ -485,81 +485,100 @@ function SkillCard({ skill }: { skill: Skill }) {
 
   const style    = ADV_STYLE[skill.advancement];
   const dotColor = TYPE_DOT[skill.skill_type ?? ""] ?? "bg-gray-400";
+  const LABEL = "w-[88px] flex-shrink-0 px-2.5 py-2 bg-[#ebebeb] border-r border-[#d8d8d8] flex items-start pt-2.5";
+  const LABEL_TEXT = "text-[11px] text-[#555] font-semibold leading-tight";
+  const ROW = "flex items-stretch border-b border-[#d8d8d8]";
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition-shadow">
-      <div className="bg-[#1b2a4a] px-3 py-2">
-        <span className="text-[#e8c96a] text-xs font-bold tracking-[0.2em]">SKILL</span>
+    <div className="border border-[#c0c0c0] rounded-sm overflow-hidden shadow-md bg-white">
+
+      {/* ── SKILL 헤더 ── */}
+      <div className="bg-[#1b2a4a] px-3 py-[5px] flex items-center justify-between">
+        <span className="text-[#e8c96a] text-[11px] font-bold tracking-[0.25em]">SKILL</span>
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${style?.btn ?? "bg-gray-500 text-white"}`}>
+          {skill.advancement}
+        </span>
       </div>
-      <div className="flex items-stretch border-b border-gray-200">
-        <div className="w-16 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
+
+      {/* ── 아이콘 + 스킬명 ── */}
+      <div className="flex items-stretch border-b border-[#d8d8d8] bg-[#f5f5f5]">
+        <div className="w-[60px] flex-shrink-0 flex items-center justify-center p-2 border-r border-[#d8d8d8]">
           <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
         </div>
-        <div className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 min-w-0">
-          <span className="text-base font-bold text-gray-900 text-center leading-tight">{skill.name}</span>
+        <div className="flex-1 flex flex-col items-center justify-center py-2 px-3 min-w-0">
+          <span className="text-[15px] font-bold text-[#1a1a1a] text-center leading-snug">{skill.name}</span>
+          <span className="text-[10px] text-[#888] mt-0.5 tracking-wide">[표기]</span>
         </div>
       </div>
-      <div className="flex items-center border-b border-gray-200">
-        <div className="w-16 flex-shrink-0 flex items-center justify-center p-2 border-r border-gray-200 bg-gray-50">
-          <div className={`w-3 h-3 rounded-full ${dotColor}`} />
-        </div>
-        <div className="flex-1 px-3 py-2 text-sm text-gray-700">{skill.skill_type ?? "—"}</div>
+
+      {/* ── 스킬 타입 (전체 너비) ── */}
+      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-[#d8d8d8] bg-[#f9f9f9]">
+        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dotColor}`} />
+        <span className="text-[12px] text-[#444]">{skill.skill_type ?? "—"}</span>
       </div>
-      <div className="flex items-center border-b border-gray-200">
-        <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
-          <span className="text-xs text-gray-500">마스터 레벨</span>
+
+      {/* ── 마스터 레벨 ── */}
+      <div className={ROW}>
+        <div className={LABEL}><span className={LABEL_TEXT}>마스터 레벨</span></div>
+        <div className="flex-1 px-3 py-2 flex items-center">
+          <span className={`text-[13px] font-bold ${skill.master_level <= 3 ? "text-[#1a6fc4]" : "text-[#1a1a1a]"}`}>
+            {skill.master_level}
+          </span>
         </div>
-        <div className="flex-1 px-3 py-2 text-sm text-gray-800">{skill.master_level}</div>
       </div>
+
+      {/* ── 재사용 대기 ── */}
       {skill.cooldown && (
-        <div className="flex items-center border-b border-gray-200">
-          <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
-            <span className="text-xs text-gray-500">재사용 대기</span>
+        <div className={ROW}>
+          <div className={LABEL}><span className={LABEL_TEXT}>재사용 대기</span></div>
+          <div className="flex-1 px-3 py-2 flex items-center">
+            <span className="text-[13px] text-[#1a6fc4]">{skill.cooldown}</span>
           </div>
-          <div className="flex-1 px-3 py-2 text-sm text-blue-600">{skill.cooldown}</div>
         </div>
       )}
+
+      {/* ── 필요 스킬 ── */}
       {skill.required_skill && (
-        <div className="flex items-center border-b border-gray-200">
-          <div className="w-24 flex-shrink-0 px-3 py-2 bg-gray-50 border-r border-gray-200">
-            <span className="text-xs text-gray-500">필요 스킬</span>
+        <div className={ROW}>
+          <div className={LABEL}><span className={LABEL_TEXT}>필요 스킬</span></div>
+          <div className="flex-1 px-3 py-2 flex items-center">
+            <span className="text-[13px] text-amber-600">{skill.required_skill}</span>
           </div>
-          <div className="flex-1 px-3 py-2 text-sm text-amber-600">{skill.required_skill}</div>
         </div>
       )}
+
+      {/* ── 설명 ── */}
       {skill.description && (
-        <div className="flex items-start border-b border-gray-200">
-          <div className="w-24 flex-shrink-0 px-3 py-2.5 bg-gray-50 border-r border-gray-200">
-            <span className="text-xs text-gray-500">설명</span>
-          </div>
-          <div className="flex-1 px-3 py-2.5 text-sm text-gray-700 leading-relaxed">
+        <div className={ROW}>
+          <div className={LABEL}><span className={LABEL_TEXT}>설명</span></div>
+          <div className="flex-1 px-3 py-2 text-[12px] text-[#333] leading-[1.6]">
             <p ref={descRef} className={!descExpanded ? "line-clamp-4" : ""}>{skill.description}</p>
             {descOverflows && (
-              <button onClick={() => setDescExpanded((v) => !v)} className="text-xs text-purple-500 hover:text-purple-700 mt-1 font-medium">
+              <button onClick={() => setDescExpanded((v) => !v)} className="text-[11px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
                 {descExpanded ? "접기 ▲" : "더보기 ▼"}
               </button>
             )}
           </div>
         </div>
       )}
+
+      {/* ── 효과 ── */}
       {skill.max_effect && (
-        <div className="flex items-start">
-          <div className="w-24 flex-shrink-0 px-3 py-2.5 bg-gray-50 border-r border-gray-200">
-            <span className="text-xs text-gray-500">효과</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-start">
-              <div className="w-10 flex-shrink-0 flex items-start justify-center pt-2.5 border-r border-gray-100">
-                <span className="text-xs text-gray-400">{skill.master_level}</span>
-              </div>
-              <div className="flex-1 px-3 py-2.5 text-sm text-gray-700 leading-relaxed">
-                <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
-                {effOverflows && (
-                  <button onClick={() => setEffExpanded((v) => !v)} className="text-xs text-purple-500 hover:text-purple-700 mt-1 font-medium">
-                    {effExpanded ? "접기 ▲" : "더보기 ▼"}
-                  </button>
-                )}
-              </div>
+        <div className="flex items-stretch">
+          <div className={LABEL}><span className={LABEL_TEXT}>효과</span></div>
+          <div className="flex-1 flex items-stretch">
+            {/* 레벨 번호 열 */}
+            <div className="w-7 flex-shrink-0 flex items-start justify-center pt-2.5 border-r border-[#d8d8d8] bg-[#f0f4ff]">
+              <span className="text-[12px] font-bold text-[#1a6fc4]">{skill.master_level}</span>
+            </div>
+            {/* 효과 텍스트 */}
+            <div className="flex-1 px-3 py-2 text-[12px] text-[#333] leading-[1.6]">
+              <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
+              {effOverflows && (
+                <button onClick={() => setEffExpanded((v) => !v)} className="text-[11px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
+                  {effExpanded ? "접기 ▲" : "더보기 ▼"}
+                </button>
+              )}
             </div>
           </div>
         </div>
