@@ -1,4 +1,4 @@
-﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -59,6 +59,62 @@ const supaFetch = <T,>(path: string): Promise<T> =>
     headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
   }).then((r) => r.json() as Promise<T>);
 
+// ── 링크스킬 데이터 ──────────────────────────────────────────────────────
+type LinkSkillDatum = {
+  jobLabel: string;
+  jobs: string[];
+  skillName: string;
+  maxLevel: number;
+  effect: string;
+  category: "데미지" | "방어율무시" | "크리티컬" | "생존" | "스탯" | "경험치" | "기타";
+};
+
+const LINK_SKILLS: LinkSkillDatum[] = [
+  // 그룹 링크스킬
+  { jobLabel:"모험가 전사", jobs:["히어로","팔라딘","다크나이트"], skillName:"인빈서블 빌리프", maxLevel:9, effect:"HP 15% 이하 시 3초간 HP 44% 자동 회복 (재발동 150초)\n[7레벨~] 데미지 2~6% 증가", category:"생존" },
+  { jobLabel:"모험가 마법사", jobs:["아크메이지(불,독)","아크메이지(썬,콜)","비숍"], skillName:"임피리컬 널리지", maxLevel:9, effect:"적 약점 파악 최대 3중첩 · 중첩당 데미지 5%, 방어율 무시 5%", category:"방어율무시" },
+  { jobLabel:"모험가 궁수", jobs:["보우마스터","신궁","패스파인더"], skillName:"어드벤쳐러 큐리어스", maxLevel:9, effect:"크리티컬 확률 최대 15% 증가\n[7레벨~] 데미지 2% 증가", category:"크리티컬" },
+  { jobLabel:"모험가 도적", jobs:["나이트로드","섀도어","듀얼블레이드"], skillName:"시프 커닝", maxLevel:9, effect:"상태이상 적용 시 10초간 데미지 27% 증가 (가동률 50%)", category:"데미지" },
+  { jobLabel:"모험가 해적", jobs:["바이퍼","캡틴","캐논슈터"], skillName:"파이렛 블레스", maxLevel:9, effect:"올스탯 20, 최대 HP·MP 350, 피격 데미지 5% 감소", category:"스탯" },
+  { jobLabel:"시그너스 직업군", jobs:["소울마스터","플레임위자드","윈드브레이커","나이트워커","스트라이커"], skillName:"시그너스 블레스", maxLevel:5, effect:"공격력·마력 2 증가 (최대 5중첩 / 본인: 공격력·마력 6)", category:"스탯" },
+  { jobLabel:"레지스탕스 직업군", jobs:["블래스터","배틀메이지","와일드헌터","메카닉","은월"], skillName:"스피릿 오브 프리덤", maxLevel:9, effect:"데미지 2%+1% 증가 (본인 한정)", category:"데미지" },
+  // 개인 링크스킬
+  { jobLabel:"미하일", jobs:["미하일"], skillName:"빛의 수호", maxLevel:3, effect:"데미지 3% 증가 · 45초간 데미지 5% 추가 (본인 한정)", category:"데미지" },
+  { jobLabel:"아란", jobs:["아란"], skillName:"콤보킬 어드밴티지", maxLevel:3, effect:"콤보 스택에 따라 스킬 재사용 대기시간 감소", category:"기타" },
+  { jobLabel:"에반", jobs:["에반"], skillName:"룬 퍼시스턴스", maxLevel:3, effect:"해방된 룬의 힘 지속시간 50% 증가", category:"기타" },
+  { jobLabel:"루미너스", jobs:["루미너스"], skillName:"퍼미에이트", maxLevel:3, effect:"방어율 무시 5.88% 증가 (본인: 데미지 4% 추가)", category:"방어율무시" },
+  { jobLabel:"메르세데스", jobs:["메르세데스"], skillName:"엘프의 축복", maxLevel:3, effect:"경험치 획득량 15% 영구 증가 (패시브)", category:"경험치" },
+  { jobLabel:"팬텀", jobs:["팬텀"], skillName:"데들리 인스팅트", maxLevel:3, effect:"크리티컬 확률 5% 증가 (본인: 데미지 5% 추가)", category:"크리티컬" },
+  { jobLabel:"은월", jobs:["은월"], skillName:"구사 일생", maxLevel:3, effect:"HP 임계값 이하 피격 시 무적 자동 발동 (재발동 대기)", category:"생존" },
+  { jobLabel:"제논", jobs:["제논"], skillName:"하이브리드 로직", maxLevel:3, effect:"올스탯 5% 증가", category:"스탯" },
+  { jobLabel:"데몬 슬레이어", jobs:["데몬 슬레이어"], skillName:"데몬스 퓨리", maxLevel:3, effect:"데미지 5% 증가", category:"데미지" },
+  { jobLabel:"데몬 어벤져", jobs:["데몬 어벤져"], skillName:"와일드 레이지", maxLevel:3, effect:"데미지 5% 증가 (본인 한정)", category:"데미지" },
+  { jobLabel:"카이저", jobs:["카이저"], skillName:"아이언 윌", maxLevel:3, effect:"최대 HP 5% 증가 (본인: 모프 게이지 단계당 데미지 2%)", category:"생존" },
+  { jobLabel:"카인", jobs:["카인"], skillName:"프라이어 프리퍼레이션", maxLevel:3, effect:"데미지 8% 증가, 가동률 50%", category:"데미지" },
+  { jobLabel:"카데나", jobs:["카데나"], skillName:"인텐시브 인썰트", maxLevel:3, effect:"데미지 6% 증가", category:"데미지" },
+  { jobLabel:"엔젤릭버스터", jobs:["엔젤릭버스터"], skillName:"소울 컨트랙트", maxLevel:3, effect:"10초간 데미지 15% 증가 (본인: 30%)", category:"데미지" },
+  { jobLabel:"아델", jobs:["아델"], skillName:"노블레스", maxLevel:3, effect:"데미지 4% + 조건부 데미지 2% 증가", category:"데미지" },
+  { jobLabel:"일리움", jobs:["일리움"], skillName:"전투의 흐름", maxLevel:3, effect:"조건부 데미지 4% 증가", category:"데미지" },
+  { jobLabel:"칼리", jobs:["칼리"], skillName:"이네이트 기프트", maxLevel:3, effect:"데미지 2% 증가 (본인: 5%)", category:"데미지" },
+  { jobLabel:"아크", jobs:["아크"], skillName:"무아", maxLevel:3, effect:"조건부 데미지 5% 증가", category:"데미지" },
+  { jobLabel:"렌", jobs:["렌"], skillName:"강체", maxLevel:3, effect:"피격 데미지 감소 (신체 단련으로 피해 경감)", category:"생존" },
+  { jobLabel:"라라", jobs:["라라"], skillName:"자연의 벗", maxLevel:3, effect:"자연의 힘으로 생존력 향상 · HP 회복 강화", category:"생존" },
+  { jobLabel:"호영", jobs:["호영"], skillName:"자신감", maxLevel:3, effect:"방어율 무시 5.56% 증가 (본인: 데미지 4% 추가)", category:"방어율무시" },
+  { jobLabel:"제로", jobs:["제로"], skillName:"륀느의 축복", maxLevel:3, effect:"경험치 획득량 증가 · 에우렐 귀환 가능 (육성 지원)", category:"경험치" },
+  { jobLabel:"키네시스", jobs:["키네시스"], skillName:"판단", maxLevel:3, effect:"크리티컬 데미지 2% 증가", category:"크리티컬" },
+  { jobLabel:"레테", jobs:["레테"], skillName:"커버넌트", maxLevel:3, effect:"소환수와의 유대로 데미지 증가", category:"데미지" },
+];
+
+const LINK_CAT_STYLE: Record<string, { bg:string; text:string; border:string }> = {
+  "데미지":    { bg:"bg-red-50",    text:"text-red-700",    border:"border-red-200" },
+  "방어율무시": { bg:"bg-orange-50", text:"text-orange-700", border:"border-orange-200" },
+  "크리티컬":  { bg:"bg-yellow-50", text:"text-yellow-700", border:"border-yellow-200" },
+  "생존":      { bg:"bg-blue-50",   text:"text-blue-700",   border:"border-blue-200" },
+  "스탯":      { bg:"bg-purple-50", text:"text-purple-700", border:"border-purple-200" },
+  "경험치":    { bg:"bg-green-50",  text:"text-green-700",  border:"border-green-200" },
+  "기타":      { bg:"bg-gray-50",   text:"text-gray-700",   border:"border-gray-200" },
+};
+
 const TYPE_DOT: Record<string, string> = {
   "패시브":          "bg-green-500",
   "액티브(즉발)":    "bg-red-500",
@@ -91,6 +147,103 @@ function CycleSkillIcon({ name, iconUrl }: { name: string; iconUrl: string | nul
       <span className="text-[10px] text-gray-500 text-center leading-tight w-full truncate px-0.5" title={name}>
         {short}
       </span>
+    </div>
+  );
+}
+
+function LinkSkillCard({ data, iconUrl }: { data: LinkSkillDatum; iconUrl: string | null }) {
+  const [imgErr, setImgErr] = useState(false);
+  const isGroup = data.jobs.length > 1;
+  const cat = LINK_CAT_STYLE[data.category] ?? LINK_CAT_STYLE["기타"];
+  return (
+    <div className={`rounded-lg border p-3 flex gap-3 items-start ${cat.bg} ${cat.border}`}>
+      <div className="w-12 h-12 rounded-lg flex-shrink-0 bg-white/80 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+        {iconUrl && !imgErr ? (
+          <img src={iconUrl} alt={data.skillName} className="w-10 h-10 object-contain" onError={() => setImgErr(true)} loading="lazy" />
+        ) : (
+          <span className="text-xl">🔗</span>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-0.5">
+          <span className="font-bold text-gray-900 text-sm">{data.skillName}</span>
+          <span className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${cat.text} ${cat.border} bg-white/60`}>
+            {data.category}
+          </span>
+          {isGroup && (
+            <span className="text-xs px-1.5 py-0.5 rounded-full border font-medium text-indigo-600 border-indigo-200 bg-white/60">
+              그룹공유
+            </span>
+          )}
+          <span className="text-xs text-gray-400 ml-auto">최대 Lv.{data.maxLevel}</span>
+        </div>
+        <p className="text-xs text-gray-500 mb-1">
+          {isGroup ? data.jobs.join(" · ") : data.jobLabel} <span className="text-gray-400">제공</span>
+        </p>
+        <p className="text-sm text-gray-700 leading-snug whitespace-pre-line">{data.effect}</p>
+      </div>
+    </div>
+  );
+}
+
+function LinkSkillView() {
+  const [iconMap, setIconMap] = useState<Record<string, string>>({});
+  const [filter, setFilter] = useState("전체");
+
+  useEffect(() => {
+    const names = LINK_SKILLS.map((s) => s.skillName);
+    const inParam = names.map((n) => `"${n}"`).join(",");
+    supaFetch<{ name: string; icon_url: string | null }[]>(
+      `skills?name=in.(${encodeURIComponent(inParam)})&select=name,icon_url&limit=200`
+    ).then((icons) => {
+      const map: Record<string, string> = {};
+      icons.forEach((s) => { if (s.icon_url) map[s.name] = s.icon_url; });
+      setIconMap(map);
+    });
+  }, []);
+
+  const cats = ["전체", "데미지", "방어율무시", "크리티컬", "생존", "스탯", "경험치", "기타"];
+  const filtered = filter === "전체" ? LINK_SKILLS : LINK_SKILLS.filter((s) => s.category === filter);
+  const groups = filtered.filter((s) => s.jobs.length > 1);
+  const individuals = filtered.filter((s) => s.jobs.length === 1);
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-xl font-bold text-purple-800">🔗 링크 스킬</h2>
+        <span className="text-sm text-gray-400 ml-auto">총 {LINK_SKILLS.length}개</span>
+      </div>
+      <div className="flex flex-wrap gap-1.5 mb-5">
+        {cats.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilter(cat)}
+            className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
+              filter === cat
+                ? "bg-purple-600 text-white shadow-sm scale-105"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+      {groups.length > 0 && (
+        <div className="mb-5">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">그룹 링크스킬 · 직업군 공유</p>
+          <div className="flex flex-col gap-2">
+            {groups.map((s) => <LinkSkillCard key={s.skillName} data={s} iconUrl={iconMap[s.skillName] ?? null} />)}
+          </div>
+        </div>
+      )}
+      {individuals.length > 0 && (
+        <div>
+          {groups.length > 0 && <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">개인 링크스킬</p>}
+          <div className="flex flex-col gap-2">
+            {individuals.map((s) => <LinkSkillCard key={s.skillName} data={s} iconUrl={iconMap[s.skillName] ?? null} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -422,12 +575,14 @@ export function SkillPage() {
   const [activeAdv, setActiveAdv] = useState("0차");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["전사"]));
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState<"job" | "link">("job");
 
   useEffect(() => {
     supaFetch<Job[]>("jobs?select=id,name,job_group").then(setJobs);
   }, []);
 
   const selectJob = async (job: Job) => {
+    setView("job");
     setSelectedJob(job);
     setLoading(true);
     const data = await supaFetch<Skill[]>(`skills?job_id=eq.${job.id}&select=*&limit=300`);
@@ -462,6 +617,16 @@ export function SkillPage() {
             <h3 className="text-sm font-bold text-white tracking-wide">직업 선택</h3>
           </div>
           <div className="overflow-y-auto max-h-[70vh]">
+            <button
+              onClick={() => { setView("link"); setSelectedJob(null); }}
+              className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm font-bold border-b border-purple-100 transition-colors ${
+                view === "link"
+                  ? "bg-purple-600 text-white"
+                  : "text-purple-700 bg-purple-50 hover:bg-purple-100"
+              }`}
+            >
+              🔗 링크 스킬
+            </button>
             {GROUP_ORDER.map((group) => (
               <div key={group}>
                 <button
@@ -492,7 +657,9 @@ export function SkillPage() {
       </div>
 
       <div className="flex-1 min-w-0">
-        {!selectedJob ? (
+        {view === "link" ? (
+          <LinkSkillView />
+        ) : !selectedJob ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400 bg-white/50 rounded-xl border-2 border-dashed border-purple-200">
             <span className="text-4xl mb-3">⚔️</span>
             <p className="text-sm">왼쪽에서 직업을 선택하세요</p>
@@ -551,4 +718,5 @@ export function SkillPage() {
     </div>
   );
 }
+
 
