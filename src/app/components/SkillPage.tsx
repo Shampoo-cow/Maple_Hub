@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -120,8 +120,8 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
       setData(d);
       const names = new Set<string>();
       d.forEach((bp) => {
-        bp.skill_timeline?.forEach((sk) => names.add(sk.s));
-        bp.skill_stats?.forEach((sk) => names.add(sk.s));
+        bp.skill_timeline?.forEach((sk) => names.add(sk.s.trim()));
+        bp.skill_stats?.forEach((sk) => names.add(sk.s.trim()));
       });
       if (names.size > 0) {
         const inParam = [...names].map((n) => `"${n}"`).join(",");
@@ -242,12 +242,12 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
                         <span className="text-[10px] text-red-500 font-bold leading-none ml-1">{seg.seq}</span>
                         <div className="flex gap-1 px-1.5 rounded-xl border-2 border-red-400 bg-red-50/60">
                           {seg.skills.map((sk, j) => (
-                            <CycleSkillIcon key={j} name={sk.s} iconUrl={iconMap[sk.s] ?? null} />
+                            <CycleSkillIcon key={j} name={sk.s} iconUrl={iconMap[sk.s.trim()] ?? null} />
                           ))}
                         </div>
                       </div>
                     ) : (
-                      <CycleSkillIcon key={i} name={seg.skill.s} iconUrl={iconMap[seg.skill.s] ?? null} />
+                      <CycleSkillIcon key={i} name={seg.skill.s} iconUrl={iconMap[seg.skill.s.trim()] ?? null} />
                     )
                   )}
                 </div>
@@ -261,9 +261,9 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
             <div className="space-y-1.5">
               {topStats.map((sk, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  {iconMap[sk.s] ? (
+                  {iconMap[sk.s.trim()] ? (
                     <img
-                      src={iconMap[sk.s]!}
+                      src={iconMap[sk.s.trim()]!}
                       alt={sk.s}
                       className="w-5 h-5 object-contain flex-shrink-0"
                       loading="lazy"
@@ -551,3 +551,4 @@ export function SkillPage() {
     </div>
   );
 }
+
