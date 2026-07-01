@@ -1,4 +1,4 @@
-﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -550,6 +550,7 @@ function LinkSkillView() {
 function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: Skill[] }) {
   const [data, setData] = useState<BpCache[]>([]);
   const [activeRank, setActiveRank] = useState(1);
+  const [activeSeason, setActiveSeason] = useState<number | null>(null);
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -564,12 +565,15 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
   useEffect(() => {
     setLoading(true);
     setActiveRank(1);
+    setActiveSeason(null);
     setIconMap({});
     const enc = encodeURIComponent(jobName);
     supaFetch<BpCache[]>(
-      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=rank.asc&limit=3`
+      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=season.desc,rank.asc&limit=10`
     ).then(async (d) => {
       setData(d);
+      const seasons = [...new Set(d.map((x) => x.season))].sort((a, b) => a - b);
+      setActiveSeason(seasons[seasons.length - 1] ?? null);
       const names = new Set<string>();
       d.forEach((bp) => {
         bp.skill_timeline?.forEach((sk) => names.add(sk.s.trim()));
@@ -590,7 +594,9 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
     });
   }, [jobName]);
 
-  const current = data.find((d) => d.rank === activeRank) ?? data[0];
+  const availableSeasons = [...new Set(data.map((x) => x.season))].sort((a, b) => a - b);
+  const seasonData = data.filter((d) => activeSeason === null || d.season === activeSeason);
+  const current = seasonData.find((d) => d.rank === activeRank) ?? seasonData[0];
 
   const topStats = useMemo(() => {
     if (!current) return [];
@@ -651,7 +657,6 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
   if (data.length === 0) return null;
 
   const maxPct = topStats[0]?.pct ?? 1;
-  const season = current?.season;
 
   return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white overflow-hidden shadow-sm">
@@ -660,11 +665,25 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 transition-colors"
         onClick={() => setOpen((v) => !v)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-base font-bold text-amber-800">🔥 극딜 사이클</span>
-          <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
-            시즌{season} 기준
-          </span>
+          {availableSeasons.length > 1 ? (
+            availableSeasons.map((s) => (
+              <button
+                key={s}
+                onClick={(e) => { e.stopPropagation(); setActiveSeason(s); setActiveRank(1); }}
+                className={`text-xs px-2 py-0.5 rounded-full border font-bold transition-colors ${
+                  activeSeason === s
+                    ? "bg-amber-500 text-white border-amber-500"
+                    : "bg-amber-50 text-amber-600 border-amber-300 hover:bg-amber-100"
+                }`}
+              >시즌{s}</button>
+            ))
+          ) : (
+            <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
+              시즌{activeSeason} 기준
+            </span>
+          )}
           <span className="text-xs text-gray-400">연무장 top3 (2분 사이클)</span>
         </div>
         <span className="text-sm text-amber-400">{open ? "▲" : "▼"}</span>
@@ -674,7 +693,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
         <div className="px-4 pb-4">
           {/* Rank tabs */}
           <div className="flex gap-1.5 mb-3">
-            {data.map((d) => (
+            {seasonData.map((d) => (
               <button
                 key={d.rank}
                 onClick={() => setActiveRank(d.rank)}
