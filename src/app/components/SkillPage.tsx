@@ -743,27 +743,20 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
   );
 }
 
-function SkillIcon({ iconUrl, name, advStyle }: { iconUrl: string | null; name: string; advStyle?: { iconBg: string } }) {
+function SkillIcon({ iconUrl, name, advStyle, className }: { iconUrl: string | null; name: string; advStyle?: { iconBg: string }; className?: string }) {
   const [err, setErr] = useState(false);
+  const wrap = className ?? `w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${advStyle?.iconBg ?? "bg-gray-100"}`;
 
   if (iconUrl && !err) {
     return (
-      <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${advStyle?.iconBg ?? "bg-gray-100"}`}>
-        <img
-          src={iconUrl}
-          alt={name}
-          className="w-10 h-10 object-contain"
-          onError={() => setErr(true)}
-          loading="lazy"
-        />
+      <div className={wrap}>
+        <img src={iconUrl} alt={name} className="w-10 h-10 object-contain" onError={() => setErr(true)} loading="lazy" />
       </div>
     );
   }
 
   return (
-    <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl ${advStyle?.iconBg ?? "bg-gray-100"}`}>
-      ⚔️
-    </div>
+    <div className={`${wrap} text-xl`}>⚔️</div>
   );
 }
 
@@ -784,104 +777,74 @@ function SkillCard({ skill }: { skill: Skill }) {
 
   const style    = ADV_STYLE[skill.advancement];
   const dotColor = TYPE_DOT[skill.skill_type ?? ""] ?? "bg-gray-400";
-  const LABEL = "w-[88px] flex-shrink-0 px-2.5 py-2 bg-[#ebebeb] border-r border-[#d8d8d8] flex items-start pt-2.5";
-  const LABEL_TEXT = "text-[11px] text-[#555] font-semibold leading-tight";
-  const ROW = "flex items-stretch border-b border-[#d8d8d8]";
 
   return (
-    <div className="border border-[#c0c0c0] rounded-sm overflow-hidden shadow-md bg-white">
+    <div className="rounded-lg border border-gray-200 overflow-hidden shadow-sm">
 
-      {/* ── SKILL 헤더 ── */}
-      <div className="bg-[#1b2a4a] px-3 py-[5px] flex items-center justify-between">
-        <span className="text-[#e8c96a] text-[11px] font-bold tracking-[0.25em]">SKILL</span>
-        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${style?.btn ?? "bg-gray-500 text-white"}`}>
-          {skill.advancement}
-        </span>
-      </div>
-
-      {/* ── 아이콘 + 스킬명 ── */}
-      <div className="flex items-stretch border-b border-[#d8d8d8] bg-[#f5f5f5]">
-        <div className="w-[60px] flex-shrink-0 flex items-center justify-center p-2 border-r border-[#d8d8d8]">
-          <SkillIcon iconUrl={skill.icon_url} name={skill.name} advStyle={style} />
-        </div>
-        <div className="flex-1 flex flex-col items-center justify-center py-2 px-3 min-w-0">
-          <span className="text-[15px] font-bold text-[#1a1a1a] text-center leading-snug">{skill.name}</span>
-          <span className="text-[10px] text-[#888] mt-0.5 tracking-wide">[표기]</span>
-        </div>
-      </div>
-
-      {/* ── 스킬 타입 (전체 너비) ── */}
-      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-[#d8d8d8] bg-[#f9f9f9]">
-        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dotColor}`} />
-        <span className="text-[12px] text-[#444]">{skill.skill_type ?? "—"}</span>
-      </div>
-
-      {/* ── 마스터 레벨 ── */}
-      <div className={ROW}>
-        <div className={LABEL}><span className={LABEL_TEXT}>마스터 레벨</span></div>
-        <div className="flex-1 px-3 py-2 flex items-center">
-          <span className={`text-[13px] font-bold ${skill.master_level <= 3 ? "text-[#1a6fc4]" : "text-[#1a1a1a]"}`}>
-            {skill.master_level}
-          </span>
-        </div>
-      </div>
-
-      {/* ── 재사용 대기 ── */}
-      {skill.cooldown && (
-        <div className={ROW}>
-          <div className={LABEL}><span className={LABEL_TEXT}>재사용 대기</span></div>
-          <div className="flex-1 px-3 py-2 flex items-center">
-            <span className="text-[13px] text-[#1a6fc4]">{skill.cooldown}</span>
+      {/* ── 헤더: 아이콘 + 스킬명 + 배지 ── */}
+      <div className={`flex gap-3 items-start p-3 ${style?.iconBg ?? "bg-gray-100"}`}>
+        <SkillIcon
+          iconUrl={skill.icon_url}
+          name={skill.name}
+          advStyle={style}
+          className="w-11 h-11 rounded-lg flex-shrink-0 bg-white/80 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="font-bold text-gray-900 text-sm leading-tight">{skill.name}</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${style?.btn ?? "bg-gray-500 text-white"}`}>
+              {skill.advancement}
+            </span>
           </div>
-        </div>
-      )}
-
-      {/* ── 필요 스킬 ── */}
-      {skill.required_skill && (
-        <div className={ROW}>
-          <div className={LABEL}><span className={LABEL_TEXT}>필요 스킬</span></div>
-          <div className="flex-1 px-3 py-2 flex items-center">
-            <span className="text-[13px] text-amber-600">{skill.required_skill}</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── 설명 ── */}
-      {skill.description && (
-        <div className={ROW}>
-          <div className={LABEL}><span className={LABEL_TEXT}>설명</span></div>
-          <div className="flex-1 px-3 py-2 text-[12px] text-[#333] leading-[1.6]">
-            <p ref={descRef} className={!descExpanded ? "line-clamp-4" : ""}>{skill.description}</p>
-            {descOverflows && (
-              <button onClick={() => setDescExpanded((v) => !v)} className="text-[11px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
-                {descExpanded ? "접기 ▲" : "더보기 ▼"}
-              </button>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            <span className="flex items-center gap-1">
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColor}`} />
+              <span className="text-[10px] text-gray-600">{skill.skill_type ?? "—"}</span>
+            </span>
+            <span className="text-[10px] text-gray-400">마스터 Lv.{skill.master_level}</span>
+            {skill.cooldown && (
+              <span className="text-[10px] text-gray-400">쿨 {skill.cooldown}</span>
+            )}
+            {skill.required_skill && (
+              <span className="text-[10px] text-amber-600">필요: {skill.required_skill}</span>
             )}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* ── 효과 ── */}
-      {skill.max_effect && (
-        <div className="flex items-stretch">
-          <div className={LABEL}><span className={LABEL_TEXT}>효과</span></div>
-          <div className="flex-1 flex items-stretch">
-            {/* 레벨 번호 열 */}
-            <div className="w-7 flex-shrink-0 flex items-start justify-center pt-2.5 border-r border-[#d8d8d8] bg-[#f0f4ff]">
-              <span className="text-[12px] font-bold text-[#1a6fc4]">{skill.master_level}</span>
+      {/* ── 테이블 ── */}
+      <div className="border-t border-gray-200 bg-white">
+        {skill.description && (
+          <div className={`flex items-stretch text-xs ${skill.max_effect ? "border-b border-gray-100" : ""}`}>
+            <div className="w-10 flex-shrink-0 flex items-start justify-center pt-2 pb-2 border-r border-gray-100 bg-gray-50">
+              <span className="font-semibold text-gray-400 text-[10px]">설명</span>
             </div>
-            {/* 효과 텍스트 */}
-            <div className="flex-1 px-3 py-2 text-[12px] text-[#333] leading-[1.6]">
-              <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
-              {effOverflows && (
-                <button onClick={() => setEffExpanded((v) => !v)} className="text-[11px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
-                  {effExpanded ? "접기 ▲" : "더보기 ▼"}
+            <div className="flex-1 px-3 py-2 text-gray-700 leading-relaxed">
+              <p ref={descRef} className={!descExpanded ? "line-clamp-4" : ""}>{skill.description}</p>
+              {descOverflows && (
+                <button onClick={() => setDescExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
+                  {descExpanded ? "▲ 접기" : "▼ 더보기"}
                 </button>
               )}
             </div>
           </div>
-        </div>
-      )}
+        )}
+        {skill.max_effect && (
+          <div className="flex items-stretch text-xs">
+            <div className="w-10 flex-shrink-0 flex items-start justify-center pt-2 pb-2 border-r border-gray-100 bg-[#f0f4ff]">
+              <span className="font-bold text-[#1a6fc4] text-[11px]">Lv.{skill.master_level}</span>
+            </div>
+            <div className="flex-1 px-3 py-2 text-gray-700 leading-relaxed whitespace-pre-line">
+              <p ref={effRef} className={!effExpanded ? "line-clamp-3" : ""}>{skill.max_effect}</p>
+              {effOverflows && (
+                <button onClick={() => setEffExpanded((v) => !v)} className="text-[10px] text-purple-500 hover:text-purple-700 mt-1 font-medium">
+                  {effExpanded ? "▲ 접기" : "▼ 더보기"}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
