@@ -592,40 +592,56 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
 
   const current = data.find((d) => d.rank === activeRank) ?? data[0];
 
-  const uniqueTimeline = useMemo(() => {
-    if (!current) return [];
-    const seen = new Set<string>();
-    const result: TimelineSkill[] = [];
-    for (const sk of current.skill_timeline ?? []) {
-      if (!seen.has(sk.s)) {
-        seen.add(sk.s);
-        result.push(sk);
-      }
-    }
-    return result;
-  }, [current]);
-
   const topStats = useMemo(() => {
     if (!current) return [];
     return [...(current.skill_stats ?? [])].sort((a, b) => b.pct - a.pct).slice(0, 7);
   }, [current]);
 
   const segments = useMemo<Segment[]>(() => {
-    const result: Segment[] = [];
-    for (const sk of uniqueTimeline) {
+    const tl = current?.skill_timeline ?? [];
+
+    // 1단계: raw timeline → seq 연속 그룹 + 개별 노말 스킬로 분할
+    const rawSegs: Segment[] = [];
+    for (const sk of tl) {
       if (sk.seq) {
-        const last = result[result.length - 1];
+        const last = rawSegs[rawSegs.length - 1];
         if (last?.type === "seq" && last.seq === sk.seq) {
           last.skills.push(sk);
         } else {
-          result.push({ type: "seq", seq: sk.seq, skills: [sk] });
+          rawSegs.push({ type: "seq", seq: sk.seq, skills: [sk] });
         }
       } else {
-        result.push({ type: "normal", skill: sk });
+        rawSegs.push({ type: "normal", skill: sk });
       }
     }
-    return result;
-  }, [uniqueTimeline]);
+
+    // 2단계: 시퀀스는 seq 레이블 기준으로, 노말 스킬은 스킬명 기준으로 중복 제거
+    const seenSeqs = new Set<string>();
+    const seenSkills = new Set<string>();
+    const deduped: Segment[] = [];
+    for (const seg of rawSegs) {
+      if (seg.type === "seq") {
+        if (!seenSeqs.has(seg.seq)) {
+          seenSeqs.add(seg.seq);
+          seg.skills.forEach((sk) => seenSkills.add(sk.s));
+          deduped.push(seg);
+        }
+      } else {
+        if (!seenSkills.has(seg.skill.s)) {
+          seenSkills.add(seg.skill.s);
+          deduped.push(seg);
+        }
+      }
+    }
+
+    // 3단계: 스킬 3개 미만 시퀀스 → 개별 노말 스킬로 강등
+    return deduped.flatMap((seg): Segment[] => {
+      if (seg.type === "seq" && seg.skills.length < 3) {
+        return seg.skills.map((sk) => ({ type: "normal", skill: sk }));
+      }
+      return [seg];
+    });
+  }, [current]);
 
   if (loading) return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-600 animate-pulse">
@@ -683,7 +699,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
               딜 사이클
               <span className="ml-2 normal-case font-normal text-red-500">빨간 박스 = 극딜 시퀀스</span>
             </p>
-            {uniqueTimeline.length === 0 ? (
+            {segments.length === 0 ? (
               <span className="text-sm text-gray-400">타임라인 정보 없음</span>
             ) : (
               <div className="overflow-x-auto pb-1">
