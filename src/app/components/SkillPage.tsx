@@ -1,4 +1,4 @@
-﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -65,75 +65,315 @@ type LinkSkillDatum = {
   jobs: string[];
   skillName: string;
   maxLevel: number;
-  effect: string;
+  effects: { lv: number; text: string }[];
   category: "데미지" | "방어율무시" | "크리티컬" | "생존" | "스탯" | "경험치" | "기타";
 };
 
 const LINK_SKILLS: LinkSkillDatum[] = [
   // ─── 그룹 링크스킬 (직업군 공유) ───
-  { jobLabel:"모험가 전사", jobs:["히어로","팔라딘","다크나이트"], skillName:"인빈서블 빌리프", maxLevel:9,
-    effect:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 35% 회복\n재발동 대기시간 210초", category:"생존" },
-  { jobLabel:"모험가 마법사", jobs:["아크메이지(불,독)","아크메이지(썬,콜)","비숍"], skillName:"임피리컬 널리지", maxLevel:9,
-    effect:"공격한 적의 약점 25% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 3%, 방어율 무시 3% 증가", category:"방어율무시" },
-  { jobLabel:"모험가 궁수", jobs:["보우마스터","신궁","패스파인더"], skillName:"어드벤쳐러 큐리어스", maxLevel:9,
-    effect:"몬스터 컬렉션 등록 확률 35%, 크리티컬 확률 10% 증가", category:"크리티컬" },
-  { jobLabel:"모험가 도적", jobs:["나이트로드","섀도어","듀얼블레이드"], skillName:"시프 커닝", maxLevel:9,
-    effect:"상태 이상 적용 시 10초간 데미지 18% 증가\n재발동 대기시간 20초", category:"데미지" },
-  { jobLabel:"모험가 해적", jobs:["바이퍼","캡틴","캐논슈터"], skillName:"파이렛 블레스", maxLevel:9,
-    effect:"힘·민첩·지력·운 70, 최대 HP·MP 1225 증가\n피격 데미지 15% 감소\n재사용 대기시간 5초", category:"스탯" },
-  { jobLabel:"시그너스 직업군", jobs:["소울마스터","플레임위자드","윈드브레이커","나이트워커","스트라이커"], skillName:"시그너스 블레스", maxLevel:10,
-    effect:"공격력·마력 25, 상태 이상 내성 15, 모든 속성 내성 15% 증가", category:"스탯" },
-  { jobLabel:"레지스탕스 직업군", jobs:["블래스터","배틀메이지","와일드헌터","메카닉","은월"], skillName:"스피릿 오브 프리덤", maxLevel:9,
-    effect:"부활 시 8초간 무적 상태\n맵 이동 시 해제", category:"생존" },
+  {
+    jobLabel:"모험가 전사", jobs:["히어로","팔라딘","다크나이트"], skillName:"인빈서블 빌리프", maxLevel:9, category:"생존",
+    effects:[
+      { lv:1, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 20% 회복\n재발동 대기시간 410초" },
+      { lv:2, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 23% 회복\n재발동 대기시간 380초" },
+      { lv:3, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 26% 회복\n재발동 대기시간 350초" },
+      { lv:4, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 29% 회복\n재발동 대기시간 320초" },
+      { lv:5, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 32% 회복\n재발동 대기시간 290초" },
+      { lv:6, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 35% 회복\n재발동 대기시간 260초" },
+      { lv:7, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 38% 회복\n재발동 대기시간 230초" },
+      { lv:8, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 41% 회복\n재발동 대기시간 200초" },
+      { lv:9, text:"HP 15% 이하 시 자동 발동 — 3초간 매초 최대 HP 44% 회복\n재발동 대기시간 150초" },
+    ],
+  },
+  {
+    jobLabel:"모험가 마법사", jobs:["아크메이지(불,독)","아크메이지(썬,콜)","비숍"], skillName:"임피리컬 널리지", maxLevel:9, category:"방어율무시",
+    effects:[
+      { lv:1, text:"공격한 적의 약점 15% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 1%, 방어율 무시 1% 증가" },
+      { lv:2, text:"공격한 적의 약점 17% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 1%, 방어율 무시 2% 증가" },
+      { lv:3, text:"공격한 적의 약점 18% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 2%, 방어율 무시 2% 증가" },
+      { lv:4, text:"공격한 적의 약점 20% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 2%, 방어율 무시 3% 증가" },
+      { lv:5, text:"공격한 적의 약점 22% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 2%, 방어율 무시 3% 증가" },
+      { lv:6, text:"공격한 적의 약점 23% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 3%, 방어율 무시 4% 증가" },
+      { lv:7, text:"공격한 적의 약점 25% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 3%, 방어율 무시 4% 증가" },
+      { lv:8, text:"공격한 적의 약점 27% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 3%, 방어율 무시 5% 증가" },
+      { lv:9, text:"공격한 적의 약점 31% 확률로 파악 (최대 3중첩, 10초 지속)\n중첩당 데미지 5%, 방어율 무시 5% 증가" },
+    ],
+  },
+  {
+    jobLabel:"모험가 궁수", jobs:["보우마스터","신궁","패스파인더"], skillName:"어드벤쳐러 큐리어스", maxLevel:9, category:"크리티컬",
+    effects:[
+      { lv:1, text:"몬스터 컬렉션 등록 확률 10% 증가, 크리티컬 확률 3% 증가" },
+      { lv:2, text:"몬스터 컬렉션 등록 확률 13% 증가, 크리티컬 확률 4% 증가" },
+      { lv:3, text:"몬스터 컬렉션 등록 확률 17% 증가, 크리티컬 확률 5% 증가" },
+      { lv:4, text:"몬스터 컬렉션 등록 확률 20% 증가, 크리티컬 확률 6% 증가" },
+      { lv:5, text:"몬스터 컬렉션 등록 확률 23% 증가, 크리티컬 확률 7% 증가" },
+      { lv:6, text:"몬스터 컬렉션 등록 확률 27% 증가, 크리티컬 확률 9% 증가" },
+      { lv:7, text:"몬스터 컬렉션 등록 확률 30% 증가, 크리티컬 확률 10% 증가" },
+      { lv:8, text:"몬스터 컬렉션 등록 확률 35% 증가, 크리티컬 확률 12% 증가" },
+      { lv:9, text:"몬스터 컬렉션 등록 확률 50% 증가, 크리티컬 확률 15% 증가" },
+    ],
+  },
+  {
+    jobLabel:"모험가 도적", jobs:["나이트로드","섀도어","듀얼블레이드"], skillName:"시프 커닝", maxLevel:9, category:"데미지",
+    effects:[
+      { lv:1, text:"상태 이상 적용 시 10초간 데미지 3% 증가\n재발동 대기시간 20초" },
+      { lv:2, text:"상태 이상 적용 시 10초간 데미지 6% 증가\n재발동 대기시간 20초" },
+      { lv:3, text:"상태 이상 적용 시 10초간 데미지 9% 증가\n재발동 대기시간 20초" },
+      { lv:4, text:"상태 이상 적용 시 10초간 데미지 12% 증가\n재발동 대기시간 20초" },
+      { lv:5, text:"상태 이상 적용 시 10초간 데미지 14% 증가\n재발동 대기시간 20초" },
+      { lv:6, text:"상태 이상 적용 시 10초간 데미지 16% 증가\n재발동 대기시간 20초" },
+      { lv:7, text:"상태 이상 적용 시 10초간 데미지 18% 증가\n재발동 대기시간 20초" },
+      { lv:8, text:"상태 이상 적용 시 10초간 데미지 22% 증가\n재발동 대기시간 20초" },
+      { lv:9, text:"상태 이상 적용 시 10초간 데미지 27% 증가\n재발동 대기시간 20초" },
+    ],
+  },
+  {
+    jobLabel:"모험가 해적", jobs:["바이퍼","캡틴","캐논슈터"], skillName:"파이렛 블레스", maxLevel:9, category:"스탯",
+    effects:[
+      { lv:1, text:"힘·민첩·지력·운 20, 최대 HP·MP 350 증가\n피격 데미지 5% 감소" },
+      { lv:2, text:"힘·민첩·지력·운 27, 최대 HP·MP 473 증가\n피격 데미지 7% 감소" },
+      { lv:3, text:"힘·민첩·지력·운 35, 최대 HP·MP 613 증가\n피격 데미지 9% 감소" },
+      { lv:4, text:"힘·민첩·지력·운 42, 최대 HP·MP 735 증가\n피격 데미지 11% 감소" },
+      { lv:5, text:"힘·민첩·지력·운 50, 최대 HP·MP 875 증가\n피격 데미지 13% 감소" },
+      { lv:6, text:"힘·민첩·지력·운 57, 최대 HP·MP 998 증가\n피격 데미지 15% 감소" },
+      { lv:7, text:"힘·민첩·지력·운 65, 최대 HP·MP 1138 증가\n피격 데미지 17% 감소" },
+      { lv:8, text:"힘·민첩·지력·운 72, 최대 HP·MP 1260 증가\n피격 데미지 19% 감소" },
+      { lv:9, text:"힘·민첩·지력·운 100, 최대 HP·MP 1750 증가\n피격 데미지 21% 감소" },
+    ],
+  },
+  {
+    jobLabel:"시그너스 직업군", jobs:["소울마스터","플레임위자드","윈드브레이커","나이트워커","스트라이커"], skillName:"시그너스 블레스", maxLevel:15, category:"스탯",
+    effects:[
+      { lv:1,  text:"공격력·마력 7 증가, 상태 이상 내성 1, 모든 속성 내성 1% 증가" },
+      { lv:2,  text:"공격력·마력 8 증가, 상태 이상 내성 2, 모든 속성 내성 2% 증가" },
+      { lv:3,  text:"공격력·마력 9 증가, 상태 이상 내성 3, 모든 속성 내성 3% 증가" },
+      { lv:4,  text:"공격력·마력 10 증가, 상태 이상 내성 4, 모든 속성 내성 4% 증가" },
+      { lv:5,  text:"공격력·마력 11 증가, 상태 이상 내성 5, 모든 속성 내성 5% 증가" },
+      { lv:6,  text:"공격력·마력 13 증가, 상태 이상 내성 7, 모든 속성 내성 7% 증가" },
+      { lv:7,  text:"공격력·마력 14 증가, 상태 이상 내성 8, 모든 속성 내성 8% 증가" },
+      { lv:8,  text:"공격력·마력 15 증가, 상태 이상 내성 9, 모든 속성 내성 9% 증가" },
+      { lv:9,  text:"공격력·마력 17 증가, 상태 이상 내성 11, 모든 속성 내성 11% 증가" },
+      { lv:10, text:"공격력·마력 18 증가, 상태 이상 내성 12, 모든 속성 내성 12% 증가" },
+      { lv:11, text:"공격력·마력 19 증가, 상태 이상 내성 13, 모든 속성 내성 13% 증가" },
+      { lv:12, text:"공격력·마력 21 증가, 상태 이상 내성 15, 모든 속성 내성 15% 증가" },
+      { lv:13, text:"공격력·마력 28 증가, 상태 이상 내성 17, 모든 속성 내성 17% 증가" },
+      { lv:14, text:"공격력·마력 32 증가, 상태 이상 내성 19, 모든 속성 내성 19% 증가" },
+      { lv:15, text:"공격력·마력 35 증가, 상태 이상 내성 22, 모든 속성 내성 22% 증가" },
+    ],
+  },
+  {
+    jobLabel:"레지스탕스 직업군", jobs:["블래스터","배틀메이지","와일드헌터","메카닉"], skillName:"스피릿 오브 프리덤", maxLevel:12, category:"생존",
+    effects:[
+      { lv:1,  text:"부활 시 1초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:2,  text:"부활 시 2초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:3,  text:"부활 시 3초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:4,  text:"부활 시 4초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:5,  text:"부활 시 5초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:6,  text:"부활 시 6초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:7,  text:"부활 시 7초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:8,  text:"부활 시 8초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:9,  text:"부활 시 9초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:10, text:"부활 시 10초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:11, text:"부활 시 11초간 무적 상태 (맵 이동 시 해제)" },
+      { lv:12, text:"부활 시 12초간 무적 상태 (맵 이동 시 해제)" },
+    ],
+  },
   // ─── 개인 링크스킬 ───
-  { jobLabel:"미하일", jobs:["미하일"], skillName:"빛의 수호", maxLevel:3,
-    effect:"30초간 보호막 생성 (최대 9회 피해 방어), 데미지 25% 증가\n최대 HP 비율 피해에 한해 피해 30% 감소\n재사용 대기시간 120초\n[패시브] 데미지 3% 증가", category:"생존" },
-  { jobLabel:"아란", jobs:["아란"], skillName:"콤보킬 어드밴티지", maxLevel:3,
-    effect:"콤보킬 구슬 경험치 획득량 650% 영구 증가", category:"경험치" },
-  { jobLabel:"에반", jobs:["에반"], skillName:"룬 퍼시스턴스", maxLevel:3,
-    effect:"해방된 룬의 힘 지속시간 70% 증가, 데미지 5% 증가", category:"기타" },
-  { jobLabel:"루미너스", jobs:["루미너스"], skillName:"퍼미에이트", maxLevel:3,
-    effect:"방어율 무시 20%, 데미지 4% 증가", category:"방어율무시" },
-  { jobLabel:"메르세데스", jobs:["메르세데스"], skillName:"엘프의 축복", maxLevel:3,
-    effect:"사용 시 에우렐 귀환 (재사용 600초)\n[패시브] 경험치 획득량 20%, 데미지 5% 증가", category:"경험치" },
-  { jobLabel:"팬텀", jobs:["팬텀"], skillName:"데들리 인스팅트", maxLevel:3,
-    effect:"크리티컬 확률 20%, 데미지 5% 증가", category:"크리티컬" },
-  { jobLabel:"은월", jobs:["은월"], skillName:"구사 일생", maxLevel:3,
-    effect:"사망에 이르는 공격을 당할 시 10% 확률로 생존", category:"생존" },
-  { jobLabel:"제논", jobs:["제논"], skillName:"하이브리드 로직", maxLevel:3,
-    effect:"모든 능력치 15% 증가", category:"스탯" },
-  { jobLabel:"데몬 슬레이어", jobs:["데몬 슬레이어"], skillName:"데몬스 퓨리", maxLevel:3,
-    effect:"보스 몬스터 공격 시 데미지 20% 증가, 포스 10 추가 흡수", category:"데미지" },
-  { jobLabel:"데몬 어벤져", jobs:["데몬 어벤져"], skillName:"와일드 레이지", maxLevel:3,
-    effect:"데미지 10% 증가", category:"데미지" },
-  { jobLabel:"카이저", jobs:["카이저"], skillName:"아이언 윌", maxLevel:3,
-    effect:"최대 HP 10% 증가, 모프 게이지 단계당 데미지 3% 증가", category:"생존" },
-  { jobLabel:"카인", jobs:["카인"], skillName:"프라이어 프리퍼레이션", maxLevel:3,
-    effect:"적 8명 처치 또는 보스에게 5회 적중 시 사전 준비 1회 완료\n사전 준비 5회 달성 시 20초간 데미지 17% 증가\n재발동 대기시간 40초", category:"데미지" },
-  { jobLabel:"카데나", jobs:["카데나"], skillName:"인텐시브 인썰트", maxLevel:3,
-    effect:"자신보다 레벨 낮은 몬스터 공격 시 데미지 9% 증가\n상태 이상 몬스터 공격 시 데미지 9% 증가", category:"데미지" },
-  { jobLabel:"엔젤릭버스터", jobs:["엔젤릭버스터"], skillName:"소울 컨트랙트", maxLevel:3,
-    effect:"MP 30 소비, 10초간 데미지 120% 증가\n링크 스킬로 사용 시 효과 절반 적용\n재사용 대기시간 60초", category:"데미지" },
-  { jobLabel:"아델", jobs:["아델"], skillName:"노블레스", maxLevel:3,
-    effect:"보스 몬스터 공격 시 데미지 4% 증가\n파티원 1명당 데미지 2% 증가 (최대 8%)\n파티 미결성 시 자신만 파티한 것으로 취급", category:"데미지" },
-  { jobLabel:"일리움", jobs:["일리움"], skillName:"전투의 흐름", maxLevel:3,
-    effect:"일정 거리 이동 시 발동 (최대 4중첩, 지속 25초)\n중첩당 데미지 3% 증가\n링크 스킬 사용 시 지속시간 10초로 감소", category:"데미지" },
-  { jobLabel:"칼리", jobs:["칼리"], skillName:"이네이트 기프트", maxLevel:3,
-    effect:"데미지 5% 증가\n공격 시 5초간 매초 최대 HP·MP 2% 회복\n재발동 대기시간 30초", category:"데미지" },
-  { jobLabel:"아크", jobs:["아크"], skillName:"무아", maxLevel:3,
-    effect:"전투 상태 5초 지속 시 발동 (최대 5중첩, 지속 5초)\n발동 시 데미지 1%, 중첩당 데미지 3% 추가 증가", category:"데미지" },
-  { jobLabel:"렌", jobs:["렌"], skillName:"강체", maxLevel:3,
-    effect:"최대 HP 비율 피해 포함 피해 4% 감소", category:"생존" },
-  { jobLabel:"라라", jobs:["라라"], skillName:"자연의 벗", maxLevel:3,
-    effect:"데미지 5% 증가\n일반 몬스터 20마리 처치 시 자연의 도움 발동\n자연의 도움: 30초간 일반 몬스터 데미지 11% 증가\n재발동 대기시간 30초", category:"데미지" },
-  { jobLabel:"호영", jobs:["호영"], skillName:"자신감", maxLevel:3,
-    effect:"방어율 무시 15%, 데미지 4% 증가\nHP 100%인 몬스터 공격 시 데미지 19% 추가 증가", category:"방어율무시" },
-  { jobLabel:"제로", jobs:["제로"], skillName:"륀느의 축복", maxLevel:5,
-    effect:"받는 데미지 15% 감소, 방어율 무시 10% 증가", category:"생존" },
-  { jobLabel:"키네시스", jobs:["키네시스"], skillName:"판단", maxLevel:3,
-    effect:"크리티컬 데미지 6% 증가", category:"크리티컬" },
-  { jobLabel:"레테", jobs:["레테"], skillName:"커버넌트", maxLevel:3,
-    effect:"소환수와의 유대로 데미지 증가", category:"데미지" },
+  {
+    jobLabel:"미하일", jobs:["미하일"], skillName:"빛의 수호", maxLevel:3, category:"생존",
+    effects:[
+      { lv:1, text:"상태 이상 내성 100 증가 (지속시간 10초)\n재사용 대기시간 120초" },
+      { lv:2, text:"상태 이상 내성 100 증가 (지속시간 15초)\n재사용 대기시간 120초" },
+      { lv:3, text:"상태 이상 내성 100 증가 (지속시간 20초)\n재사용 대기시간 120초" },
+    ],
+  },
+  {
+    jobLabel:"아란", jobs:["아란"], skillName:"콤보킬 어드밴티지", maxLevel:3, category:"경험치",
+    effects:[
+      { lv:1, text:"콤보킬 구슬 경험치 획득량 400% 영구 증가" },
+      { lv:2, text:"콤보킬 구슬 경험치 획득량 650% 영구 증가" },
+      { lv:3, text:"콤보킬 구슬 경험치 획득량 900% 영구 증가" },
+    ],
+  },
+  {
+    jobLabel:"에반", jobs:["에반"], skillName:"룬 퍼시스턴스", maxLevel:3, category:"기타",
+    effects:[
+      { lv:1, text:"해방된 룬의 힘 지속시간 30% 증가" },
+      { lv:2, text:"해방된 룬의 힘 지속시간 50% 증가" },
+      { lv:3, text:"해방된 룬의 힘 지속시간 70% 증가" },
+    ],
+  },
+  {
+    jobLabel:"루미너스", jobs:["루미너스"], skillName:"퍼미에이트", maxLevel:3, category:"방어율무시",
+    effects:[
+      { lv:1, text:"방어율 무시 10% 증가" },
+      { lv:2, text:"방어율 무시 15% 증가" },
+      { lv:3, text:"방어율 무시 20% 증가" },
+    ],
+  },
+  {
+    jobLabel:"메르세데스", jobs:["메르세데스"], skillName:"엘프의 축복", maxLevel:3, category:"경험치",
+    effects:[
+      { lv:1, text:"사용 시 에우렐 귀환 (재사용 600초)\n[패시브] 경험치 획득량 10%, 데미지 5% 증가" },
+      { lv:2, text:"사용 시 에우렐 귀환 (재사용 600초)\n[패시브] 경험치 획득량 15%, 데미지 5% 증가" },
+      { lv:3, text:"사용 시 에우렐 귀환 (재사용 600초)\n[패시브] 경험치 획득량 20%, 데미지 5% 증가" },
+    ],
+  },
+  {
+    jobLabel:"팬텀", jobs:["팬텀"], skillName:"데들리 인스팅트", maxLevel:3, category:"크리티컬",
+    effects:[
+      { lv:1, text:"크리티컬 확률 10% 증가" },
+      { lv:2, text:"크리티컬 확률 15% 증가" },
+      { lv:3, text:"크리티컬 확률 20% 증가" },
+    ],
+  },
+  {
+    jobLabel:"은월", jobs:["은월"], skillName:"구사 일생", maxLevel:3, category:"생존",
+    effects:[
+      { lv:1, text:"사망에 이르는 공격을 당할 시 5% 확률로 생존 (재발동 대기시간 300초)" },
+      { lv:2, text:"사망에 이르는 공격을 당할 시 10% 확률로 생존 (재발동 대기시간 300초)" },
+      { lv:3, text:"사망에 이르는 공격을 당할 시 15% 확률로 생존 (재발동 대기시간 300초)" },
+    ],
+  },
+  {
+    jobLabel:"제논", jobs:["제논"], skillName:"하이브리드 로직", maxLevel:3, category:"스탯",
+    effects:[
+      { lv:1, text:"힘·민첩·지력 5% 증가" },
+      { lv:2, text:"힘·민첩·지력 10% 증가" },
+      { lv:3, text:"힘·민첩·지력 15% 증가" },
+    ],
+  },
+  {
+    jobLabel:"데몬 슬레이어", jobs:["데몬 슬레이어"], skillName:"데몬스 퓨리", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"보스 몬스터 공격 시 데미지 10% 증가" },
+      { lv:2, text:"보스 몬스터 공격 시 데미지 15% 증가" },
+      { lv:3, text:"보스 몬스터 공격 시 데미지 20% 증가" },
+    ],
+  },
+  {
+    jobLabel:"데몬 어벤져", jobs:["데몬 어벤져"], skillName:"와일드 레이지", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"데미지 5% 증가" },
+      { lv:2, text:"데미지 10% 증가" },
+      { lv:3, text:"데미지 15% 증가" },
+    ],
+  },
+  {
+    jobLabel:"카이저", jobs:["카이저"], skillName:"아이언 윌", maxLevel:3, category:"생존",
+    effects:[
+      { lv:1, text:"최대 HP 10% 증가" },
+      { lv:2, text:"최대 HP 15% 증가" },
+      { lv:3, text:"최대 HP 20% 증가" },
+    ],
+  },
+  {
+    jobLabel:"카인", jobs:["카인"], skillName:"프라이어 프리퍼레이션", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"적 8명 처치 또는 보스에게 5회 적중 시 사전 준비 1회 완료\n사전 준비 5회 달성 시 20초간 데미지 9% 증가\n재발동 대기시간 40초" },
+      { lv:2, text:"적 8명 처치 또는 보스에게 5회 적중 시 사전 준비 1회 완료\n사전 준비 5회 달성 시 20초간 데미지 17% 증가\n재발동 대기시간 40초" },
+      { lv:3, text:"적 8명 처치 또는 보스에게 5회 적중 시 사전 준비 1회 완료\n사전 준비 5회 달성 시 20초간 데미지 25% 증가\n재발동 대기시간 40초" },
+    ],
+  },
+  {
+    jobLabel:"카데나", jobs:["카데나"], skillName:"인텐시브 인썰트", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"자신보다 레벨 낮은 몬스터 공격 시 데미지 3% 증가\n상태 이상 몬스터 공격 시 데미지 3% 증가" },
+      { lv:2, text:"자신보다 레벨 낮은 몬스터 공격 시 데미지 6% 증가\n상태 이상 몬스터 공격 시 데미지 6% 증가" },
+      { lv:3, text:"자신보다 레벨 낮은 몬스터 공격 시 데미지 9% 증가\n상태 이상 몬스터 공격 시 데미지 9% 증가" },
+    ],
+  },
+  {
+    jobLabel:"엔젤릭버스터", jobs:["엔젤릭버스터"], skillName:"소울 컨트랙트", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"MP 30 소비, 10초간 데미지 30% 증가\n재사용 대기시간 90초" },
+      { lv:2, text:"MP 30 소비, 10초간 데미지 45% 증가\n재사용 대기시간 60초" },
+      { lv:3, text:"MP 30 소비, 10초간 데미지 60% 증가\n재사용 대기시간 60초" },
+    ],
+  },
+  {
+    jobLabel:"아델", jobs:["아델"], skillName:"노블레스", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"보스 몬스터 공격 시 데미지 2% 증가\n파티원 1명당 데미지 1% 증가 (최대 4%)" },
+      { lv:2, text:"보스 몬스터 공격 시 데미지 4% 증가\n파티원 1명당 데미지 2% 증가 (최대 8%)" },
+      { lv:3, text:"보스 몬스터 공격 시 데미지 6% 증가\n파티원 1명당 데미지 3% 증가 (최대 12%)" },
+    ],
+  },
+  {
+    jobLabel:"일리움", jobs:["일리움"], skillName:"전투의 흐름", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"일정 거리 이동 시 발동 (최대 4중첩, 지속 25초)\n중첩당 데미지 2% 증가\n링크 스킬 사용 시 지속시간 10초로 감소" },
+      { lv:2, text:"일정 거리 이동 시 발동 (최대 4중첩, 지속 25초)\n중첩당 데미지 3% 증가\n링크 스킬 사용 시 지속시간 10초로 감소" },
+      { lv:3, text:"일정 거리 이동 시 발동 (최대 4중첩, 지속 25초)\n중첩당 데미지 4% 증가\n링크 스킬 사용 시 지속시간 10초로 감소" },
+    ],
+  },
+  {
+    jobLabel:"칼리", jobs:["칼리"], skillName:"이네이트 기프트", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"데미지 3% 증가\n공격 시 5초간 매초 최대 HP·MP 1% 회복\n재발동 대기시간 30초" },
+      { lv:2, text:"데미지 5% 증가\n공격 시 5초간 매초 최대 HP·MP 2% 회복\n재발동 대기시간 30초" },
+      { lv:3, text:"데미지 7% 증가\n공격 시 5초간 매초 최대 HP·MP 3% 회복\n재발동 대기시간 30초" },
+    ],
+  },
+  {
+    jobLabel:"아크", jobs:["아크"], skillName:"무아", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"전투 상태 5초 지속 시 발동 (최대 5중첩, 지속 5초)\n중첩당 데미지 1% 증가" },
+      { lv:2, text:"전투 상태 5초 지속 시 발동 (최대 5중첩, 지속 5초)\n중첩당 데미지 2% 증가" },
+      { lv:3, text:"전투 상태 5초 지속 시 발동 (최대 5중첩, 지속 5초)\n중첩당 데미지 3% 증가" },
+    ],
+  },
+  {
+    jobLabel:"렌", jobs:["렌"], skillName:"강체", maxLevel:3, category:"생존",
+    effects:[
+      { lv:1, text:"최대 HP 비율 피해 포함 피해 2% 감소" },
+      { lv:2, text:"최대 HP 비율 피해 포함 피해 4% 감소" },
+      { lv:3, text:"최대 HP 비율 피해 포함 피해 6% 감소" },
+    ],
+  },
+  {
+    jobLabel:"라라", jobs:["라라"], skillName:"자연의 벗", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"데미지 3% 증가\n일반 몬스터 20마리 처치 시 자연의 도움 발동\n자연의 도움: 30초간 일반 몬스터 데미지 7% 증가\n재발동 대기시간 30초" },
+      { lv:2, text:"데미지 5% 증가\n일반 몬스터 20마리 처치 시 자연의 도움 발동\n자연의 도움: 30초간 일반 몬스터 데미지 11% 증가\n재발동 대기시간 30초" },
+      { lv:3, text:"데미지 7% 증가\n일반 몬스터 20마리 처치 시 자연의 도움 발동\n자연의 도움: 30초간 일반 몬스터 데미지 15% 증가\n재발동 대기시간 30초" },
+    ],
+  },
+  {
+    jobLabel:"호영", jobs:["호영"], skillName:"자신감", maxLevel:3, category:"방어율무시",
+    effects:[
+      { lv:1, text:"방어율 무시 5% 증가\nHP 100%인 몬스터 공격 시 데미지 9% 추가 증가" },
+      { lv:2, text:"방어율 무시 10% 증가\nHP 100%인 몬스터 공격 시 데미지 14% 추가 증가" },
+      { lv:3, text:"방어율 무시 15% 증가\nHP 100%인 몬스터 공격 시 데미지 19% 추가 증가" },
+    ],
+  },
+  {
+    jobLabel:"제로", jobs:["제로"], skillName:"륀느의 축복", maxLevel:6, category:"생존",
+    effects:[
+      { lv:1, text:"받는 데미지 3% 감소, 방어율 무시 2% 증가" },
+      { lv:2, text:"받는 데미지 5% 감소, 방어율 무시 5% 증가" },
+      { lv:3, text:"받는 데미지 8% 감소, 방어율 무시 7% 증가" },
+      { lv:4, text:"받는 데미지 10% 감소, 방어율 무시 10% 증가" },
+      { lv:5, text:"받는 데미지 15% 감소, 방어율 무시 12% 증가" },
+      { lv:6, text:"받는 데미지 20% 감소, 방어율 무시 15% 증가" },
+    ],
+  },
+  {
+    jobLabel:"키네시스", jobs:["키네시스"], skillName:"판단", maxLevel:3, category:"크리티컬",
+    effects:[
+      { lv:1, text:"크리티컬 데미지 2% 증가" },
+      { lv:2, text:"크리티컬 데미지 4% 증가" },
+      { lv:3, text:"크리티컬 데미지 6% 증가" },
+    ],
+  },
+  {
+    jobLabel:"레테", jobs:["레테"], skillName:"커버넌트", maxLevel:3, category:"데미지",
+    effects:[
+      { lv:1, text:"소환수 데미지 4% 증가" },
+      { lv:2, text:"소환수 데미지 8% 증가" },
+      { lv:3, text:"소환수 데미지 12% 증가" },
+    ],
+  },
 ];
 
 const LINK_CAT_STYLE: Record<string, { bg:string; text:string; border:string }> = {
@@ -184,34 +424,62 @@ function CycleSkillIcon({ name, iconUrl }: { name: string; iconUrl: string | nul
 
 function LinkSkillCard({ data, iconUrl }: { data: LinkSkillDatum; iconUrl: string | null }) {
   const [imgErr, setImgErr] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const isGroup = data.jobs.length > 1;
   const cat = LINK_CAT_STYLE[data.category] ?? LINK_CAT_STYLE["기타"];
+  const needsCollapse = data.effects.length > 3;
+  const visibleEffects = needsCollapse && !expanded
+    ? [data.effects[0], data.effects[data.effects.length - 1]]
+    : data.effects;
+
   return (
-    <div className={`rounded-lg border p-3 flex gap-3 items-start ${cat.bg} ${cat.border}`}>
-      <div className="w-12 h-12 rounded-lg flex-shrink-0 bg-white/80 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
-        {iconUrl && !imgErr ? (
-          <img src={iconUrl} alt={data.skillName} className="w-10 h-10 object-contain" onError={() => setImgErr(true)} loading="lazy" />
-        ) : (
-          <span className="text-xl">🔗</span>
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap mb-0.5">
-          <span className="font-bold text-gray-900 text-sm">{data.skillName}</span>
-          <span className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${cat.text} ${cat.border} bg-white/60`}>
-            {data.category}
-          </span>
-          {isGroup && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full border font-medium text-indigo-600 border-indigo-200 bg-white/60">
-              그룹공유
-            </span>
+    <div className={`rounded-lg border overflow-hidden ${cat.border}`}>
+      {/* 헤더 */}
+      <div className={`flex gap-3 items-start p-3 ${cat.bg}`}>
+        <div className="w-11 h-11 rounded-lg flex-shrink-0 bg-white/80 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+          {iconUrl && !imgErr ? (
+            <img src={iconUrl} alt={data.skillName} className="w-9 h-9 object-contain" onError={() => setImgErr(true)} loading="lazy" />
+          ) : (
+            <span className="text-lg">🔗</span>
           )}
-          <span className="text-xs text-gray-400 ml-auto">최대 Lv.{data.maxLevel}</span>
         </div>
-        <p className="text-xs text-gray-500 mb-1">
-          {isGroup ? data.jobs.join(" · ") : data.jobLabel} <span className="text-gray-400">제공</span>
-        </p>
-        <p className="text-sm text-gray-700 leading-snug whitespace-pre-line">{data.effect}</p>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="font-bold text-gray-900 text-sm">{data.skillName}</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${cat.text} ${cat.border} bg-white/60`}>
+              {data.category}
+            </span>
+            {isGroup && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full border font-medium text-indigo-600 border-indigo-200 bg-white/60">
+                그룹공유
+              </span>
+            )}
+            <span className="text-[10px] text-gray-400 ml-auto">최대 Lv.{data.maxLevel}</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {isGroup ? data.jobs.join(" · ") : data.jobLabel}
+            <span className="text-gray-400"> 제공</span>
+          </p>
+        </div>
+      </div>
+      {/* 효과 테이블 */}
+      <div className="border-t border-gray-200 bg-white">
+        {visibleEffects.map((ef, i) => (
+          <div key={ef.lv} className={`flex items-stretch text-xs ${i < visibleEffects.length - 1 ? "border-b border-gray-100" : ""}`}>
+            <div className="w-10 flex-shrink-0 flex items-start justify-center pt-2 pb-2 border-r border-gray-100 bg-[#f0f4ff]">
+              <span className="font-bold text-[#1a6fc4] text-[11px]">Lv.{ef.lv}</span>
+            </div>
+            <div className="flex-1 px-3 py-2 text-gray-700 leading-relaxed whitespace-pre-line">{ef.text}</div>
+          </div>
+        ))}
+        {needsCollapse && (
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="w-full py-1.5 text-[11px] text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100 flex items-center justify-center gap-1"
+          >
+            {expanded ? "▲ 접기" : `▼ 전체 ${data.effects.length}단계 보기`}
+          </button>
+        )}
       </div>
     </div>
   );
