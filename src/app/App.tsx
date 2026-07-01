@@ -34,7 +34,6 @@ export default function App() {
               backgroundPosition: "center",
             }}
           >
-            {/* 로고 + 타이틀 */}
             <div className="relative z-10 flex items-center justify-center gap-2 md:gap-4">
               <img
                 src={mapleLeaf}
@@ -54,30 +53,6 @@ export default function App() {
                   Maple_Hub
                 </span>
               </h1>
-            </div>
-
-            {/* 사이트 소개 */}
-            <div className="relative z-10 text-center mt-3 md:mt-4">
-              <p className="text-white/90 text-sm md:text-base font-medium tracking-wide drop-shadow">
-                메이플스토리 팬사이트 — 직업 정보부터 길드마크까지 한 곳에서
-              </p>
-              <div className="flex items-center justify-center gap-2 mt-2 md:mt-3 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs md:text-sm font-semibold backdrop-blur-sm border border-white/30 shadow-sm">
-                  🗡️ 직업별 스킬 정보
-                </span>
-                <span className="text-white/40 text-sm hidden md:inline">·</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs md:text-sm font-semibold backdrop-blur-sm border border-white/30 shadow-sm">
-                  🔥 극딜 사이클
-                </span>
-                <span className="text-white/40 text-sm hidden md:inline">·</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs md:text-sm font-semibold backdrop-blur-sm border border-white/30 shadow-sm">
-                  🔗 링크 스킬
-                </span>
-                <span className="text-white/40 text-sm hidden md:inline">·</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs md:text-sm font-semibold backdrop-blur-sm border border-white/30 shadow-sm">
-                  🏅 길드마크 에디터
-                </span>
-              </div>
             </div>
           </div>
 
