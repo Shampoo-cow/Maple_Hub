@@ -1,4 +1,4 @@
-﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+﻿﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -569,7 +569,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
     setIconMap({});
     const enc = encodeURIComponent(jobName);
     supaFetch<BpCache[]>(
-      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=season.desc,rank.asc&limit=10`
+      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=season.desc,rank.asc&limit=10&season=lte.2`
     ).then(async (d) => {
       setData(d);
       const seasons = [...new Set(d.map((x) => x.season))].sort((a, b) => a - b);
