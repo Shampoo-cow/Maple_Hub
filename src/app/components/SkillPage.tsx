@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 
 const SUPABASE_URL = "https://oemhkfjwqpmiiugpfgvu.supabase.co";
 const ANON_KEY =
@@ -31,6 +31,7 @@ type Skill = {
   cooldown: string | null;
   required_skill: string | null;
   icon_url: string | null;
+  is_party_synergy: boolean;
 };
 
 const JOB_ORDER: Record<string, string[]> = {
@@ -830,6 +831,11 @@ function SkillCard({ skill }: { skill: Skill }) {
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${style?.btn ?? "bg-gray-500 text-white"}`}>
               {skill.advancement}
             </span>
+            {skill.is_party_synergy && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-teal-100 text-teal-700 border border-teal-300">
+                👥 파티시너지
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="flex items-center gap-1">
@@ -892,9 +898,12 @@ export function SkillPage() {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["전사"]));
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<"job" | "link">("job");
+  const [partyJobIds, setPartyJobIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     supaFetch<Job[]>("jobs?select=id,name,job_group").then(setJobs);
+    supaFetch<{ job_id: string }[]>("skills?is_party_synergy=eq.true&select=job_id&limit=500")
+      .then((rows) => setPartyJobIds(new Set(rows.map((r) => r.job_id))));
   }, []);
 
   const selectJob = async (job: Job) => {
@@ -957,13 +966,18 @@ export function SkillPage() {
                     <button
                       key={job.id}
                       onClick={() => selectJob(job)}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors border-b border-gray-50 ${
+                      className={`w-full flex items-center gap-1.5 px-4 py-2 text-sm transition-colors border-b border-gray-50 ${
                         selectedJob?.id === job.id
                           ? "bg-purple-100 text-purple-800 font-semibold"
                           : "text-gray-600 hover:bg-gray-50"
                       }`}
                     >
-                      {job.name}
+                      <span className="flex-1 text-left">{job.name}</span>
+                      {partyJobIds.has(job.id) && (
+                        <span className="text-[9px] px-1 py-0.5 rounded bg-teal-100 text-teal-600 border border-teal-200 font-medium flex-shrink-0">
+                          👥
+                        </span>
+                      )}
                     </button>
                   ))}
               </div>
@@ -1034,5 +1048,6 @@ export function SkillPage() {
     </div>
   );
 }
+
 
 
