@@ -570,15 +570,15 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
     setIconMap({});
     const enc = encodeURIComponent(jobName);
     supaFetch<BpCache[]>(
-      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=season.desc,rank.asc&limit=10&season=lte.2`
+      `battle_practice_cache?job_name=eq.${enc}&select=rank,character_name,world_name,total_dps,season,skill_timeline,skill_stats&order=season.desc,rank.asc&limit=10`
     ).then(async (d) => {
       setData(d);
       const seasons = [...new Set(d.map((x) => x.season))].sort((a, b) => a - b);
       setActiveSeason(seasons[seasons.length - 1] ?? null);
       const names = new Set<string>();
       d.forEach((bp) => {
-        bp.skill_timeline?.forEach((sk) => names.add(sk.s.trim()));
-        bp.skill_stats?.forEach((sk) => names.add(sk.s.trim()));
+        bp.skill_timeline?.forEach((sk) => { if (sk.s) names.add(sk.s.trim()); });
+        bp.skill_stats?.forEach((sk) => { if (sk.s) names.add(sk.s.trim()); });
       });
       if (names.size > 0) {
         const inParam = [...names].map((n) => `"${n}"`).join(",");
@@ -592,7 +592,7 @@ function BurstCyclePanel({ jobName, jobSkills }: { jobName: string; jobSkills: S
         });
       }
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, [jobName]);
 
   const availableSeasons = [...new Set(data.map((x) => x.season))].sort((a, b) => a - b);
