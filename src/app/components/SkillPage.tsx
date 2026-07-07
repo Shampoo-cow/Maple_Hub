@@ -832,7 +832,10 @@ function SkillCard({ skill }: { skill: Skill }) {
               {skill.advancement}
             </span>
             {skill.is_party_synergy && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-teal-100 text-teal-700 border border-teal-300">
+              <span
+                title="파티원에게 버프나 도움을 주는 스킬입니다"
+                className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-teal-100 text-teal-700 border border-teal-300 cursor-help"
+              >
                 👥 파티시너지
               </span>
             )}
@@ -974,7 +977,10 @@ export function SkillPage() {
                     >
                       <span className="flex-1 text-left">{job.name}</span>
                       {partyJobIds.has(job.id) && (
-                        <span className="text-[9px] px-1 py-0.5 rounded bg-teal-100 text-teal-600 border border-teal-200 font-medium flex-shrink-0">
+                        <span
+                          title="파티원에게 버프나 도움을 주는 스킬이 있는 직업입니다"
+                          className="text-[9px] px-1 py-0.5 rounded bg-teal-100 text-teal-600 border border-teal-200 font-medium flex-shrink-0 cursor-help"
+                        >
                           👥
                         </span>
                       )}
@@ -1048,6 +1054,7 @@ export function SkillPage() {
     </div>
   );
 }
+
 
 
 
