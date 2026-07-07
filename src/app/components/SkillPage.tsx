@@ -486,6 +486,76 @@ function LinkSkillCard({ data, iconUrl }: { data: LinkSkillDatum; iconUrl: strin
   );
 }
 
+type SynergySkill = Skill & { job: { name: string; job_group: string } | null };
+
+function PartySynergyView() {
+  const [data, setData] = useState<SynergySkill[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeGroup, setActiveGroup] = useState("전체");
+
+  useEffect(() => {
+    supaFetch<SynergySkill[]>(
+      "skills?is_party_synergy=eq.true&select=*,job:jobs(name,job_group)&order=name"
+    ).then((d) => { setData(d); setLoading(false); });
+  }, []);
+
+  const groups = ["전체", ...GROUP_ORDER];
+  const filtered = activeGroup === "전체" ? data : data.filter((s) => s.job?.job_group === activeGroup);
+
+  const byJob = new Map<string, SynergySkill[]>();
+  filtered.forEach((s) => {
+    const jobName = s.job?.name ?? "기타";
+    if (!byJob.has(jobName)) byJob.set(jobName, []);
+    byJob.get(jobName)!.push(s);
+  });
+  const jobOrder = Object.values(JOB_ORDER).flat();
+  const jobNames = [...byJob.keys()].sort((a, b) => jobOrder.indexOf(a) - jobOrder.indexOf(b));
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1">
+        <h2 className="text-xl font-bold text-purple-800">👥 파티시너지 스킬</h2>
+        <span className="text-sm text-gray-400 ml-auto">총 {filtered.length}개</span>
+      </div>
+      <p className="text-xs text-gray-400 mb-4">파티원에게 버프나 도움을 주는 스킬만 모아봤습니다</p>
+      <div className="flex flex-wrap gap-1.5 mb-5">
+        {groups.map((g) => (
+          <button
+            key={g}
+            onClick={() => setActiveGroup(g)}
+            className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
+              activeGroup === g
+                ? "bg-purple-600 text-white shadow-sm scale-105"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600"
+            }`}
+          >
+            {g}
+          </button>
+        ))}
+      </div>
+      {loading ? (
+        <div className="flex items-center justify-center h-48 text-gray-400">
+          <span className="animate-pulse">불러오는 중...</span>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          {jobNames.map((jobName) => (
+            <div key={jobName}>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">{jobName}</p>
+              <div className="flex flex-col gap-2">
+                {byJob.get(jobName)!.map((s) => <SkillCard key={s.id} skill={s} />)}
+              </div>
+            </div>
+          ))}
+          {jobNames.length === 0 && (
+            <div className="text-center text-gray-400 py-10 text-sm">해당 직업군에는 파티시너지 스킬이 없습니다</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LinkSkillView() {
   const [iconMap, setIconMap] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState("전체");
@@ -900,7 +970,7 @@ export function SkillPage() {
   const [activeAdv, setActiveAdv] = useState("0차");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["전사"]));
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState<"job" | "link">("job");
+  const [view, setView] = useState<"job" | "link" | "synergy">("job");
   const [partyJobIds, setPartyJobIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -955,6 +1025,16 @@ export function SkillPage() {
             >
               🔗 링크 스킬
             </button>
+            <button
+              onClick={() => { setView("synergy"); setSelectedJob(null); }}
+              className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm font-bold border-b border-purple-100 transition-colors ${
+                view === "synergy"
+                  ? "bg-purple-600 text-white"
+                  : "text-purple-700 bg-purple-50 hover:bg-purple-100"
+              }`}
+            >
+              👥 파티시너지
+            </button>
             {GROUP_ORDER.map((group) => (
               <div key={group}>
                 <button
@@ -995,6 +1075,8 @@ export function SkillPage() {
       <div className="flex-1 min-w-0">
         {view === "link" ? (
           <LinkSkillView />
+        ) : view === "synergy" ? (
+          <PartySynergyView />
         ) : !selectedJob ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400 bg-white/50 rounded-xl border-2 border-dashed border-purple-200">
             <span className="text-4xl mb-3">⚔️</span>
