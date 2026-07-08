@@ -502,8 +502,20 @@ function PartySynergyView() {
   const groups = ["전체", ...GROUP_ORDER];
   const filtered = activeGroup === "전체" ? data : data.filter((s) => s.job?.job_group === activeGroup);
 
-  const byJob = new Map<string, SynergySkill[]>();
+  // 같은 스킬의 낮은 차수 버전(예: "OO" / "OO VI")은 가장 높은 차수만 남긴다
+  const bestByKey = new Map<string, SynergySkill>();
   filtered.forEach((s) => {
+    const baseName = s.name.replace(/\s*VI$/, "").trim();
+    const key = `${s.job?.name ?? "기타"}::${baseName}`;
+    const existing = bestByKey.get(key);
+    if (!existing || ADV_ORDER.indexOf(s.advancement) > ADV_ORDER.indexOf(existing.advancement)) {
+      bestByKey.set(key, s);
+    }
+  });
+  const deduped = [...bestByKey.values()];
+
+  const byJob = new Map<string, SynergySkill[]>();
+  deduped.forEach((s) => {
     const jobName = s.job?.name ?? "기타";
     if (!byJob.has(jobName)) byJob.set(jobName, []);
     byJob.get(jobName)!.push(s);
@@ -515,9 +527,9 @@ function PartySynergyView() {
     <div>
       <div className="flex items-center gap-2 mb-1">
         <h2 className="text-xl font-bold text-purple-800">👥 파티시너지 스킬</h2>
-        <span className="text-sm text-gray-400 ml-auto">총 {filtered.length}개</span>
+        <span className="text-sm text-gray-400 ml-auto">총 {deduped.length}개</span>
       </div>
-      <p className="text-xs text-gray-400 mb-4">파티원에게 버프나 도움을 주는 스킬만 모아봤습니다</p>
+      <p className="text-xs text-gray-400 mb-4">파티원에게 버프나 도움을 주는 스킬만 모아봤습니다 (같은 스킬은 가장 높은 차수만 표시)</p>
       <div className="flex flex-wrap gap-1.5 mb-5">
         {groups.map((g) => (
           <button
